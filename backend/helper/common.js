@@ -37,14 +37,13 @@ const isValidPassword = (passowrd) => {
 }
 
 const isValidZip = (zip) => {
-    
     if(!zip.match(/(^\d{5}$)|(^\d{5}-\d{4}$)/)) throw {status:400, error:'Invalid zip'};
     return zip;
 }
 
-const isValidName = (name) => {
-  name = isValidString(name,"Name");
-  name=name.split(' '); 
+const isValidName = (inputName) => {
+  inputName = isValidString(inputName,"Name");
+  let name=inputName.split(' '); 
   if(name.length!=2) throw {status:400, error:'Invalid name'}; 
   if(name[0].length<3)
     throw {status: '400', error : 'First name should be atleast 3 character'};
@@ -58,7 +57,7 @@ const isValidName = (name) => {
     throw {status: '400', error : 'Invalid first name'};
   if(!name[1].match(/^[a-z.'-]+$/i))
     throw {status: '400', error : 'Invalid last name'};
-    return name;
+    return inputName;
 }
 
 const isValidCity = (city) => {
