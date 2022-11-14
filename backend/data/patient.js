@@ -7,11 +7,19 @@ const {ObjectId} = require('mongodb');
 
 const saltRounds = 10;
 
-const createPatient = async (patientId,email,age,profilePicture,name,city,state,zip,password) => {
+const createPatient = async (email,age,profilePicture,name,city,state,zip,password) => {
+    email=commonHelper.isValidEmail(email);
+    age = patientHelper.isValidAge(age);
+    profilePicture=commonHelper.isValidFilePath(profilePicture);
+    name=commonHelper.isValidName(name);
+    city=commonHelper.isValidCity(city);
+    state=commonHelper.isValidState(state);
+    zip=commonHelper.isValidZip(zip);
+    password=commonHelper.isValidPassword(password);
+    
     let hashedPassword = await bcryptjs.hash(password,saltRounds);
-    patientHelper.isValidAge(age);
-
-    let newPatient = {patientId,email,age,profilePicture,name,city,state,zip,hashedPassword,medicalHistory:[],prescriptions:[],testReports:[]};
+    
+    let newPatient = {email,age,profilePicture,name,city,state,zip,hashedPassword,medicalHistory:[],prescriptions:[],testReports:[]};
     const patientCollection = await patients(); 
     const insertInfo = await patientCollection.insertOne(newPatient);
     if (!insertInfo.acknowledged || !insertInfo.insertedId)
