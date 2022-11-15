@@ -10,10 +10,10 @@ router
       const allDoctors = await doctorData.getAllDoctor();
       res.json(allDoctors);
     }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '400')
-        res.status(400).json(e);
-      else if(e.status === '404')
-        res.status(404).json(e);
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
       return;
     }
   })
@@ -31,10 +31,10 @@ router
       data.password = helper.common.isValidPassword(data.password);
       data.schedule = helper.doctor.isValidSchedule(data.schedule);
     }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '400')
-        res.status(400).json(e);
-      else if(e.status === '404')
-        res.status(404).json(e);
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
       return;
     }
 
@@ -43,10 +43,10 @@ router
         data.clinicAddress, data.city, data.state, data.zip, data.password, data.schedule);
       res.json(createDoctor);
     }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '400')
-        res.status(400).json(e);
-      else if(e.status === '404')
-        res.status(404).json(e);
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
       return;
     }
   })
@@ -64,10 +64,10 @@ router
     try{
       doctorId = helper.common.isValidId(req.params.doctorId);
     }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '400')
-        res.status(400).json(e);
-      else if(e.status === '404')
-        res.status(404).json(e);
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
       return;
     }
 
@@ -75,16 +75,38 @@ router
       const doctor = await doctorData.getDoctorById(doctorId);
       res.json(doctor);
     }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '400')
-        res.status(400).json(e);
-      else if(e.status === '404')
-        res.status(404).json(e);
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
       return;
     }
 
   })
   .patch(async (req, res) => {
+    let data = req.body;
+    let doctorId;
+    try{
+      doctorId = helper.common.isValidId(req.params.doctorId);
+      data = helper.doctor.isValidDoctorData(data);
+    }catch(e){
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
 
+    try{
+      const updatedDoctor = await doctorData.updateDoctor(doctorId, data);
+      res.json(updatedDoctor);
+    }catch(e){
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
   })
 
   router
