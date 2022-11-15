@@ -1,8 +1,8 @@
 const constants = require("../constants");
-const { isValidString } = require("./common");
+const common = require("./common");
 
 const isValidSpecialty = (specialty) =>{
-    specialty = isValidString(specialty, "Specialty");
+    specialty = common.isValidString(specialty, "Specialty");
     for(let i=0;i<constants.specialty.length;i++)
         if(specialty.toLowerCase() === constants.specialty[i].toLowerCase())
             return constants.specialty[i];
@@ -10,7 +10,7 @@ const isValidSpecialty = (specialty) =>{
 }
 
 const isValidAddress = (address) =>{
-    address = isValidString(address, "Address");
+    address = common.isValidString(address, "Address");
     if(!address.match(/^[a-zA-Z0-9 \s,.'-]{3,}$/))
         throw {status: '400', error : 'Invalid Address'}
     return address;
@@ -49,8 +49,51 @@ const isValidSchedule = (schedule) =>{
     return schedule;
 }
 
+const isValidDoctorData = (data) =>{
+    for(key in data)
+    {
+        switch(key){
+            case "email":
+                data.email = common.isValidEmail(data.email);
+                break;
+            case "profilePicture":
+                data.profilePicture = common.isValidFilePath(data.profilePicture);
+                break;
+            case "name":
+                data.name = common.isValidName(data.name);
+                break;
+            case "specialty":
+                data.specialty = isValidSpecialty(data.specialty);
+                break;
+            case "clinicAddress":
+                data.clinicAddress = isValidAddress(data.clinicAddress);
+                break;
+            case "city":
+                data.city = common.isValidCity(data.city);
+                break;
+            case "state":
+                data.state = common.isValidState(data.state);
+                break;
+            case "zip":
+                data.zip = common.isValidZip(data.zip);
+                break;
+            case "password":
+                data.password = common.isValidPassword(data.password);
+                break;
+            case "schedule":
+                data.schedule = doctor.isValidSchedule(data.schedule);
+                break;
+            default:
+                throw {status: '400', error : `Invalid key - ${key}`};
+            
+        }
+    }
+    return data;
+}
+
 module.exports = {
     isValidSpecialty,
     isValidAddress,
-    isValidSchedule
+    isValidSchedule,
+    isValidDoctorData
 };
