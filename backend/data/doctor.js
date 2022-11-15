@@ -83,8 +83,34 @@ const getAllDoctor = async () => {
     return allDoctors;
   };
 
+  const updateDoctor = async (
+    doctorId,
+    data
+  ) => {
+  
+    doctorId = helper.common.isValidId(doctorId);
+    data = helper.doctor.isValidDoctorData(data);
+  
+    const doctorCollection = await doctorCol();
+    
+    await getDoctorById(doctorId);
+    
+    const updatedInfo = await doctorCollection.updateOne(
+      {_id: ObjectId(doctorId)},
+      {$set: data}
+    );
+      
+    if (updatedInfo.modifiedCount === 0) {
+      throw {status: '400', error : 'could not update doctor successfully'};
+    }
+  
+    const doctor = await getDoctorById(doctorId);
+    return doctor;
+  };
+  
 module.exports = {
     createDoctor,
     getDoctorById,
-    getAllDoctor
+    getAllDoctor,
+    updateDoctor
 };
