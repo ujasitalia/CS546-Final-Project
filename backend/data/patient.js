@@ -33,7 +33,7 @@ const getPatientById = async (id) => {
   id = commonHelper.isValidId(id);
 
   const patientCollection = await patients();
-  const patient = await patientCollection.findOne({_id: ObjectId(id)});
+  const patient = await patientCollection.findOne({_id: ObjectId(id)},{projection:{hashedPassword:0}});
   if (patient === null) throw {statusCode:404,error:'No patient with that id'};
   patient['_id']=patient['_id'].toString()
   return patient;
