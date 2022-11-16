@@ -95,6 +95,12 @@ const getAllDoctor = async () => {
     
     await getDoctorById(doctorId);
     
+    if(data.password)
+    {
+      data.hashedPassword = await bcrypt.hash(data.password, saltRounds);
+      delete data.password;
+    }
+
     const updatedInfo = await doctorCollection.updateOne(
       {_id: ObjectId(doctorId)},
       {$set: data}
