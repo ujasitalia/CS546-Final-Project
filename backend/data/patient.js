@@ -44,7 +44,13 @@ const updatePatient = async (body,id) => {
   id = commonHelper.isValidId(id);
   let patientInDb = await getPatientById(id);
   if(!patientInDb) throw {statusCode: 404, error: `No patient with that ID`};
-  body = patientHelper.isValidPartialUpdate(body);
+  
+  body = patientHelper.isValidPatientUpdate(body);
+  if(body.password){
+    body.hashedPassword = await bcryptjs.hash(body.password,saltRounds);
+
+    delete body.password;
+  }
   const patientCollection = await patients();
   const updatedInfo = await patientCollection.updateOne(
     {_id: ObjectId(id)},
