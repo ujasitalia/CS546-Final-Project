@@ -4,7 +4,6 @@ const bcryptjs = require('bcryptjs');
 const patientHelper = require('../helper/patient')
 const commonHelper = require('../helper/common')
 const {ObjectId} = require('mongodb');
-
 const saltRounds = 10;
 
 const createPatient = async (email,age,profilePicture,name,city,state,zip,password) => {
@@ -40,6 +39,6 @@ const getPatientById = async (id) => {
 };
 
 module.exports = {
-  createPatient,
-  getPatientById
+    createPatient,
+    getPatientById
 };
