@@ -1,14 +1,29 @@
 const checkRating = (rating) => {
-    rating = rating.trim();
-    if(typeof rating !== 'string'){
-      throw 'not a string';
+    if(isNaN(rating) || typeof rating != 'number'){
+        throw 'Not a number'
     }
-    if(rating !== 'G' && rating !== 'PG' && rating !== 'PG-13' && rating !== 'R' && rating !== 'NC-17'){
-        throw 'not proper rating';
+    if(rating<0 && rating>6){
+        throw 'rating must between 1 to 5';
+    }
+    if(rating%0.5 != 0){
+        throw 'invalid input';
     }
     return rating;
   };
-
+  const checkReviewText = (reviewText) => {
+    if(!reviewText || reviewText == null){
+        return null;
+    }
+    if(typeof reviewText != 'string'){
+        throw 'Not a string'
+    }
+    reviewText = reviewText.trim();
+    if(reviewText.length > 500){
+        throw 'Review over character limit';
+    }
+    return reviewText;
+  };
 module.exports = {
-    checkRating
+    checkRating,
+    checkReviewText
 };

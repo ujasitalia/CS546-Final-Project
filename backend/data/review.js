@@ -10,15 +10,14 @@ patientId,
 reviewText,
 rating
 ) => {
+    reviewId = helper.common.isValidId(doctorID);
+    reviewId = helper.common.isValidId(patientId);
     doctorData = await doctor.getDoctorById(doctorID);
     patientData = await patient.getDoctorById(patientId);
-    if(!reviewText){
-
-    }
+    reviewText = helper.review.checkReviewText(reviewText);
     rating = helper.review.checkRating(rating);
-
     const reviewCollection = await reviewCol();
-    if(!reviewText){
+    if(reviewText == null){
         const newReview = {
             doctorID,
             patientId,
@@ -32,18 +31,17 @@ rating
         rating
       };
     }
-  
     const insertInfo = await reviewCollection.insertOne(newReview);
   
     if (!insertInfo.acknowledged || !insertInfo.insertedId)
         throw {status: '500', error : 'Could not add review'};
   
     const newId = insertInfo.insertedId.toString();
-    const review = await getreviewById(newId);
+    const review = await getReviewById(newId);
   
     return review;
 }
-const getreviewById = async(reviewId) =>{
+const getReviewById = async(reviewId) =>{
     reviewId = helper.common.isValidId(reviewId);
 
     const reviewCollection = await reviewCol();
@@ -58,19 +56,19 @@ const getreviewById = async(reviewId) =>{
 
     return review;
 }
-const getAllreview = async (doctorID) => {
-    reviewId = helper.common.isValidId(doctorID);
-
+const getAllReviewByDoctor = async (doctorID) => {
+    doctorID = helper.common.isValidId(doctorID);
+    let doctorData = doctor.getDoctorById(doctorID);
+    doctorID = doctorData._id;
     const reviewCollection = await reviewCol();
-    const reviewsArray = await reviewCollection.find({'review.doctorID': doctorID})
-    .toArray();find().toArray();
+    const reviewsArray = await reviewCollection.find({doctorID: ObjectId(doctorID)}).toArray();
   
-    if (!reviewsArray) throw {status: '500', error : 'Could not get all doctors'};
+    if (!reviewsArray) throw {status: '404', error : 'Could not get all review'};
   
     return reviewsArray;
   };
 module.exports = {
     createReview,
-    getreviewById,
-    getAllreview
+    getReviewById,
+    getAllReviewByDoctor
 };
