@@ -3,6 +3,7 @@ const common = require("./common");
 
 const isValidSpecialty = (specialty) =>{
     specialty = common.isValidString(specialty, "Specialty");
+
     for(let i=0;i<constants.specialty.length;i++)
         if(specialty.toLowerCase() === constants.specialty[i].toLowerCase())
             return constants.specialty[i];
