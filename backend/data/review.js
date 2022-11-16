@@ -10,8 +10,8 @@ patientId,
 reviewText,
 rating
 ) => {
-    reviewId = helper.common.isValidId(doctorID);
-    reviewId = helper.common.isValidId(patientId);
+    doctorID = helper.common.isValidId(doctorID);
+    patientId = helper.common.isValidId(patientId);
     doctorData = await doctor.getDoctorById(doctorID);
     patientData = await patient.getDoctorById(patientId);
     reviewText = helper.review.checkReviewText(reviewText);
@@ -56,7 +56,7 @@ const getReviewById = async(reviewId) =>{
 
     return review;
 }
-const getAllReviewByDoctor = async (doctorID) => {
+const getAllReviewByDoctorId = async (doctorID) => {
     doctorID = helper.common.isValidId(doctorID);
     let doctorData = doctor.getDoctorById(doctorID);
     doctorID = doctorData._id;
@@ -70,5 +70,5 @@ const getAllReviewByDoctor = async (doctorID) => {
 module.exports = {
     createReview,
     getReviewById,
-    getAllReviewByDoctor
+    getAllReviewByDoctorId
 };
