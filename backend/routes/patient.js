@@ -68,7 +68,7 @@ router
         res.status(e.status).json(e.error);
       }
       else
-        res.status(404).json(e);
+        res.status(500).json(e);
     }
   })
 
