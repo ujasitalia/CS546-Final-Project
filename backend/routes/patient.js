@@ -56,7 +56,20 @@ router
     }
   })
   .patch(async (req, res) => {
+    try{
 
+      let id = commonHelper.isValidId(req.params.patientId);
+      let body = patientHelper.isValidPatientUpdate(req.body);
+      let updatedPatient = await patientData.updatePatient(body,id);
+      res.json(updatedPatient);
+    }catch(e){
+      if(e.status)
+      {
+        res.status(e.status).json(e.error);
+      }
+      else
+        res.status(404).json(e);
+    }
   })
 
   router

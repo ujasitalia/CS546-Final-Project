@@ -4,6 +4,7 @@ const bcryptjs = require('bcryptjs');
 const patientHelper = require('../helper/patient')
 const commonHelper = require('../helper/common')
 const {ObjectId} = require('mongodb');
+
 const saltRounds = 10;
 
 const createPatient = async (email,age,profilePicture,name,city,state,zip,password) => {
@@ -38,7 +39,31 @@ const getPatientById = async (id) => {
   return patient;
 };
 
+const updatePatient = async (body,id) => {
+  id = commonHelper.isValidId(id);
+  let patientInDb = await getPatientById(id);
+  if(!patientInDb) throw {statusCode: 404, error: `No patient with that ID`};
+  
+  body = patientHelper.isValidPatientUpdate(body);
+  if(body.password){
+    body.hashedPassword = await bcryptjs.hash(body.password,saltRounds);
+
+    delete body.password;
+  }
+  const patientCollection = await patients();
+  const updatedInfo = await patientCollection.updateOne(
+    {_id: ObjectId(id)},
+    {$set: body}
+  );
+  if (updatedInfo.modifiedCount === 0) {
+    throw 'could not update patient successfully';
+  }
+
+  return await getPatientById(id);
+}
+
 module.exports = {
-    createPatient,
-    getPatientById
+  createPatient,
+  getPatientById,
+  updatePatient
 };
