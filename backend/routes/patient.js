@@ -36,6 +36,23 @@ router
   router
   .route('/login')
   .post(async (req, res) => {
+    try{
+      let email = commonHelper.isValidEmail(req.body.email);
+      let password = commonHelper.isValidPassword(req.body.password);
+      let userInDb = await patientData.checkUser(email,password);
+      if(userInDb.authenticatedUser){
+        req.session.username = username;
+        req.session.role = 'patient';
+        res.redirect('/protected');
+      } 
+    }catch(e){
+      if(e.status)
+      {
+        res.status(e.status).render('userLogin',{title:'Login',errorExist:true,error:e.error});
+      }
+      else
+        res.status(500).json('Internal server error');
+    }
 
   })
 

@@ -8,7 +8,7 @@ const {ObjectId} = require('mongodb');
 const saltRounds = 10;
 
 const createPatient = async (email,age,profilePicture,name,city,state,zip,password) => {
-    email=commonHelper.isValidEmail(email);
+    email=commonHelper.isValidEmail(email).toLowerCase();
     age = patientHelper.isValidAge(age);
     profilePicture=commonHelper.isValidFilePath(profilePicture);
     name=commonHelper.isValidName(name);
@@ -62,8 +62,19 @@ const updatePatient = async (body,id) => {
   return await getPatientById(id);
 }
 
+const checkUser = async (email, password) => { 
+  email=commonHelper.isValidEmail(email).toLowerCase();
+  password=commonHelper.isValidEmail(password);
+  const patientCollection = await patients();
+  const patientInDb = await patientCollection.findOne({email:email});
+  if (patientInDb === null) throw {status:404,error:'No patient with that email id'};
+  else if(await bcryptjs.compare(password,patientInDb.hashedPassword)) return {authenticatedUser: true}; 
+  throw {status:400,error:'Incorrect password'};
+};
+
 module.exports = {
   createPatient,
   getPatientById,
-  updatePatient
+  updatePatient,
+  checkUser
 };
