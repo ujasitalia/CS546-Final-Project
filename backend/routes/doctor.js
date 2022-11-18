@@ -54,7 +54,24 @@ router
   router
   .route('/login')
   .post(async (req, res) => {
-
+    try{
+      let email = helper.common.isValidEmail(req.body.email);
+      let password = helper.common.isValidPassword(req.body.password);
+      let doctorInDb = await doctorData.checkDoctor(email,password);
+      if(doctorInDb){
+        req.session.email = email;
+        req.session.role = 'doctor';
+        res.redirect(`/doctor/${doctorInDb._id}`);
+      } 
+      
+    }catch(e){
+      if(e.status)
+      {
+        res.status(e.status).json(e.error);
+      }
+      else
+        res.status(500).json('Internal server error');
+    }
   })
 
   router
