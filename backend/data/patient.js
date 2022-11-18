@@ -64,11 +64,11 @@ const updatePatient = async (body,id) => {
 
 const checkUser = async (email, password) => { 
   email=commonHelper.isValidEmail(email).toLowerCase();
-  password=commonHelper.isValidEmail(password);
+  password=commonHelper.isValidPassword(password);
   const patientCollection = await patients();
   const patientInDb = await patientCollection.findOne({email:email});
   if (patientInDb === null) throw {status:404,error:'No patient with that email id'};
-  else if(await bcryptjs.compare(password,patientInDb.hashedPassword)) return {authenticatedUser: true}; 
+  else if(await bcryptjs.compare(password,patientInDb.hashedPassword)) return patientInDb; 
   throw {status:400,error:'Incorrect password'};
 };
 
