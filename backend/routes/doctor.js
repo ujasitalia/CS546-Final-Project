@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {doctor : doctorData} = require("../data");
+const {doctor : doctorData, appointment : appointmentData} = require("../data");
 const helper = require('../helper');
 
 router
@@ -31,8 +31,9 @@ router
       data.password = helper.common.isValidPassword(data.password);
       data.schedule = helper.doctor.isValidSchedule(data.schedule);
     }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '500')
+      if(typeof e !== 'object' || !('status' in e) || e.status === '500'){
         res.status(500).json(e.error);
+      }        
       else
         res.status(e.status).json(e.error);
       return;
@@ -112,7 +113,38 @@ router
   router
   .route('/:doctorId/appointment')
   .get(async (req, res) => {
-
+    //check doctor id 
+    let doctorId = req.params.doctorId
+    try {
+      helper.common.isValidId(req.params.doctorId);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    //check if the doctor with that id is present
+    try {
+      await doctorData.getDoctorById(doctorId);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    //get all the appointments of that doctor
+    try {
+      const doctorAppointments = await appointmentData.getDoctorAppointments(doctorId)
+      res.json(doctorAppointments)
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
   })
 
   router
