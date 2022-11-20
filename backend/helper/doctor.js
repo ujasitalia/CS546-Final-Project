@@ -30,7 +30,7 @@ const isValidSchedule = (schedule) =>{
         if(!Array.isArray(schedule[day]))
             throw {status: '400', error : `Invalid data type in slot for ${day}`};
         for(let i=0;i<schedule[day].length;i++)
-        {
+        {            
             if(schedule[day][i].length!==2)
                 throw {status: '400', error : `Invalid slot for ${day}`};
 
