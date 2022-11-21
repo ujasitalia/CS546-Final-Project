@@ -65,6 +65,29 @@ router
 
   })
   .patch(async (req, res) => {})
-  .delete(async (req, res) => {});
+  .delete(async (req, res) => {
+    //get id and check it
+    let id = req.params.appointmentId;
+    try {
+      id = helper.common.isValidId(id);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }    
+
+    try {
+      let deleteConfirmation = await appointmentData.deleteAppointmentById(id)
+      res.json(deleteConfirmation)
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+  });
 
 module.exports = router;

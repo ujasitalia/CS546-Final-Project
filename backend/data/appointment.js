@@ -110,9 +110,26 @@ const getAppointmentById = async (id) => {
   return appointment
 }
 
+const deleteAppointmentById = async (id) => {
+  //check for id
+  id = helper.common.isValidId(id);
+
+  //get all appointments of that doctor
+  const appointmentCollection = await apCol();
+  //check if appointment exists
+  const appointment = await appointmentCollection
+    .findOne({ _id: ObjectId(id) }, { projection: { _id: 0 } })
+  if(!appointment) throw {status: "404", error: "No appointment found with that id"}
+
+  const deletedAppointment = await appointmentCollection.deleteOne({ _id: ObjectId(id) })
+  if (deletedAppointment.deletedCount === 1) return (`Successfully deleted ${id}`)
+  else throw {status:"500", error: "Could not delete appointment"}
+}
+
 
 module.exports = {
   createAppointment,
   getDoctorAppointments,
   getAppointmentById,
+  deleteAppointmentById,
 };
