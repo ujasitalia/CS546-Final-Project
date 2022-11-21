@@ -96,7 +96,23 @@ const getDoctorAppointments = async (id) => {
   return appointments;
 };
 
+const getAppointmentById = async (id) => {
+  //check for id
+  id = helper.common.isValidId(id);
+
+  //get all appointments of that doctor
+  const appointmentCollection = await apCol();
+  const appointment = await appointmentCollection
+    .findOne({ _id: ObjectId(id) }, { projection: { _id: 0 } })
+
+  // console.log(appointment);
+  if(!appointment) throw {status: "404", error: "No appointment found with that id"}
+  return appointment
+}
+
+
 module.exports = {
   createAppointment,
   getDoctorAppointments,
+  getAppointmentById,
 };

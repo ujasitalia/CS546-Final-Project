@@ -116,7 +116,7 @@ router
     //check doctor id 
     let doctorId = req.params.doctorId
     try {
-      helper.common.isValidId(req.params.doctorId);
+      id = helper.common.isValidId(req.params.doctorId);
     } catch (e) {
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json(e);
