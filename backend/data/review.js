@@ -4,33 +4,33 @@ const reviewCol = mongoCollections.review;
 const {ObjectId} = require('mongodb');
 const patient = require('./patient');
 const doctor = require('./doctor');
+
 const createReview = async(
-doctorID,
+doctorId,
 patientId,
-reviewText,
+reviewText = null,
 rating
 ) => {
-    doctorID = helper.common.isValidId(doctorID);
+    doctorId = helper.common.isValidId(doctorId);
     patientId = helper.common.isValidId(patientId);
-    doctorData = await doctor.getDoctorById(doctorID);
-    patientData = await patient.getDoctorById(patientId);
-    reviewText = helper.review.checkReviewText(reviewText);
     rating = helper.review.checkRating(rating);
+
+    await doctor.getDoctorById(doctorId);
+    await patient.getPatientById(patientId);
+
     const reviewCollection = await reviewCol();
-    if(reviewText == null){
-        const newReview = {
-            doctorID,
-            patientId,
-            rating
-          };
-    }else{
+
     const newReview = {
-        doctorID,
+        doctorId,
         patientId,
-        reviewText,
         rating
-      };
+    };
+
+    if(reviewText != null){
+        reviewText = helper.review.checkReviewText(reviewText);
+        newReview.reviewText = reviewText;
     }
+
     const insertInfo = await reviewCollection.insertOne(newReview);
   
     if (!insertInfo.acknowledged || !insertInfo.insertedId)
@@ -39,8 +39,10 @@ rating
     const newId = insertInfo.insertedId.toString();
     const review = await getReviewById(newId);
   
+    review._id = review._id.toString();
     return review;
 }
+
 const getReviewById = async(reviewId) =>{
     reviewId = helper.common.isValidId(reviewId);
 
@@ -56,17 +58,18 @@ const getReviewById = async(reviewId) =>{
 
     return review;
 }
+
 const getAllReviewByDoctorId = async (doctorID) => {
     doctorID = helper.common.isValidId(doctorID);
-    let doctorData = doctor.getDoctorById(doctorID);
-    doctorID = doctorData._id;
+    await doctor.getDoctorById(doctorID);
     const reviewCollection = await reviewCol();
     const reviewsArray = await reviewCollection.find({doctorID: ObjectId(doctorID)}).toArray();
   
     if (!reviewsArray) throw {status: '404', error : 'Could not get all review'};
   
     return reviewsArray;
-  };
+}
+
 module.exports = {
     createReview,
     getReviewById,

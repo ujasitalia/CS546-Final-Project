@@ -8,25 +8,27 @@ router
   .post(async (req, res) => {
     const data = req.body;
     try{
-      data.doctorID = helper.common.isValidId(data.doctorID);
+      data.doctorId = helper.common.isValidId(data.doctorId);
       data.patientId = helper.common.isValidId(data.patientId);
       data.rating = helper.review.checkRating(data.rating);
-      data.reviewText = helper.review.checkReviewText(data.reviewText);
-
+      if(data.reviewText != null)
+        data.reviewText = helper.review.checkReviewText(data.reviewText);
+      else 
+        data.reviewText = null
     }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '500')
-        res.status(500).json(e.error);
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
       else
         res.status(e.status).json(e.error);
       return;
     }
     
     try{
-      const newReview = await reviewData.createReview(data.doctorID,data.patientId,data.reviewText,data.rating);
+      const newReview = await reviewData.createReview(data.doctorId,data.patientId,data.reviewText,data.rating);
       res.json(newReview);
     }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '500')
-        res.status(500).json(e.error);
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
       else
         res.status(e.status).json(e.error);
       return;

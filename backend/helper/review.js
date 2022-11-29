@@ -2,10 +2,10 @@ const checkRating = (rating) => {
     if(isNaN(rating) || typeof rating != 'number'){
         throw 'Not a number'
     }
-    if(rating<0 && rating>6){
+    if(rating<0 || rating>5){
         throw 'rating must between 1 to 5';
     }
-    if(rating%0.5 != 0){
+    if((rating*10)%1 != 0){
         throw 'invalid input';
     }
     return rating;

@@ -44,23 +44,22 @@ router
   router
   .route('/:doctorId/review')
   .get(async (req, res) => {
-    const data = req.body;
     try{
-      doctorId = helper.common.isValidId(req.params.doctorId);
+      req.params.doctorId = helper.common.isValidId(req.params.doctorId);
     }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '500')
-        res.status(500).json(e.error);
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
       else
         res.status(e.status).json(e.error);
       return;
     }
     
     try{
-      const reviews = await reviewData.getAllReviewByDoctorId(doctorId);
+      const reviews = await reviewData.getAllReviewByDoctorId(req.params.doctorId);
       res.json(reviews);
     }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '500')
-        res.status(500).json(e.error);
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
       else
         res.status(e.status).json(e.error);
       return;
