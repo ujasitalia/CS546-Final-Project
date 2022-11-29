@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const helper =  require('../helper/index')
-const data = require('../data/index')
+const data = require("../data");
+const helper = require('../helper');
 const patientData = data.patient;
 const commonHelper = helper.common;
 const patientHelper = helper.patient;
@@ -74,12 +74,6 @@ router
 
   router
   .route('/:patientId/appointment')
-  .get(async (req, res) => {
-
-  })
-
-  router
-  .route('/:patientId/chat/:doctorId')
   .get(async (req, res) => {
 
   })
