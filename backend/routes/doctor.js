@@ -62,7 +62,7 @@ router
         req.session.email = email;
         req.session.role = 'doctor';
         req.session.userId = doctorInDb._id;
-        return doctorInDb;
+        res.json(doctorInDb);
       } else throw {status:400,error:'Invalid email or password'};
       
     }catch(e){
