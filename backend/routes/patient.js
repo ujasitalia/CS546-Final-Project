@@ -44,7 +44,7 @@ if(e.status)
         req.session.email = email;
         req.session.role = 'patient';
         req.session.userId = userInDb._id;
-        return userInDb;
+        res.json(userInDb);
       } else throw {status:404,error:'Invalid email or password'};
       
     }catch(e){
