@@ -43,8 +43,9 @@ if(e.status)
       if(userInDb){
         req.session.email = email;
         req.session.role = 'patient';
-        res.redirect(`/patient/${userInDb._id}`);
-      } 
+        req.session.userId = userInDb._id;
+        return userInDb;
+      } else throw {status:404,error:'Invalid email or password'};
       
     }catch(e){
       if(e.status)
