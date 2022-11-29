@@ -8,8 +8,8 @@ const doctor = require('./doctor');
 const createReview = async(
 doctorId,
 patientId,
-reviewText = null,
-rating
+rating,
+reviewText = null
 ) => {
     doctorId = helper.common.isValidId(doctorId);
     patientId = helper.common.isValidId(patientId);

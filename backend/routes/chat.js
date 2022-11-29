@@ -15,7 +15,7 @@ router
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json(e);
       else
-        res.status(e.status).json(e.error);
+        res.status(parseInt(e.status)).json(e.error);
       return;
     }
     
@@ -26,7 +26,7 @@ router
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json(e);
       else
-        res.status(e.status).json(e.error);
+        res.status(parseInt(e.status)).json(e.error);
       return;
     }
   })
@@ -39,7 +39,7 @@ router
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json(e);
       else
-        res.status(e.status).json(e.error);
+        res.status(parseInt(e.status)).json(e.error);
       return;
     }
     
@@ -50,7 +50,7 @@ router
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json(e);
       else
-        res.status(e.status).json(e.error);
+        res.status(parseInt(e.status)).json(e.error);
       return;
     }
   });

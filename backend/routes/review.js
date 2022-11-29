@@ -11,7 +11,7 @@ router
       data.doctorId = helper.common.isValidId(data.doctorId);
       data.patientId = helper.common.isValidId(data.patientId);
       data.rating = helper.review.checkRating(data.rating);
-      if(data.reviewText != null)
+      if(data.reviewText)
         data.reviewText = helper.review.checkReviewText(data.reviewText);
       else 
         data.reviewText = null
@@ -19,18 +19,18 @@ router
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json(e);
       else
-        res.status(e.status).json(e.error);
+        res.status(parseInt(e.status)).json(e.error);
       return;
     }
     
     try{
-      const newReview = await reviewData.createReview(data.doctorId,data.patientId,data.reviewText,data.rating);
+      const newReview = await reviewData.createReview(data.doctorId, data.patientId, data.rating, data.reviewText);
       res.json(newReview);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json(e);
       else
-        res.status(e.status).json(e.error);
+        res.status(parseInt(e.status)).json(e.error);
       return;
     }
   })
