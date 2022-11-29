@@ -133,4 +133,15 @@ router
     }
   });
 
+// router
+//   .route("/temp/:id")
+//   .get(async (req, res) => {
+//     const id = req.params.id 
+//     try {
+//       const a = appointmentData.getAvailableSlots(id, "monday")
+//     } catch (e) {
+//       console.log(e);
+//     }
+//   })
+
 module.exports = router;

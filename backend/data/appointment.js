@@ -1,10 +1,71 @@
 const helper = require("../helper");
 const mongoCollections = require("../config/mongoCollections");
-const { ObjectId } = require("mongodb");
+const { ObjectId, LoggerLevel } = require("mongodb");
 const apCol = mongoCollections.appointment;
 const doctorData = require("./doctor");
 const patientData = require("./patient")
 const data = require(".");
+
+
+const getAvailableSlots = async (id, day) => {
+  // get doctor's schedule, get all appointment that were booked ( get all doctor's appointments), get the available slots
+
+  
+  const appointments = await getDoctorAppointments(id)
+  
+  const docData = await doctorData.getDoctorById(id)
+  const scheduleThatDay = docData.schedule[day]
+  // console.log(scheduleThatDay);
+  let timeSlotsTaken = []
+  const weekdays = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  for (i of appointments){   
+    // console.log(i.startTime); 
+    let startTime = i.startTime
+    const d = weekdays[new Date(startTime).getDay()].toLocaleLowerCase();
+    // console.log(d);
+    if(d === day.toLocaleLowerCase()){
+      const t = startTime.slice(11, 16);
+      const [time, modifier] = t.split(" ");
+      let [hours, minutes] = time.split(":");
+      if (hours === "12") {
+        hours = "00";
+      }
+      if (modifier === "PM") {
+        hours = parseInt(hours, 10) + 12;
+      }
+      const apTime = hours + ":" + minutes;
+      timeSlotsTaken.push(apTime)
+    }
+  }
+  //creating all possible slots
+  let allPossibleSlots = []
+  for(i of scheduleThatDay){
+    const start = Number(i[0].split(':')[0])
+    const duration = Number(i[1].split(':')[0]) - Number(i[0].split(':')[0])
+    for (j=start; j<start+duration; j++){
+      allPossibleSlots.push(`${j}:00`)
+    }
+  }
+  
+  // getting all available slots
+  let allAvailableSlots = []
+  for(i of allPossibleSlots){
+    if(!timeSlotsTaken.includes(i)){
+      allAvailableSlots.push(i)
+    }
+  }
+  return allAvailableSlots
+  
+}
+
 
 const createAppointment = async (
   doctorID,
@@ -233,4 +294,5 @@ module.exports = {
   getAppointmentById,
   deleteAppointmentById,
   updateAppointmentById,
+  getAvailableSlots
 };
