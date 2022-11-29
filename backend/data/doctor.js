@@ -119,9 +119,9 @@ const getAllDoctor = async () => {
     password=helper.common.isValidPassword(password);
     const doctorCollection = await doctorCol();
     const doctorInDb = await doctorCollection.findOne({email:email});
-    if (doctorInDb === null) throw {status:404,error:'No doctor with that email id'};
+    if (doctorInDb === null) throw {status:404,error:'Invalid email or password'};
     else if(await bcrypt.compare(password,doctorInDb.hashedPassword)) return doctorInDb; 
-    throw {status:400,error:'Incorrect password'};
+    throw {status:400,error:'Invalid email or password'};
   };
   
 module.exports = {

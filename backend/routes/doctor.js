@@ -61,8 +61,9 @@ router
       if(doctorInDb){
         req.session.email = email;
         req.session.role = 'doctor';
-        res.redirect(`/doctor/${doctorInDb._id}`);
-      } 
+        req.session.userId = doctorInDb._id;
+        return doctorInDb;
+      } else throw {status:400,error:'Invalid email or password'};
       
     }catch(e){
       if(e.status)
