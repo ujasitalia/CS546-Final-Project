@@ -12,8 +12,8 @@ router
       data.receiverId = helper.common.isValidId(data.receiverId);
       data.message = helper.chat.checkMessage(data.message);
     }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '500')
-        res.status(500).json(e.error);
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
       else
         res.status(e.status).json(e.error);
       return;
@@ -23,13 +23,36 @@ router
       const newMessage = await chatData.createChat(data.senderId,data.receiverId,data.message);
       res.json(newMessage);
     }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '500')
-        res.status(500).json(e.error);
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(e.status).json(e.error);
+      return;
+    }
+  })
+  .get(async (req, res) => {
+    const data = req.body;
+    try{
+      data.patientId = helper.common.isValidId(data.patientId);
+      data.doctorId = helper.common.isValidId(data.doctorId);
+    }catch(e){
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
       else
         res.status(e.status).json(e.error);
       return;
     }
     
-  })
+    try{
+      const chatHistory = await chatData.getAllchat(data.doctorId, data.patientId);
+      res.json(chatHistory);
+    }catch(e){
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(e.status).json(e.error);
+      return;
+    }
+  });
 
 module.exports = router;

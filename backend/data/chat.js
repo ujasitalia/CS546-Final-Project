@@ -5,52 +5,51 @@ const {ObjectId} = require('mongodb');
 const patient = require('./patient');
 const doctor = require('./doctor');
 
-const getAllchat = async (doctorID,patientID) => {
-    reviewId = helper.common.isValidId(doctorID);
-    reviewId = helper.common.isValidId(patientID);
+const getAllchat = async (doctorID, patientID) => {
+    doctorID = helper.common.isValidId(doctorID);
+    patientID = helper.common.isValidId(patientID);
 
-    let doctorData = doctor.getDoctorById(doctorID);
-    doctorID = doctorData._id;
-    let patientData = patient.getPatientById(patient);
-    patientID = patientData._id;
+    await doctor.getDoctorById(doctorID);
+    await patient.getPatientById(patientID);
     const chatCollection = await chatCol();
 
-    var chatHistory = await chatCollection.find({receiverId: ObjectId(doctorID),senderId: ObjectId(patientID)}).toArray();
-    chatHistory += await chatCollection.find({receiverId: ObjectId(patientID),senderId: ObjectId(doctorID)}).toArray();
+    const chatHistory = await chatCollection.find( {$or : [{receiverId: ObjectId(doctorID), senderId: ObjectId(patientID)}, {receiverId: ObjectId(patientID),senderId: ObjectId(doctorID)}] }).toArray();
   
     if (!chatHistory) throw {status: '404', error : 'Could not get chat'};
   
     return chatHistory;
-  };
-const createChat = async (senderId,receiverId,message) => {
+  }
+
+const createChat = async (senderId, receiverId, message) => {
     receiverId = helper.common.isValidId(receiverId);
     senderId = helper.common.isValidId(senderId);
     message = helper.chat.checkMessage(message);
-    timeStamp = Date().valueOf();
+    const timeStamp = Date();
+
     const newMessage = {
-        receiverId,
-        senderId,
+        receiverId : ObjectId(receiverId),
+        senderId : ObjectId(senderId),
         message,
         timeStamp
       };
-    
-      const insertInfo = await chatCollection.insertOne(newMessage);
+      
+    const chatCollection = await chatCol();
+    const insertInfo = await chatCollection.insertOne(newMessage);
   
-      if (!insertInfo.acknowledged || !insertInfo.insertedId)
-          throw {status: '500', error : 'Could not add review'};
+    if (!insertInfo.acknowledged || !insertInfo.insertedId)
+        throw {status: '500', error : 'Could not add chat'};
     
-      const newId = insertInfo.insertedId.toString();
-      const chat = await chatCollection.findOne({_id: ObjectId(newId)});
+    const newId = insertInfo.insertedId.toString();
+    const chat = await chatCollection.findOne({_id: ObjectId(newId)});
 
-      if (chat === null) 
-      {
-          throw {status: '404', error : 'No chat with that id'};
-      }
+    if (chat === null) 
+        throw {status: '500', error : 'Could not add chat'};
   
-      chat._id = chat._id.toString();
+    chat._id = chat._id.toString();
   
-      return chat;
+    return chat;
 }
+
 module.exports = {
     getAllchat,
     createChat

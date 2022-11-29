@@ -32,33 +32,6 @@ router
   })
 
   router
-  .route('/:patientId/chat/:doctorId')
-  .get(async (req, res) => {
-    const data = req.body;
-    try{
-      patientId = helper.common.isValidId(req.params.patientId);
-      doctorId = helper.common.isValidId(req.params.doctorId);
-    }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '500')
-        res.status(500).json(e.error);
-      else
-        res.status(e.status).json(e.error);
-      return;
-    }
-    
-    try{
-      const chatHistory = await chatData.getAllchat(doctorId,patientId);
-      res.json(chatHistory);
-    }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '500')
-        res.status(500).json(e.error);
-      else
-        res.status(e.status).json(e.error);
-      return;
-    }
-  })
-
-  router
   .route('/:patientId/prescription')
   .get(async (req, res) => {
 
