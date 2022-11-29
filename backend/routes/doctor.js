@@ -44,6 +44,7 @@ router
         data.clinicAddress, data.city, data.state, data.zip, data.password, data.schedule);
       res.json(createDoctor);
     }catch(e){
+      console.log(e);
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json(e);
       else

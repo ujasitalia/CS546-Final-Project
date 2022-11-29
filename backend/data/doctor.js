@@ -27,7 +27,7 @@ const createDoctor = async (
   zip = helper.common.isValidZip(zip);
   password = helper.common.isValidPassword(password);
   schedule = helper.doctor.isValidSchedule(schedule);
-
+  
   const doctorCollection = await doctorCol();
   const hashedPassword = await bcrypt.hash(password, saltRounds);
   const newDoctor = {

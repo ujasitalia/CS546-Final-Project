@@ -14,7 +14,25 @@ const isValidStartTime = (startTime) => {
   return startTime;
 };
 
+const validateData = (data) => {
+  if (!data) throw { status: "400", error: "New data not provided" };
+  for (key in data) {
+    switch (key) {
+      case "startTime":
+        data.startTime = isValidStartTime(data.startTime);
+        break;
+      case "appointmentLocation":
+        data.appointmentLocation = isValidAddress(data.appointmentLocation);
+        break;
+      default:
+        throw { status: "400", error: `Invalid key - ${key}` };
+    }
+  }
+  return data;
+};
+
 module.exports = {
   isValidAddress,
   isValidStartTime,
+  validateData,
 };

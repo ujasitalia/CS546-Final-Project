@@ -3,6 +3,8 @@ const mongoCollections = require("../config/mongoCollections");
 const { ObjectId } = require("mongodb");
 const apCol = mongoCollections.appointment;
 const doctorData = require("./doctor");
+const patientData = require("./patient")
+const data = require(".");
 
 const createAppointment = async (
   doctorID,
@@ -19,7 +21,7 @@ const createAppointment = async (
   //get doctor data to verify the time and day
   const docData = await doctorData.getDoctorById(doctorID);
 
-  //verify if startTime has valid day 
+  //verify if startTime has valid day
   const weekdays = [
     "Sunday",
     "Monday",
@@ -29,29 +31,31 @@ const createAppointment = async (
     "Friday",
     "Saturday",
   ];
-  const day = weekdays[new Date(startTime).getDay()].toLocaleLowerCase();  
-  if(!Object.keys(docData.schedule).includes(day)) throw {status: "400", error: `Doctor is not available on ${day}`}
+  const day = weekdays[new Date(startTime).getDay()].toLocaleLowerCase();
+  if (!Object.keys(docData.schedule).includes(day))
+    throw { status: "400", error: `Doctor is not available on ${day}` };
 
-  //check for slots  
-  const t = startTime.slice(11,16)
+  //check for slots
+  const t = startTime.slice(11, 16);
   const [time, modifier] = t.split(" ");
   let [hours, minutes] = time.split(":");
-  if (hours === "12") { 
+  if (hours === "12") {
     hours = "00";
   }
   if (modifier === "PM") {
     hours = parseInt(hours, 10) + 12;
   }
-  const apTime = hours+':'+minutes;
-  
-  let flag = 0
-  const docScheduleForThatDay = docData.schedule[day]
-  docScheduleForThatDay.forEach(sch => {
-    if(apTime >= sch[0] && apTime < sch[1]) {
-      flag = 1
+  const apTime = hours + ":" + minutes;
+
+  let flag = 0;
+  const docScheduleForThatDay = docData.schedule[day];
+  docScheduleForThatDay.forEach((sch) => {
+    if (apTime >= sch[0] && apTime < sch[1]) {
+      flag = 1;
     }
-  })
-  if(flag === 0) throw {status: "400", error: `doctor is not available during ${apTime}`}
+  });
+  if (flag === 0)
+    throw { status: "400", error: `doctor is not available during ${apTime}` };
 
   //if everything is fine get appointment collection and create a new appointment
   const appointmentCollection = await apCol();
@@ -81,9 +85,10 @@ const getDoctorAppointments = async (id) => {
   await doctorData.getDoctorById(id);
   //get all appointments of that doctor
   const appointmentCollection = await apCol();
+  
   const appointments = await appointmentCollection
-    .find({ doctorID: ObjectId(id) }, { projection: { _id: 0 } })
-    .toArray();
+  .find({ doctorID: id })
+  .toArray();  
 
   if (!appointments)
     throw { status: "404", error: "No apoointments for doctor with that id" };
@@ -96,19 +101,44 @@ const getDoctorAppointments = async (id) => {
   return appointments;
 };
 
+const getPatientAppointment = async (id) => {
+  //check for id
+  id = helper.common.isValidId(id);
+  //check if that doctor exists
+  await patientData.getPatientById(id);
+  //get all appointments of that doctor
+  const appointmentCollection = await apCol();
+  
+  const appointments = await appointmentCollection
+  .find({ patientID: id })
+  .toArray();  
+
+  if (!appointments)
+    throw { status: "404", error: "No apoointments for doctor with that id" };
+
+  appointments.forEach((a) => {
+    a.doctorID = a.doctorID.toString();
+    a.patientID = a.patientID.toString();
+  });
+
+  return appointments;
+}
+
 const getAppointmentById = async (id) => {
   //check for id
   id = helper.common.isValidId(id);
 
   //get all appointments of that doctor
   const appointmentCollection = await apCol();
-  const appointment = await appointmentCollection
-    .findOne({ _id: ObjectId(id) }, { projection: { _id: 0 } })
+  const appointment = await appointmentCollection.findOne(
+    { _id: ObjectId(id) }
+  );
 
   // console.log(appointment);
-  if(!appointment) throw {status: "404", error: "No appointment found with that id"}
-  return appointment
-}
+  if (!appointment)
+    throw { status: "404", error: "No appointment found with that id" };
+  return appointment;
+};
 
 const deleteAppointmentById = async (id) => {
   //check for id
@@ -117,19 +147,90 @@ const deleteAppointmentById = async (id) => {
   //get all appointments of that doctor
   const appointmentCollection = await apCol();
   //check if appointment exists
-  const appointment = await appointmentCollection
-    .findOne({ _id: ObjectId(id) }, { projection: { _id: 0 } })
-  if(!appointment) throw {status: "404", error: "No appointment found with that id"}
+  const appointment = await appointmentCollection.findOne(
+    { _id: ObjectId(id) },
+    { projection: { _id: 0 } }
+  );
+  if (!appointment)
+    throw { status: "404", error: "No appointment found with that id" };
 
-  const deletedAppointment = await appointmentCollection.deleteOne({ _id: ObjectId(id) })
-  if (deletedAppointment.deletedCount === 1) return (`Successfully deleted ${id}`)
-  else throw {status:"500", error: "Could not delete appointment"}
-}
+  const deletedAppointment = await appointmentCollection.deleteOne({
+    _id: ObjectId(id),
+  });
+  if (deletedAppointment.deletedCount === 1)
+    return `Successfully deleted ${id}`;
+  else throw { status: "500", error: "Could not delete appointment" };
+};
 
+const updateAppointmentById = async (id, data) => {
+  //check for id
+  id = helper.common.isValidId(id);
+
+  //validate data to update
+  data = helper.appointment.validateData(data);
+
+  //get all appointments of that doctor
+  let appointmentCollection = await apCol();
+
+  //check if appointment exists
+  const appointment = await getAppointmentById(id)
+  const docData = await doctorData.getDoctorById(appointment.doctorID)
+    
+  //if startTime... check startTime
+  if(Object.keys(data).includes("startTime")) {
+    const weekdays = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    const day = weekdays[new Date(data.startTime).getDay()].toLocaleLowerCase();
+    if (!Object.keys(docData.schedule).includes(day))
+      throw { status: "400", error: `Doctor is not available on ${day}` };
+
+    //check for slots
+    const t = data.startTime.slice(11, 16);
+    const [time, modifier] = t.split(" ");
+    let [hours, minutes] = time.split(":");
+    if (hours === "12") {
+      hours = "00";
+    }
+    if (modifier === "PM") {
+      hours = parseInt(hours, 10) + 12;
+    }
+    const apTime = hours + ":" + minutes;
+
+    flag = 0;
+    const docScheduleForThatDay = docData.schedule[day];
+    docScheduleForThatDay.forEach((sch) => {
+      if (apTime >= sch[0] && apTime < sch[1]) {
+        flag = 1;
+      }
+    });
+    if (flag === 0)
+      throw { status: "400", error: `doctor is not available during ${apTime}` };
+  }
+
+  const updatedInfo = await appointmentCollection.updateOne(
+    { _id: ObjectId(id) },
+    { $set: data }
+  );
+
+  if (updatedInfo.modifiedCount === 0) {
+    throw { status: "400", error: "could not update appointment successfully" };
+  }
+
+  return await getAppointmentById(id);
+};
 
 module.exports = {
   createAppointment,
   getDoctorAppointments,
+  getPatientAppointment,
   getAppointmentById,
   deleteAppointmentById,
+  updateAppointmentById,
 };
