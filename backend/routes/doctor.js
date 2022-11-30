@@ -58,7 +58,25 @@ router
   router
   .route('/login')
   .post(async (req, res) => {
-
+    try{
+      let email = helper.common.isValidEmail(req.body.email);
+      let password = helper.common.isValidPassword(req.body.password);
+      let doctorInDb = await doctorData.checkDoctor(email,password);
+      if(doctorInDb){
+        req.session.email = email;
+        req.session.role = 'doctor';
+        req.session.userId = doctorInDb._id;
+        res.json(doctorInDb);
+      } else throw {status:400,error:'Invalid email or password'};
+      
+    }catch(e){
+      if(e.status)
+      {
+        res.status(e.status).json(e.error);
+      }
+      else
+        res.status(500).json('Internal server error');
+    }
   })
 
   router

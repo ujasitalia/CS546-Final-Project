@@ -25,7 +25,7 @@ router
       res.json(newPatient);
 
     }catch(e){
-      if(e.status)
+if(e.status)
       {
         res.status(e.status).json(e.error);
       }
@@ -37,6 +37,24 @@ router
   router
   .route('/login')
   .post(async (req, res) => {
+    try{
+      let email = commonHelper.isValidEmail(req.body.email);
+      let password = commonHelper.isValidPassword(req.body.password);
+      let userInDb = await patientData.checkUser(email,password);
+      if(userInDb){
+        req.session.email = email;
+        req.session.role = 'patient';
+        res.redirect(`/patient/${userInDb._id}`);
+      } 
+      
+    }catch(e){
+      if(e.status)
+      {
+        res.status(e.status).json(e.error);
+      }
+      else
+        res.status(500).json('Internal server error');
+    }
 
   })
 
@@ -144,6 +162,13 @@ router
   .route('/:patientId/testReport/:testReportId')
   .patch(async (req, res) => {
 
+  })
+
+  router
+  .route('/protected')
+  .get(async (req, res) => {
+    //code here for GET
+    res.json('Protected');
   })
   
 module.exports = router;

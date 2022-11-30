@@ -113,10 +113,21 @@ const getAllDoctor = async () => {
     const doctor = await getDoctorById(doctorId);
     return doctor;
   };
+
+  const checkDoctor = async (email, password) => { 
+    email=helper.common.isValidEmail(email).toLowerCase();
+    password=helper.common.isValidPassword(password);
+    const doctorCollection = await doctorCol();
+    const doctorInDb = await doctorCollection.findOne({email:email});
+    if (doctorInDb === null) throw {status:404,error:'Invalid email or password'};
+    else if(await bcrypt.compare(password,doctorInDb.hashedPassword)) return doctorInDb; 
+    throw {status:400,error:'Invalid email or password'};
+  };
   
 module.exports = {
     createDoctor,
     getDoctorById,
     getAllDoctor,
-    updateDoctor
+    updateDoctor,
+    checkDoctor
 };
