@@ -22,6 +22,13 @@ const Login = () => {
         {
             setEmail(helper.common.isValidEmail(email));
             setPassword(helper.common.isValidPassword(password));
+        }catch(e){
+            setHasError(true);
+            setError(e.message);
+            return;
+        }
+        
+        try{
             const data = {"email" : email, "password" : password}
             const response = await api.login.post(data);
             console.log(response);
@@ -29,8 +36,8 @@ const Login = () => {
             navigate("/dashboard", {doctor : response.data.doctorData});
         }catch(e){
             setHasError(true);
-            setError(e.message);
-            console.log(e.message);
+            setError(e.response.data);
+            return;
         }
     }
   return (
@@ -54,7 +61,7 @@ const Login = () => {
                 </div>
             </button>
         </form>
-        {hasError && <div>{error}</div>}
+        {hasError && <div className="error">{error}</div>}
         </div>
     </div>
   )
