@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const helper =  require('../helper/index')
-const data = require('../data/index')
+const data = require("../data");
+const helper = require('../helper');
 const patientData = data.patient;
 const appointmentData = data.appointment;
 const commonHelper = helper.common;
@@ -108,12 +108,6 @@ router
         res.status(parseInt(e.status)).json(e.error);
       return;
     }
-  })
-
-  router
-  .route('/:patientId/chat/:doctorId')
-  .get(async (req, res) => {
-
   })
 
   router
