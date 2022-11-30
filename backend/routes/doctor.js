@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {doctor : doctorData, appointment : appointmentData, review : reviewData} = require("../data");
 const helper = require('../helper');
+const jwt = require("jsonwebtoken");
 
 router
   .route('/')
@@ -61,10 +62,14 @@ router
       let password = helper.common.isValidPassword(req.body.password);
       let doctorInDb = await doctorData.checkDoctor(email,password);
       if(doctorInDb){
-        req.session.email = email;
-        req.session.role = 'doctor';
-        req.session.userId = doctorInDb._id;
-        res.json(doctorInDb);
+        const token = jwt.sign(
+          { role: "doctor", email , userId : doctorInDb._id},
+          "pd",
+          {
+            expiresIn: "1h",
+          }
+        );
+        res.json({doctorData : doctorInDb, token});
       } else throw {status:400,error:'Invalid email or password'};
       
     }catch(e){

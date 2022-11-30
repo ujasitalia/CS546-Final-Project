@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require("jsonwebtoken");
 const router = express.Router();
 const data = require("../data");
 const helper = require('../helper');
@@ -25,7 +26,7 @@ router
       res.json(newPatient);
 
     }catch(e){
-if(e.status)
+    if(e.status)
       {
         res.status(e.status).json(e.error);
       }
@@ -42,10 +43,14 @@ if(e.status)
       let password = commonHelper.isValidPassword(req.body.password);
       let userInDb = await patientData.checkUser(email,password);
       if(userInDb){
-        req.session.email = email;
-        req.session.role = 'patient';
-        req.session.userId = userInDb._id;
-        res.json(userInDb);
+        const token = jwt.sign(
+          { role: "patient", email , userId : userInDb._id},
+          "pd",
+          {
+            expiresIn: "1h",
+          }
+        );
+        res.json({patientData : userInDb, token});
       } else throw {status:404,error:'Invalid email or password'};
       
     }catch(e){
