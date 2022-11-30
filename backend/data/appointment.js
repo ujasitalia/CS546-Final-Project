@@ -1,11 +1,9 @@
 const helper = require("../helper");
 const mongoCollections = require("../config/mongoCollections");
-const { ObjectId, LoggerLevel } = require("mongodb");
+const { ObjectId } = require("mongodb");
 const apCol = mongoCollections.appointment;
 const doctorData = require("./doctor");
 const patientData = require("./patient")
-const data = require(".");
-
 
 const getAvailableSlots = async (id, day) => {
   // get doctor's schedule, get all appointment that were booked ( get all doctor's appointments), get the available slots
@@ -134,9 +132,9 @@ const createAppointment = async (
     throw { status: "500", error: "Could not add appointment" };
 
   const newId = insertInfo.insertedId.toString();
-  //   const doctor = await getAppointmentById(newId);
+  const appointment = await getAppointmentById(newId);
 
-  return newId;
+  return appointment;
 };
 
 const getDoctorAppointments = async (id) => {
@@ -287,6 +285,70 @@ const updateAppointmentById = async (id, data) => {
   return await getAppointmentById(id);
 };
 
+const getDoctorSlots = async (doctorId, date = new Date()) => {
+  const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  const slotSize = 30;
+  const doctor = await doctorData.getDoctorById(doctorId);
+
+  if(date.getDay()>5)
+    return [];
+
+  const day = weekDays[date.getDay() - 1];
+  const schedule = doctor.schedule[day.toLowerCase()];
+
+  if(!schedule)
+    return [];
+  let slot = [];
+
+  let appointments = await getDoctorAppointments(doctorId);
+  appointments = appointments.filter( appointment =>{
+    if(new Date(appointment.startTime).getDate() == date.getDate())
+      return appointment;
+  })
+
+  const isAppointmentNotExistInSlot = (hour, minite) => {
+
+    for(let i=0;i<appointments.length;i++)
+    {
+      const h = new Date(appointments[i].startTime).getHours();
+      const m = new Date(appointments[i].startTime).getMinutes();
+      if( h == hour && m == minite)
+      {
+        appointments.splice(i, 1);
+        return false;
+      }
+    }
+      return true;
+  }
+
+  for(let i=0;i<schedule.length;i++)
+  {
+    const startTime = schedule[i][0].split(':');
+    const endTime = schedule[i][1].split(':');
+    startTime[0] = parseInt(startTime[0]);
+    startTime[1] = parseInt(startTime[1]);
+    endTime[0] = parseInt(endTime[0]);
+    endTime[1] = parseInt(endTime[1]);
+    while(1)
+    {
+      if((startTime[1] + slotSize < 60 && startTime[0]==endTime[0] && startTime[1] + slotSize > endTime[1]) || (startTime[1] + slotSize > 59 && (startTime[0]==endTime[0] || (startTime[0]+1 == endTime[0] && (startTime[1] + slotSize > 60)%60 > endTime[1]))))
+        break;
+      if(startTime[1] + slotSize < 60)
+      {
+        if(isAppointmentNotExistInSlot(startTime[0], startTime[1]))
+          slot = [...slot, [startTime[0].toString().padStart(2, '0') + ':' + startTime[1].toString().padStart(2, '0'), startTime[0].toString().padStart(2, '0') + ':' + (startTime[1] + slotSize).toString().padStart(2, '0')]];
+        startTime[1] += slotSize; 
+      }else{
+        if(isAppointmentNotExistInSlot(startTime[0], startTime[1]))
+          slot = [...slot, [startTime[0].toString().padStart(2, '0') + ':' + startTime[1].toString().padStart(2, '0'), (startTime[0] + 1).toString().padStart(2, '0') + ':' + ((startTime[1] + slotSize)%60).toString().padStart(2, '0')]];
+        startTime[0] += 1;
+        startTime[1] = (startTime[1] + slotSize)%60; 
+      }
+    }
+  }
+  return slot;
+}
+
 module.exports = {
   createAppointment,
   getDoctorAppointments,
@@ -294,5 +356,6 @@ module.exports = {
   getAppointmentById,
   deleteAppointmentById,
   updateAppointmentById,
-  getAvailableSlots
+  getAvailableSlots,
+  getDoctorSlots
 };

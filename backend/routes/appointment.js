@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const helper = require("../helper");
-const { doctor: doctorData, appointment: appointmentData } = require("../data");
-const { getAppointmentById } = require("../data/appointment");
+const { appointment: appointmentData } = require("../data");
 
 router.route("/").post(async (req, res) => {
   const data = req.body;
@@ -82,6 +81,8 @@ router
     //data validation
     try {
       data = helper.appointment.validateData(data);
+          //get the appointment to be updated
+      await appointmentData.getAppointmentById(id)
       // res.json(data)
     } catch (e) {
       console.log(e);
@@ -91,13 +92,11 @@ router
         res.status(parseInt(e.status)).json(e.error);
       return;
     }
-    //get the appointment to be updated
-    await getAppointmentById(id)
     
     //updating the appointment
     try {
-      const updatedAppointment = await appointmentData.updateAppointmentById(id, data)
-      res.json(updatedAppointment)
+      const updatedAppointment = await appointmentData.updateAppointmentById(id, data);
+      res.json(updatedAppointment);
     } catch (e) {
       console.log(e);
       if(typeof e !== 'object' || !('status' in e))

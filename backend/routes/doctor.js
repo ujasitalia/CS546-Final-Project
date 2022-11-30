@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const {doctor : doctorData, appointment : appointmentData} = require("../data");
+const {doctor : doctorData, appointment : appointmentData, review : reviewData} = require("../data");
 const helper = require('../helper');
-const reviewData = data.review;
-const doctorData = data.doctor;
 
 router
   .route('/')
@@ -171,7 +169,29 @@ router
   router
   .route('/:doctorId/slot')
   .get(async (req, res) => {
-
+    try{
+      req.params.doctorId = helper.common.isValidId(req.params.doctorId);
+      if(req.body.date)
+        req.body.date = helper.common.isValidTime(req.body.date);
+      else
+      req.body.date = new Date();
+    }catch(e){
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    try{
+      const doctorSlots = await appointmentData.getDoctorSlots(req.params.doctorId, req.body.date);
+      res.json(doctorSlots);
+    }catch(e){
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
   })
   
   router

@@ -69,6 +69,14 @@ const isValidState = (state) => {
     return isValidString(state,"State");
 } 
 
+const isValidTime = (time) => {
+  if (!time) throw { status: "400", error: "No time provided" };
+  time = new Date(time);
+  if (time === "Invalid Date")
+    throw { status: "400", error: "Invalid startTime" };
+  return time;
+};
+
 module.exports = {
     isValidId,
     isValidString,
@@ -78,5 +86,6 @@ module.exports = {
     isValidCity,
     isValidState,
     isValidZip,
-    isValidName
+    isValidName,
+    isValidTime
 };

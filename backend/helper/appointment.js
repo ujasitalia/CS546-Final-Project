@@ -9,7 +9,8 @@ const isValidAddress = (address) => {
 
 const isValidStartTime = (startTime) => {
   if (!startTime) throw { status: "400", error: "No time provided" };
-  if (new Date(startTime) === "Invalid Date")
+  const t =new Date(startTime);
+  if (t === "Invalid Date")
     throw { status: "400", error: "Invalid startTime" };
   return startTime;
 };
