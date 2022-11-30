@@ -67,9 +67,9 @@ const checkUser = async (email, password) => {
   password=commonHelper.isValidPassword(password);
   const patientCollection = await patients();
   const patientInDb = await patientCollection.findOne({email:email});
-  if (patientInDb === null) throw {status:404,error:'No patient with that email id'};
+  if (patientInDb === null) throw {status:404,error:'Invalid email or password'};
   else if(await bcryptjs.compare(password,patientInDb.hashedPassword)) return patientInDb; 
-  throw {status:400,error:'Incorrect password'};
+  throw {status:400,error:'Invalid email or password'};
 };
 
 module.exports = {
