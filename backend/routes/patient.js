@@ -51,7 +51,7 @@ router
           }
         );
         res.json({patientData : userInDb, token});
-      } else throw {status:404,error:'Invalid email or password'};
+      } else throw {status:401,error:'Invalid email or password'};
       
     }catch(e){
       if(e.status)
