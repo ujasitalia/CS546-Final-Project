@@ -4,13 +4,15 @@
     "description": "Contain all the backend API for doctor-dashboard and doctolib(frontend for booking appointments)",
     "main": "app.js",
     "scripts": {
-        "start": "node app.js"
+        "start": "node app.js",
+        "dev": "nodemon app.js"
     },
     "author": "Chapadia Dhru - 20013370, Darji Parthkumar - 20011927, Italia Ujas - 20012646, Shah Megh - 20011908, Singh Shloka - 20015697",
     "license": "ISC",
     "dependencies": {
         "bcryptjs": "^2.4.3",
         "express": "^4.18.2",
-        "mongodb": "^4.10.0"
+        "mongodb": "^4.10.0",
+        "nodemon": "^2.0.20"
     }
 }
