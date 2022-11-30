@@ -3,6 +3,7 @@ const router = express.Router();
 const data = require("../data");
 const helper = require('../helper');
 const patientData = data.patient;
+const appointmentData = data.appointment;
 const commonHelper = helper.common;
 const patientHelper = helper.patient;
 
@@ -75,7 +76,38 @@ router
   router
   .route('/:patientId/appointment')
   .get(async (req, res) => {
-
+    //check patient id 
+    let patientId = req.params.patientId
+    try {
+      id = helper.common.isValidId(req.params.patientId);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    //check if the doctor with that id is present
+    try {
+      await patientData.getPatientById(id);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    //get all the appointments of that doctor
+    try {
+      const patientAppointments = await appointmentData.getPatientAppointment(id)
+      res.json(patientAppointments)
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
   })
 
   router
