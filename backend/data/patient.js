@@ -11,13 +11,15 @@ const isPatientEmailInDb = async(email) => {
   email=commonHelper.isValidEmail(email).toLowerCase();
   const patientCollection = await patients();
   const patientInDb = await patientCollection.findOne({email:email});
-  if (patientInDb === null) return false;
-  return true;
+  if (patientInDb == null) 
+    return false;
+  else 
+    return true;
 }
   
 const createPatient = async (email,age,profilePicture,name,city,state,zip,password) => {
     email=commonHelper.isValidEmail(email).toLowerCase();
-    if(isPatientEmailInDb(email)) throw {Status:400,error:'An account already exists with this email'};
+    if(await isPatientEmailInDb(email)) throw {status:400,error:'An account already exists with this email'};
     age = patientHelper.isValidAge(age);
     profilePicture=commonHelper.isValidFilePath(profilePicture);
     name=commonHelper.isValidName(name);
