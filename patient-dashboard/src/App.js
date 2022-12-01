@@ -8,6 +8,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<pages.Login/>} />
           <Route path="/signup" element={<pages.SignUp/>} />
+          <Route path="/profile" element={<pages.Profile patientId={'63720db26efe81c88657130f'}/>} />
           {/* <Route path="/create-account" element={<CreateAccount/>} /> */}
         </Routes>
       </Router>
