@@ -1,5 +1,7 @@
 import * as common from "./common"
+import {links} from './navbarData';
 const helper = {
-    common
+    common,
+    links
   }
 export { helper }

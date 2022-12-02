@@ -1,2 +1,4 @@
 /backend/node_modules
 /backend/config/settings.json
+/doctor-dashboard/node_modules
+/patient-dashboard/node_modules
