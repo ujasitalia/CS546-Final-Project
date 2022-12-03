@@ -27,7 +27,7 @@ app.use('/', (req, res, next) => {
       return;
     }
   }
-  next()
+  next();
 });
 
 
