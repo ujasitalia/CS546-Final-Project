@@ -33,7 +33,7 @@ const Login = () => {
             const response = await api.login.post(data);
             console.log(response);
             localStorage.setItem('token_data', JSON.stringify(response.data.token))
-            navigate("/dashboard", {doctor : response.data.doctorData});
+            navigate("/dashboard", {state : {doctor : response.data.doctorData} });
         }catch(e){
             setHasError(true);
             setError(e.response.data);

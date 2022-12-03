@@ -19,7 +19,7 @@ const isValidAddress = (address) =>{
 
 const isValidSchedule = (schedule) =>{
     const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-    for(day in schedule)
+    for(let day in schedule)
     {
         for(let i=0;i<weekDays.length;i++){
             if(weekDays[i].toLowerCase() === day.toLowerCase())
@@ -34,6 +34,8 @@ const isValidSchedule = (schedule) =>{
             if(schedule[day][i].length!==2)
                 throw {status: '400', error : `Invalid slot for ${day}`};
 
+            schedule[day][i][0] = common.isValidString(schedule[day][i][0]);
+            schedule[day][i][1] = common.isValidString(schedule[day][i][1]);
             const startTime = schedule[day][i][0].split(':');
             const endTime = schedule[day][i][1].split(':');
 
@@ -82,7 +84,7 @@ const isValidDoctorData = (data) =>{
                 data.password = common.isValidPassword(data.password);
                 break;
             case "schedule":
-                data.schedule = doctor.isValidSchedule(data.schedule);
+                data.schedule = isValidSchedule(data.schedule);
                 break;
             default:
                 throw {status: '400', error : `Invalid key - ${key}`};

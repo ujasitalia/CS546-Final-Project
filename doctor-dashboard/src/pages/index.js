@@ -1,5 +1,8 @@
-import Login from "./Login"
+import Login from "./Login";
+import Dashboard from "./Dashboard";
+
 const pages = {
-    Login
+    Login,
+    Dashboard
 }
 export { pages }
