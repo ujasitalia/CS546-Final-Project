@@ -101,13 +101,13 @@ const getAllDoctor = async () => {
       delete data.password;
     }
 
-    const updatedInfo = await doctorCollection.updateOne(
+    const updatedInfo = await doctorCollection.updateMany(
       {_id: ObjectId(doctorId)},
       {$set: data}
     );
       
     if (updatedInfo.modifiedCount === 0) {
-      throw {status: '400', error : 'could not update doctor successfully'};
+      throw {status: '400', error : 'could not update because values are same as previous one'};
     }
   
     const doctor = await getDoctorById(doctorId);
