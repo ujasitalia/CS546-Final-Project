@@ -54,6 +54,7 @@ router
       } else throw {status:401,error:'Invalid email or password'};
       
     }catch(e){
+      console.log(e);
       if(e.status)
       {
         res.status(e.status).json(e.error);
@@ -176,5 +177,68 @@ router
     //code here for GET
     res.json('Protected');
   })
+
+  router
+  .route('/search')
+  .post(async (req, res) => {
+    let data = req.body.search;
+    try {
+      data = await helper.common.validateSearchData(data)
+    } catch (e) {
+      if(e.status)
+      {
+        res.status(e.status).json(e.error);
+      }
+      else
+        res.status(500).json('Internal server error');
+    }
+
+    try {
+      const result = await patientData.getSearchResult(data)
+      // console.log(result);
+      res.json(result)
+      return
+    } catch (e) {
+      if(e.status)
+      {
+        res.status(e.status).json(e.error);
+        return
+      }
+      else
+        res.status(500).json('Internal server error');
+        return
+    }
+  })
   
+  router
+  .route('/filter')
+  .post(async (req, res) => {
+    let data = req.body.specialty;
+    try {
+      data = await helper.common.isValidString(data)
+    } catch (e) {
+      if(e.status)
+      {
+        res.status(e.status).json(e.error);
+      }
+      else
+        res.status(500).json('Internal server error');
+    }
+
+    try {
+      const result = await patientData.getFilterResult(data)
+      res.json(result)
+      return
+    } catch (e) {
+      if(e.status)
+      {
+        res.status(e.status).json(e.error);
+        return
+      }
+      else
+        res.status(500).json('Internal server error');
+        return
+    }
+  })
+
 module.exports = router;

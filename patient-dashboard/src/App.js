@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate  } from "react-router-dom";
 import {pages} from "./pages";
+import Navbar from "./components/Navbar"
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<pages.Login/>} />
           {/* <Route path="/create-account" element={<CreateAccount/>} /> */}
+          {/* <Route path="/nav" element={<Navbar/>} /> had written this to test */}
         </Routes>
       </Router>
     </div>

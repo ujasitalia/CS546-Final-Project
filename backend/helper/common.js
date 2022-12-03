@@ -77,6 +77,15 @@ const isValidTime = (time) => {
   return time;
 };
 
+const validateSearchData = (data) => {
+  if (!data.trim()) throw new Error("Enter doctor name");
+  data = data.trim();
+  const reg = new RegExp(/[~`!@#$%^&*()_+\-=\[\]{};:'"\\|,.<>\/?0-9]/g);
+  if (reg.test(data) || data.search(/\s\s/) > 0)
+    throw new Error("Invalid doctor name");
+  return data;
+};
+
 module.exports = {
     isValidId,
     isValidString,
@@ -87,5 +96,6 @@ module.exports = {
     isValidState,
     isValidZip,
     isValidName,
-    isValidTime
+    isValidTime,
+    validateSearchData,
 };
