@@ -3,6 +3,7 @@ const mongoCollections = require('../config/mongoCollections');
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 const doctorCol = mongoCollections.doctor;
+const commonHelper = require('../helper/common')
 const {ObjectId} = require('mongodb');
 
 const isDoctorEmailInDb = async(email) => {
@@ -26,7 +27,7 @@ const createDoctor = async(
     schedule
 ) => {
     email = helper.common.isValidEmail(email);
-    if(isDoctorEmailInDb(email)) throw {Status:400,error:'An account already exists with this email'};
+    if(await isDoctorEmailInDb(email)) throw {Status:400,error:'An account already exists with this email'};
     profilePicture = helper.common.isValidFilePath(profilePicture);
     name = helper.common.isValidName(name);
     specialty = helper.doctor.isValidSpecialty(specialty);

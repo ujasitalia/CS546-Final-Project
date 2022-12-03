@@ -17,7 +17,7 @@ const isPatientEmailInDb = async(email) => {
   
 const createPatient = async (email,age,profilePicture,name,city,state,zip,password) => {
     email=commonHelper.isValidEmail(email).toLowerCase();
-    if(isPatientEmailInDb(email)) throw {Status:400,error:'An account already exists with this email'};
+    if(await isPatientEmailInDb(email)) throw {Status:400,error:'An account already exists with this email'};
     age = patientHelper.isValidAge(age);
     profilePicture=commonHelper.isValidFilePath(profilePicture);
     name=commonHelper.isValidName(name);
