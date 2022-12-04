@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import {helper} from '../helper'
 import './navbar.css'
-const Navbar = (props) => {
+const Navbar = () => {
     let links = helper.links;
     const handleLogout = (e) =>{
       console.log(e.target.id);

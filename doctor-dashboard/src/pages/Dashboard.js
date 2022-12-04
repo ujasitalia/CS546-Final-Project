@@ -26,7 +26,7 @@ const Dashboard = () => {
 
     return (
       <div>
-        {data && <components.Navbar doctorId={data.doctor._id}/>}
+        {data && <components.Navbar/>}
         <div>
           {console.log(data)}
             <ul>
