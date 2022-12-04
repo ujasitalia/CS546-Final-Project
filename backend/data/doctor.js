@@ -18,7 +18,7 @@ const createDoctor = async(
     email,
     profilePicture,
     name,
-    specialty,
+    speciality,
     clinicAddress,
     city,
     state,
@@ -30,7 +30,7 @@ const createDoctor = async(
     if(await isDoctorEmailInDb(email)) throw {Status:400,error:'An account already exists with this email'};
     profilePicture = helper.common.isValidFilePath(profilePicture);
     name = helper.common.isValidName(name);
-    specialty = helper.doctor.isValidSpecialty(specialty);
+    speciality = helper.doctor.isValidSpeciality(speciality);
     clinicAddress = helper.doctor.isValidAddress(clinicAddress);
     city = helper.common.isValidCity(city);
     state = helper.common.isValidState(state);
@@ -44,7 +44,7 @@ const createDoctor = async(
         email,
         profilePicture,
         name,
-        specialty,
+        speciality,
         clinicAddress,
         city,
         state,
