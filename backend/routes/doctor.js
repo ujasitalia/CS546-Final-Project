@@ -24,7 +24,7 @@ router
       data.email = helper.common.isValidEmail(data.email);
       data.profilePicture = helper.common.isValidFilePath(data.profilePicture);
       data.name = helper.common.isValidName(data.name);
-      data.specialty = helper.doctor.isValidSpecialty(data.specialty);
+      data.speciality = helper.doctor.isValidSpeciality(data.speciality);
       data.clinicAddress = helper.doctor.isValidAddress(data.clinicAddress);
       data.city = helper.common.isValidCity(data.city);
       data.state = helper.common.isValidState(data.state);

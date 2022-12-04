@@ -213,7 +213,7 @@ router
   router
   .route('/filter')
   .post(async (req, res) => {
-    let data = req.body.specialty;
+    let data = req.body.speciality;
     try {
       data = await helper.common.isValidString(data)
     } catch (e) {

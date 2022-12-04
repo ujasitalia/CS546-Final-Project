@@ -1,13 +1,13 @@
 const constants = require("../constants");
 const common = require("./common");
 
-const isValidSpecialty = (specialty) =>{
-    specialty = common.isValidString(specialty, "Specialty");
+const isValidSpeciality = (speciality) =>{
+    speciality = common.isValidString(speciality, "speciality");
 
-    for(let i=0;i<constants.specialty.length;i++)
-        if(specialty.toLowerCase() === constants.specialty[i].toLowerCase())
-            return constants.specialty[i];
-    throw {status: '400', error : "Invalid Specialty"};
+    for(let i=0;i<constants.speciality.length;i++)
+        if(speciality.toLowerCase() === constants.speciality[i].toLowerCase())
+            return constants.speciality[i];
+    throw {status: '400', error : "Invalid speciality"};
 }
 
 const isValidAddress = (address) =>{
@@ -65,8 +65,8 @@ const isValidDoctorData = (data) =>{
             case "name":
                 data.name = common.isValidName(data.name);
                 break;
-            case "specialty":
-                data.specialty = isValidSpecialty(data.specialty);
+            case "speciality":
+                data.speciality = isValidSpeciality(data.speciality);
                 break;
             case "clinicAddress":
                 data.clinicAddress = isValidAddress(data.clinicAddress);
@@ -95,7 +95,7 @@ const isValidDoctorData = (data) =>{
 }
 
 module.exports = {
-    isValidSpecialty,
+    isValidSpeciality,
     isValidAddress,
     isValidSchedule,
     isValidDoctorData
