@@ -44,68 +44,58 @@ router
     try {
       id = helper.common.isValidId(id);
     } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
-      return;
-    }    
-
-    try {
-      let apppointment = await appointmentData.getAppointmentById(id)
-      res.json(apppointment)
-    } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
+      if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
+      else res.status(parseInt(e.status)).json(e.error);
       return;
     }
 
-
+    try {
+      let apppointment = await appointmentData.getAppointmentById(id);
+      res.json(apppointment);
+    } catch (e) {
+      if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
+      else res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
   })
   .patch(async (req, res) => {
     let id = req.params.appointmentId;
-    // console.log(req.body);
-    let data = req.body;
+    // console.log(req.body.data);
+    let data = req.body.data;
     try {
       id = helper.common.isValidId(id);
     } catch (e) {
-      // console.log(e);
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
+      console.log(e);
+      if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
+      else res.status(parseInt(e.status)).json(e.error);
       return;
     }
     //data validation
     try {
       data = helper.appointment.validateData(data);
-          //get the appointment to be updated
-      await appointmentData.getAppointmentById(id)
+      //get the appointment to be updated
+      await appointmentData.getAppointmentById(id);
       // res.json(data)
     } catch (e) {
       console.log(e);
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
+      if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
+      else res.status(parseInt(e.status)).json(e.error);
       return;
     }
-    
+
     //updating the appointment
     try {
-      const updatedAppointment = await appointmentData.updateAppointmentById(id, data);
+      const updatedAppointment = await appointmentData.updateAppointmentById(
+        id,
+        data
+      );
       res.json(updatedAppointment);
     } catch (e) {
       console.log(e);
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
+      if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
+      else res.status(parseInt(e.status)).json(e.error);
       return;
     }
-    
   })
   .delete(async (req, res) => {
     //get id and check it
@@ -113,34 +103,42 @@ router
     try {
       id = helper.common.isValidId(id);
     } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
+      if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
+      else res.status(parseInt(e.status)).json(e.error);
       return;
-    }    
+    }
 
     try {
-      let deleteConfirmation = await appointmentData.deleteAppointmentById(id)
-      res.json(deleteConfirmation)
+      let deleteConfirmation = await appointmentData.deleteAppointmentById(id);
+      res.json(deleteConfirmation);
     } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
+      if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
+      else res.status(parseInt(e.status)).json(e.error);
       return;
     }
   });
 
-// router
-//   .route("/temp/:id")
-//   .get(async (req, res) => {
-//     const id = req.params.id 
-//     try {
-//       const a = appointmentData.getAvailableSlots(id, "monday")
-//     } catch (e) {
-//       console.log(e);
-//     }
-//   })
+router.route("/slots/:doctorID&:day").get(async (req, res) => {
+  let id = req.params.doctorID;                 
+  let day = req.params.day;
+  try {
+    id = helper.common.isValidId(id);
+    day = helper.common.isValidString(day);
+  } catch (e) {
+    console.log(e);
+    if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
+    else res.status(parseInt(e.status)).json(e.error);
+    return;
+  }
+  try {
+    const a = await appointmentData.getAvailableSlots(id, day);
+    res.json(a);
+  } catch (e) {
+    console.log(e);
+    if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
+    else res.status(parseInt(e.status)).json(e.error);
+    return;
+  }
+});
 
 module.exports = router;

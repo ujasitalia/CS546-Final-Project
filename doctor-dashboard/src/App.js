@@ -9,6 +9,7 @@ function App() {
           <Route path="/login" element={<pages.Login/>} />
           <Route path="/" element={<Navigate  to="/login"/>}/>
           <Route path="/dashboard" element={<pages.Dashboard/>}/>
+          <Route path="/dashboard/appointment/:appointmentId" element={<pages.EditAppointment/>}/>
           {/* <Route path="/create-account" element={<CreateAccount/>} /> */}
         </Routes>
       </Router>
