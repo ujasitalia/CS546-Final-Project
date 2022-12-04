@@ -27,7 +27,7 @@ const createDoctor = async(
     //schedule
 ) => {
     email = helper.common.isValidEmail(email);
-    if(await isDoctorEmailInDb(email)) throw {Status:400,error:'An account already exists with this email'};
+    if(await isDoctorEmailInDb(email)) throw {status:400,error:'An account already exists with this email'};
     profilePicture = helper.common.isValidFilePath(profilePicture);
     name = helper.common.isValidName(name);
     speciality = helper.doctor.isValidSpeciality(speciality);
