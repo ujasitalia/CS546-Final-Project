@@ -6,9 +6,9 @@ import {helper} from '../helper';
 import arrow from "../assets/images/arrow.svg";
 
 export const About = (props) => {
-    const [fullName, setName] = useState(props.patientData.name);
-    const [age, setAge] = useState(props.patientData.age);
-    const [zip, setZip] = useState(props.patientData.zip);
+    const [fullName, setName] = useState('');
+    const [age, setAge] = useState('');
+    const [zip, setZip] = useState('');
     const [hasError, setHasError] = useState(false);
     const [error, setError] = useState('');
     const handleInputChange = (e) => {
@@ -19,6 +19,14 @@ export const About = (props) => {
         else if(e.target.id === 'aboutZip')
             setZip(e.target.value);
     }
+    useEffect(()=> {
+        if(!fullName){
+            setName(props.patientData.name);
+            //console.log(fullName)
+            setAge(props.patientData.age);
+            setZip(props.patientData.zip);
+        }
+    })
     const validateSignUp = async (e) =>{
         e.preventDefault();
         try
@@ -44,6 +52,7 @@ export const About = (props) => {
     }
   return (
     <div>
+        
        <form onSubmit={validateSignUp}>
             <div className="emailText">Name</div>
             <input placeholder="Patrik Hill" id="aboutName" value={fullName} onChange={handleInputChange} type="text" className="loginInput" autoFocus/>

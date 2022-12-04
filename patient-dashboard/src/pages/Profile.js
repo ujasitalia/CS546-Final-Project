@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { api } from '../api';
 import arrow from "../assets/images/arrow.svg";
 import {helper} from '../helper';
-import { About } from '../components/about';
-import { Prescriptions } from '../components/prescriptions';
+import { About } from '../components/About';
+import { Prescriptions } from '../components/Prescriptions';
 
 const Profile = ({patientId}) => {
 
@@ -76,7 +76,7 @@ const Profile = ({patientId}) => {
         </ul>
         
         <div> { aboutTab && <About patientData={patientData}/> }</div>
-        <div> { prescriptionsTab && <Prescriptions/> }</div>        
+        <div> { prescriptionsTab && <Prescriptions patientData={patientData}/> }</div>        
         {hasError && <div className="error">{error}</div>}
     </div>
   )
