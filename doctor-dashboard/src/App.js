@@ -7,6 +7,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<pages.Login/>} />
+          <Route path="/signup" element={<pages.SignUp/>} />
           {/* <Route path="/create-account" element={<CreateAccount/>} /> */}
         </Routes>
       </Router>

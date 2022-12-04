@@ -1,5 +1,8 @@
 import * as login from "./login"
+import * as signup from "./signup"
+
 const api = {
-    login
+    login,
+    signup
   }
 export { api }
