@@ -21,8 +21,8 @@ reviewText = null
     const reviewCollection = await reviewCol();
 
     const newReview = {
-        doctorId,
-        patientId,
+        doctorId : ObjectId(doctorId),
+        patientId : ObjectId(patientId),
         rating
     };
 
@@ -59,11 +59,11 @@ const getReviewById = async(reviewId) =>{
     return review;
 }
 
-const getAllReviewByDoctorId = async (doctorID) => {
-    doctorID = helper.common.isValidId(doctorID);
-    await doctor.getDoctorById(doctorID);
+const getAllReviewByDoctorId = async (doctorId) => {
+    doctorId = helper.common.isValidId(doctorId);
+    await doctor.getDoctorById(doctorId);
     const reviewCollection = await reviewCol();
-    const reviewsArray = await reviewCollection.find({doctorID: ObjectId(doctorID)}).toArray();
+    const reviewsArray = await reviewCollection.find({doctorId: ObjectId(doctorId)}).toArray();
   
     if (!reviewsArray) throw {status: '404', error : 'Could not get all review'};
   
