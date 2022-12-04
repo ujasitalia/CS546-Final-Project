@@ -30,7 +30,7 @@ router
       data.state = helper.common.isValidState(data.state);
       data.zip = helper.common.isValidZip(data.zip);
       data.password = helper.common.isValidPassword(data.password);
-      data.schedule = helper.doctor.isValidSchedule(data.schedule);
+      //data.schedule = helper.doctor.isValidSchedule(data.schedule);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e) || e.status === '500'){
         res.status(500).json(e.error);
@@ -41,8 +41,8 @@ router
     }
 
     try{
-      const createDoctor = await doctorData.createDoctor(data.email, data.profilePicture, data.name, data.speciality, 
-        data.clinicAddress, data.city, data.state, data.zip, data.password, data.schedule);
+      const createDoctor = await doctorData.createDoctor(data.email, data.profilePicture, data.name, data.specialty, 
+        data.clinicAddress, data.city, data.state, data.zip, data.password)//, data.schedule);
       res.json(createDoctor);
     }catch(e){
       console.log(e);
