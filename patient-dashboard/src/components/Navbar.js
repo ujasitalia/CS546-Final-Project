@@ -6,7 +6,7 @@ import Button from "react-bootstrap/Button";
 import { helper } from "../helper";
 import { Link } from "react-router-dom";
 
-const Navbar = () => {
+const Navbar = ({searchData, filterData}) => {
   const [search, setSerarch] = useState("");
   const [searcResult, setSearchResult] = useState([]);
   const [hasError, setHasError] = useState(false);
@@ -34,6 +34,7 @@ const Navbar = () => {
       const response = await api.search.post(data);
       setSearchResult(response.data);
       // console.log(searcResult);
+      searchData(response.data)
     } catch (e) {
       setHasError(true);
       setError(e.response.data);
@@ -45,7 +46,7 @@ const Navbar = () => {
   const validateSelectData = async (e) => {
     try {
       // console.log(e.target.value);
-      setSpecialty(e.target.value);
+      setSpecialty(e.target.value); 
       e.target.value = helper.common.isValidString(e.target.value);
       // console.log(specialty);
     } catch (e) {
@@ -58,6 +59,8 @@ const Navbar = () => {
       const data = { specialty: e.target.value };
       const response = await api.filter.post(data);
       setFilterResult(response.data);
+      // console.log(response.data);
+      filterData(response.data)
     } catch (e) {
       setHasError(true);
       setError(e.response.data);
@@ -77,6 +80,10 @@ const Navbar = () => {
           <ul className="links">
             <li>
               <a href="/profile">profile</a>
+            </li>
+
+            <li>
+              <a href="/dashboard">dashboard</a>
             </li>
 
           {(window.location.pathname==="/dashboard" || window.location.pathname==="/dashboard/") && <li>
