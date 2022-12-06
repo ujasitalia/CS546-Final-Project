@@ -13,7 +13,7 @@ export const links = [
   },
   {
     id: 3,
-    url: '/dashboard',
+    url: '/login',
     text: 'logout',
   },
 ];
