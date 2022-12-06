@@ -20,6 +20,33 @@ const getAllchat = async (doctorID, patientID) => {
     return chatHistory;
   }
 
+  const getPeople = async (userID) => {
+    userID = helper.common.isValidId(userID);
+    if(await doctor.getDoctorById(userID) || await patient.getPatientById(userID)){
+
+    }else{
+        throw {status: '404', error : 'Could not find user'};
+    }
+    const chatCollection = await chatCol();
+
+    const chatHistory = await chatCollection.find( {$or : [{receiverId: ObjectId(userID)}, {senderId: ObjectId(userID)}] }).toArray();
+    let people = [];
+    for(var message in chatHistory){
+        if(chatHistory[message].senderId.toString() == userID.toString()){
+            if(!people.includes(chatHistory[message].receiverId.toString())){
+            people.push(chatHistory[message].receiverId.toString());
+            }
+        }
+        if(chatHistory[message].receiverId.toString() == userID.toString()){
+            if(!people.includes(chatHistory[message].senderId.toString())){
+            people.push(chatHistory[message].senderId.toString());
+            }
+        }
+    }
+    if (people.length ==0) throw {status: '404', error : 'Could not get chat history'};
+    return people;
+  }
+
 const createChat = async (senderId, receiverId, message) => {
     receiverId = helper.common.isValidId(receiverId);
     senderId = helper.common.isValidId(senderId);
@@ -52,5 +79,6 @@ const createChat = async (senderId, receiverId, message) => {
 
 module.exports = {
     getAllchat,
-    createChat
+    createChat,
+    getPeople
 };

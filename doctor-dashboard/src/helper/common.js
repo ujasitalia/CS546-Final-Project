@@ -22,6 +22,37 @@ export const isValidPassword = (passowrd) => {
     return passowrd
 }
 
+export const isValidAddress = (address) =>{
+    address = isValidString(address, "Address");
+    if(!address.match(/^[a-zA-Z0-9 \s,.'-]{3,}$/))
+        throw new Error('Invalid Address');
+    return address;
+}
+
+export const isValidZip = (zip) => {
+    if(!zip.match(/(^\d{5}$)|(^\d{5}-\d{4}$)/)) throw new Error('Invalid zip');
+    return zip;
+}
+
+export const isValidName = (inputName) => {
+  inputName = isValidString(inputName,"Name");
+  let name=inputName.split(' '); 
+  if(name.length!=2) throw new Error('Invalid name'); 
+  if(name[0].length<3)
+    throw new Error('First name should be atleast 3 character');
+  if(name[1].length<3)
+    throw new Error('Last name should be atleast 3 character');
+  if(name[0].match(/^[^a-zA-Z0-9]+$/) || (name[0].replace(/[^a-zA-Z0-9 ]/g, '').length !== name[0].length && name[0].replace(/[^a-zA-Z0-9 ]/g, '').length !== name[0].length-1))
+    throw new Error( 'Invalid first name');
+  if(name[1].match(/^[^a-zA-Z0-9]+$/) || (name[1].replace(/[^a-zA-Z0-9 ]/g, '').length !== name[1].length && name[1].replace(/[^a-zA-Z0-9 ]/g, '').length !== name[1].length-1))
+    throw new Error( 'Invalid last name');
+  if(!name[0].match(/^[a-z.'-]+$/i))
+    throw new Error('Invalid first name');
+  if(!name[1].match(/^[a-z.'-]+$/i))
+    throw new Error('Invalid last name');
+    return inputName;
+}
+
 export const isValidSchedule = (schedule) =>{
     const weekDays = ["monday", "tuesday", "wednesday", "thursday", "friday"];
     for(let day in schedule)

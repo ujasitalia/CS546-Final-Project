@@ -30,11 +30,14 @@ router
       return;
     }
   })
+  
+  router
+  .route('/:doctorId/:patientId')
   .get(async (req, res) => {
     const data = req.body;
     try{
-      data.patientId = helper.common.isValidId(data.patientId);
-      data.doctorId = helper.common.isValidId(data.doctorId);
+      data.patientId = helper.common.isValidId(req.params.patientId);
+      data.doctorId = helper.common.isValidId(req.params.doctorId);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json(e);
@@ -44,7 +47,7 @@ router
     }
     
     try{
-      const chatHistory = await chatData.getAllchat(data.doctorId, data.patientId);
+      const chatHistory = await chatData.getAllchat(req.params.doctorId, req.params.patientId);
       res.json(chatHistory);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
@@ -55,4 +58,29 @@ router
     }
   });
 
+  router
+  .route('/:id')
+  .get(async (req, res) => {
+    let id;
+    try{
+      id = helper.common.isValidId(req.params.id);
+    }catch(e){
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    
+    try{
+      const people = await chatData.getPeople(id);
+      res.json(people);
+    }catch(e){
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+  });
 module.exports = router;

@@ -4,6 +4,7 @@ import { api } from "../api";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { helper } from "../helper";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [search, setSerarch] = useState("");
@@ -68,20 +69,21 @@ const Navbar = () => {
     <nav>
       <div className="nav-center">
         <div className="nav-header">
-          <a href="">
+          <a href="/dashboard">
             <p>DoctoLib</p>
           </a>
         </div>
         <div className="links-container">
           <ul className="links">
             <li>
-              <a href="/">profile</a>
+              <a href="/profile">profile</a>
             </li>
-            <li>
+
+          {(window.location.pathname==="/dashboard" || window.location.pathname==="/dashboard/") && <li>
               <Form onSubmit={validateData}>
                 <Form.Control
                   type="text"
-                  placeholder="Search patient"
+                  placeholder="Search Doctor"
                   name="search"
                   onChange={setSearchData}
                 />
@@ -89,8 +91,9 @@ const Navbar = () => {
                   Search
                 </Button>
               </Form>
-            </li>
-            <li style={{ marginLeft: '10px' }}>
+            </li>}
+
+            {(window.location.pathname==="/dashboard" || window.location.pathname==="/dashboard/") && <li style={{ marginLeft: '10px' }}>
                 <Form.Select aria-label="filter" value={specialty} onChange={validateSelectData}>
                   <option>filter specialties</option>
                   <option value="dentist">dentist</option>
@@ -98,6 +101,10 @@ const Navbar = () => {
                   <option value="orthopedic">orthopedic</option>
                   <option value="dermatologist">dermatologist</option>
                 </Form.Select>
+            </li>}
+
+            <li>
+              <Link to="/login" onClick={()=>{localStorage.clear()}}>Logout</Link>
             </li>
             {hasError && <li className="error" style={{marginLeft: 10}}>{error}</li>}
           </ul>
