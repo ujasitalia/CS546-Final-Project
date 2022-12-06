@@ -33,7 +33,7 @@ const Dashboard = () => {
               <li id="appointmentTab" onClick={handleTabChange}>Appointment</li>
               <li id="availabilityTab" onClick={handleTabChange}>Availability</li>  
             </ul>
-            {data && tab === 'appointmentTab' && <components.DoctorAppointment doctorId={data.doctor._id}/>}
+            {data && tab === 'appointmentTab' && <components.DoctorAppointment doctorId={data.doctor._id} />}
             {data && tab === 'availabilityTab' && <components.Availability doctorId={data.doctor._id} doctorSchedule={data.doctor.schedule} handleAvailabilityChange={handleAvailabilityChange}/>}
         </div>
       </div>

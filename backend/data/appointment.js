@@ -246,6 +246,7 @@ const updateAppointmentById = async (id, data) => {
       "Friday",
       "Saturday",
     ];
+    console.log(data.startTime);
     const day = weekdays[new Date(data.startTime).getDay()].toLocaleLowerCase();
     if (!Object.keys(docData.schedule).includes(day))
       throw { status: "400", error: `Doctor is not available on ${day}` };
@@ -277,9 +278,8 @@ const updateAppointmentById = async (id, data) => {
     { _id: ObjectId(id) },
     { $set: data }
   );
-
   if (updatedInfo.modifiedCount === 0) {
-    throw { status: "400", error: "could not update appointment successfully" };
+    return "select a different date/time than original" ;
   }
 
   return await getAppointmentById(id);

@@ -236,7 +236,7 @@ const Availability = (props) => {
     try{
       const data = {schedule:newSchedule}
       const response = await api.doctor.updateDoctor(props.doctorId, data);
-      console.log(response);
+      // console.log(response);
       setHasError(false);
       setAvaibility(response.data.schedule);
       props.handleAvailabilityChange(response.data);
