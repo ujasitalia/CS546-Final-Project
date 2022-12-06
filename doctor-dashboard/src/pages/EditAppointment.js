@@ -9,7 +9,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const EditAppointment = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const location = useLocation();
   const [appointment, setAppointment] = useState("");
   const [day, setDay] = useState("monday");
@@ -60,8 +60,11 @@ const EditAppointment = () => {
     e.preventDefault();
     let getDay = await getTimeDay(startDate)
     // console.log(day, appointment.doctorID);
+    let date = startDate.toISOString().split('T')[0]
+    // console.log(date);
+    console.log(startDate); 
     if(getDay !== 0){
-        const data = { doctorID: appointment.doctorID, day: getDay };
+        const data = { doctorID: appointment.doctorID, day: getDay, date: date };
         const availableSlots = await api.appointment.getAvailableSlots(data);
         setAvailableSlots(availableSlots.data);
     }
@@ -148,7 +151,9 @@ const EditAppointment = () => {
                     </Form>                   
                     </div>
                 ) : (
-                    <></>
+                    <>
+                      <p>All slots are taken. Please try for a different day.</p>
+                    </>
                 )}
             </>
             )}

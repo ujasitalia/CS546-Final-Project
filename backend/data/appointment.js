@@ -5,10 +5,7 @@ const apCol = mongoCollections.appointment;
 const doctorData = require("./doctor");
 const patientData = require("./patient")
 
-const getAvailableSlots = async (id, day) => {
-  // get doctor's schedule, get all appointment that were booked ( get all doctor's appointments), get the available slots
-
-  
+const getAvailableSlots = async (id, day, date) => {  
   const appointments = await getDoctorAppointments(id)
   
   const docData = await doctorData.getDoctorById(id)
@@ -27,18 +24,20 @@ const getAvailableSlots = async (id, day) => {
   for (i of appointments){   
     // console.log(i.startTime); 
     let startTime = i.startTime
+    const da = i.startTime.split('T')[0]
     const d = weekdays[new Date(startTime).getDay()].toLocaleLowerCase();
     // console.log(d);
-    if(d === day.toLocaleLowerCase()){
+    if(d === day.toLocaleLowerCase() && da === date){
+      // console.log(da);
       const t = startTime.slice(11, 16);
       const [time, modifier] = t.split(" ");
       let [hours, minutes] = time.split(":");
-      if (hours === "12") {
-        hours = "00";
-      }
-      if (modifier === "PM") {
-        hours = parseInt(hours, 10) + 12;
-      }
+      // if (hours === "24") {
+      //   hours = "00";
+      // }
+      // if (modifier === "PM") {
+      //   hours = parseInt(hours, 10) + 12;
+      // }
       const apTime = hours + ":" + minutes;
       timeSlotsTaken.push(apTime)
     }
@@ -98,12 +97,12 @@ const createAppointment = async (
   const t = startTime.slice(11, 16);
   const [time, modifier] = t.split(" ");
   let [hours, minutes] = time.split(":");
-  if (hours === "12") {
-    hours = "00";
-  }
-  if (modifier === "PM") {
-    hours = parseInt(hours, 10) + 12;
-  }
+  // if (hours === "24") {
+  //   hours = "00";
+  // }
+  // if (modifier === "PM") {
+  //   hours = parseInt(hours, 10) + 12;
+  // }
   const apTime = hours + ":" + minutes;
 
   let flag = 0;
@@ -129,7 +128,7 @@ const createAppointment = async (
   const insertInfo = await appointmentCollection.insertOne(newAppointment);
 
   if (!insertInfo.acknowledged || !insertInfo.insertedId)
-    throw { status: "500", error: "Could not add appointment" };
+    return "Could not add appointment"
 
   const newId = insertInfo.insertedId.toString();
   const appointment = await getAppointmentById(newId);

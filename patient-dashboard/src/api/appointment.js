@@ -15,6 +15,10 @@ export const getAvailableSlots = (data) => {
 export const updateAppointment = (data) => {
     const id = data._id
     delete data._id
-    console.log(data);
+    // console.log(data);
     return axiosAuth.patch(`/appointment/${id}`, {data:data})
+}
+
+export const createAppointment = (data) => {
+    return axiosAuth.post('/appointment', data)
 }
