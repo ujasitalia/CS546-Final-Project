@@ -5,10 +5,12 @@ import { Link } from "react-router-dom";
 
 const Dashboard = () => {    
     const [data, setData] = useState('');
+    const [filteredDoctors, setFilteredDoctors] = useState('');
     useEffect(() => {
       const fetchData = async()=>{
         const response = await api.doctor.getAllDoctor();
         setData({doctors : response.data});
+        setFilteredDoctors(response.data);
       }
       if(!data)
       {
@@ -16,13 +18,37 @@ const Dashboard = () => {
       }
     },[]);
 
+    const handleSearch = (keyword, speciality) =>{
+      let filtered = [];
+      if(speciality)
+      {
+        data.doctors.forEach(element => {
+          if(element.speciality.toLowerCase() === speciality.toLowerCase())
+            filtered.push(element);
+        });
+      }else{
+        filtered = [...data.doctor];
+      }
+
+      if(keyword)
+      {
+        filtered = filtered.filter(element => {
+          if(element.name.toLowerCase().includes(keyword.toLowerCase()))
+            return element;
+          else if(element.zip.includes(keyword))
+            return element;
+        })
+      }
+      setFilteredDoctors(filtered);
+    }
+
     return (
         <div>
-          <components.Navbar/>
+          <components.Navbar handleSearch={handleSearch}/>
           <div>
-          {data !== '' 
+          {filteredDoctors !== '' 
             ? <div className="doctorsContainer">
-                          <div>{data.doctors.length !== 0 ? data.doctors.map((element, index) =>
+                          <div>{filteredDoctors.length !== 0 ? filteredDoctors.map((element, index) =>
                           <Link to={{ pathname : `/doctor/${element._id}`, state : {appointmentId : element._id}}}>
                               <div className="card" key={element._id}>
                                   <div className="cardHeading">Doctor - {index+1}</div>
