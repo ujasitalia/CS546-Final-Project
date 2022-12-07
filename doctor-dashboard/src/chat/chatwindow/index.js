@@ -4,16 +4,38 @@ import { styles } from "../styles";
 import ExistingChat from '../../components/existingChat/existingChat'
 import ChatEngine from '../../components/chatEngine/chatengine'
 import axios from "axios";
+import {io} from "socket.io-client"
 const ChatWindow = props => {
     const [conversations , setConversations] = useState([]);
     const [currentChat , setCurrentChat] = useState(null);
     const [messages , setMessages] = useState([]);
     const [newMessage , setNewMessage] = useState("");
+    const [arrivalMessage , setArrivalMessage] = useState(null);
     const [user , setUser] = useState(null);
+    const socket = useRef()
     const [chat , setChat] = useState(null);
     const scrollRef = useRef();
     let doctorID="638ad54868dfe87d4ed59099"
     //const {user} = useContext(authContext);
+    useEffect(()=>{
+        socket.current = io("ws://localhost:8900");
+        socket.current.on("getMessage", (data) => {
+            setArrivalMessage({
+              sender: data.senderId,
+              text: data.text,
+              createdAt: Date.now(),
+            });
+          });
+    },[])
+    useEffect(() => {
+        arrivalMessage &&
+          currentChat == arrivalMessage.sender &&
+          setMessages((prev) => [...prev, arrivalMessage]);
+      }, [arrivalMessage, currentChat]);
+    useEffect(() =>{
+        socket.current.emit("addUser",doctorID);
+        socket.current.on("getUsers")
+    },[doctorID])
     useEffect(() =>{
         const getConversations = async () =>{
             try{
@@ -39,10 +61,16 @@ const ChatWindow = props => {
     const handleSubmit = async (e) =>{
         e.preventDefault();
         const message = {
-            senderId : "638ad54868dfe87d4ed59099",
+            senderId : doctorID,
             receiverId : currentChat,
             message : newMessage
         };
+        socket.current.emit("sendMessage",{
+            senderId : doctorID,
+            receiverId : currentChat,
+            text: newMessage
+        });
+
         try{
             const res = await axios.post("http://localhost:3000/chat/",message);
             setMessages([...messages,res.data]);

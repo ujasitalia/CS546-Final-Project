@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 
 app.use(express.json());
 app.use(cors());
-
+/*
 app.use('/', (req, res, next) => {
   if(!((req.originalUrl === '/doctor/login' || req.originalUrl === '/patient/login') || (req.originalUrl === '/doctor' && req.method === 'POST') || (req.originalUrl === '/patient' && req.method === 'POST')))
   {
@@ -28,7 +28,7 @@ app.use('/', (req, res, next) => {
     }
   }
   next();
-});
+});*/
 
 
 configRoutes(app);
