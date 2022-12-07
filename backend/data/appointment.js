@@ -77,44 +77,17 @@ const createAppointment = async (
   appointmentLocation = helper.appointment.isValidAddress(appointmentLocation);
 
   //get doctor data to verify the time and day
-  const docData = await doctorData.getDoctorById(doctorID);
+  await doctorData.getDoctorById(doctorID);
 
-  //verify if startTime has valid day
-  const weekdays = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-  const day = weekdays[new Date(startTime).getDay()].toLocaleLowerCase();
-  if (!Object.keys(docData.schedule).includes(day))
-    throw { status: "400", error: `Doctor is not available on ${day}` };
-
-  //check for slots
-  const t = startTime.slice(11, 16);
-  const [time, modifier] = t.split(" ");
-  let [hours, minutes] = time.split(":");
-  // if (hours === "24") {
-  //   hours = "00";
-  // }
-  // if (modifier === "PM") {
-  //   hours = parseInt(hours, 10) + 12;
-  // }
-  const apTime = hours + ":" + minutes;
-
-  let flag = 0;
-  const docScheduleForThatDay = docData.schedule[day];
-  docScheduleForThatDay.forEach((sch) => {
-    if (apTime >= sch[0] && apTime < sch[1]) {
-      flag = 1;
-    }
-  });
-  if (flag === 0)
-    throw { status: "400", error: `doctor is not available during ${apTime}` };
-
+  const slots = await getDoctorSlots(appointment.doctorID, new Date(data.startTime));
+  let flag = false;
+  slots.forEach(slot =>{
+    if(slot[0].split(":")[0] === data.startTime.split("T")[1].split(":")[0])
+      flag = true;
+  })
+  
+  if(!flag)
+    throw { status: "400", error: `slot not available` };
   //if everything is fine get appointment collection and create a new appointment
   const appointmentCollection = await apCol();
 
@@ -235,43 +208,15 @@ const updateAppointmentById = async (id, data) => {
   const docData = await doctorData.getDoctorById(appointment.doctorID)
     
   //if startTime... check startTime
-  if(Object.keys(data).includes("startTime")) {
-    const weekdays = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    console.log(data.startTime);
-    const day = weekdays[new Date(data.startTime).getDay()].toLocaleLowerCase();
-    if (!Object.keys(docData.schedule).includes(day))
-      throw { status: "400", error: `Doctor is not available on ${day}` };
-
-    //check for slots
-    const t = data.startTime.slice(11, 16);
-    const [time, modifier] = t.split(" ");
-    let [hours, minutes] = time.split(":");
-    if (hours === "12") {
-      hours = "00";
-    }
-    if (modifier === "PM") {
-      hours = parseInt(hours, 10) + 12;
-    }
-    const apTime = hours + ":" + minutes;
-
-    flag = 0;
-    const docScheduleForThatDay = docData.schedule[day];
-    docScheduleForThatDay.forEach((sch) => {
-      if (apTime >= sch[0] && apTime < sch[1]) {
-        flag = 1;
-      }
-    });
-    if (flag === 0)
-      throw { status: "400", error: `doctor is not available during ${apTime}` };
-  }
+  const slots = await getDoctorSlots(appointment.doctorID, new Date(data.startTime));
+  let flag = false;
+  slots.forEach(slot =>{
+    if(slot[0].split(":")[0] === data.startTime.split("T")[1].split(":")[0])
+      flag = true;
+  })
+  
+  if(!flag)
+    throw { status: "400", error: `slot not available` };
 
   const updatedInfo = await appointmentCollection.updateOne(
     { _id: ObjectId(id) },

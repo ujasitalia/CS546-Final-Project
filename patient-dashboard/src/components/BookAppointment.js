@@ -16,28 +16,39 @@ const BookAppointment = (props) => {
     const [notUpdated, setNotUpdated] = useState(false)
     const [noAvailableSlots, setNoAvailableSlots] = useState(false)
     
-    const checkDate = (startDate) => {    
-    if (startDate < new Date()){
+    const checkDate = (startDate) => {  
+    const currDate = new Date();  
+    if(startDate.getDate() < currDate.getDate()){
         setHasError(true)
+        return false;
     }
     const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const d = weekdays[startDate.getDay()].toLowerCase()
     if(!Object.keys(props.doctor.schedule).includes(d)){
         setHasError(true)
+        return false;
     }
     else{
         setHasError(false)
+        return true;
     }    
   }
 
     const handleForm = async (e) => {
         e.preventDefault();
-        checkDate(startDate);
+        if(!checkDate(startDate))
+            return;
         const response = await api.doctor.getDoctorSlot(props.doctor._id, startDate.toLocaleDateString());
         if(response.data.length === 0)
             setNoAvailableSlots(true)
         else{
-            setAvailableSlots(response.data);
+            const slots = response.data.filter(element =>{
+                let time = element[0].split(":")
+                let curTime = new Date();
+                if(parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes()))
+                  return element;
+              })
+            setAvailableSlots(slots);
         }
     };
 
