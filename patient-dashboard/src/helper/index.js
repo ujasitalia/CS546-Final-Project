@@ -1,5 +1,7 @@
-import * as common from "./common"
+import * as common from "./common";
+import * as constant from "./constant";
 const helper = {
-    common
+    common,
+    constant 
   }
 export { helper }

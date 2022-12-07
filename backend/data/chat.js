@@ -22,11 +22,6 @@ const getAllchat = async (doctorID, patientID) => {
 
   const getPeople = async (userID) => {
     userID = helper.common.isValidId(userID);
-    if(await doctor.getDoctorById(userID) || await patient.getPatientById(userID)){
-
-    }else{
-        throw {status: '404', error : 'Could not find user'};
-    }
     const chatCollection = await chatCol();
 
     const chatHistory = await chatCollection.find( {$or : [{receiverId: ObjectId(userID)}, {senderId: ObjectId(userID)}] }).toArray();

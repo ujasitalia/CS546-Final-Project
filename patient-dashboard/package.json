@@ -15,6 +15,8 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"
+    "axios": "^0.26.1",
+    "timeago-react": "^3.0.5"
   },
   "scripts": {
     "start": "PORT=3003 react-scripts start",
