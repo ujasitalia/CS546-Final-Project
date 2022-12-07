@@ -11,3 +11,7 @@ export const getDoctor = (id) => {
 export const getAllDoctorReview = (id) => {
     return axiosAuth.get(`/doctor/${id}/review`);
 }
+
+export const getDoctorSlot = (id, date) => {
+    return axiosAuth.get(`/doctor/${id}/slot?date=`+date);
+}

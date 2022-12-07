@@ -16,57 +16,35 @@ const BookAppointment = (props) => {
     const [notUpdated, setNotUpdated] = useState(false)
     const [noAvailableSlots, setNoAvailableSlots] = useState(false)
     
-    // useEffect(() => {
-    //   const fetchData = async()=>{
-    //   const response = await api.doctor.getAllDoctorReview(props.doctorId);
-    //   setData({reviews : response.data});
-    // }
-    // if(!data)
-    // {
-    //   fetchData();
-    // }
-    // }, [])
-    
-    const getTimeDay = async (startDate) => {    
+    const checkDate = (startDate) => {    
     if (startDate < new Date()){
         setHasError(true)
-        return 0
     }
     const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const d = weekdays[startDate.getDay()].toLowerCase()
     if(!Object.keys(props.doctor.schedule).includes(d)){
         setHasError(true)
-        return 0
     }
     else{
         setHasError(false)
-        return d
     }    
   }
 
     const handleForm = async (e) => {
         e.preventDefault();
-        let getDay = await getTimeDay(startDate)
-        let date = startDate.toISOString().split('T')[0]
-        // console.log(day, appointment.doctorID);
-        if(getDay !== 0){
-            const data = { doctorID: props.doctor._id, day: getDay, date:date };
-            const availableSlots = await api.appointment.getAvailableSlots(data);
-            if(availableSlots.data.length == 0) setNoAvailableSlots(true)
-            else setAvailableSlots(availableSlots.data);
-            // console.log(availableSlots);
+        checkDate(startDate);
+        const response = await api.doctor.getDoctorSlot(props.doctor._id, startDate.toLocaleDateString());
+        if(response.data.length === 0)
+            setNoAvailableSlots(true)
+        else{
+            setAvailableSlots(response.data);
         }
     };
 
     const getTime = (slot) => {
-        let ft = slot.split(':')[0]
-        if(ft.length == 1) {
-            ft = '0'+ft+':'+slot.split(':')[1]+':00.000Z'
-        }
-        else{
-            ft = ft+':00:00.000Z'
-        }
-        return ft
+        slot = slot.split(':')
+        slot = slot[0]+':'+slot[1]+':00.000'
+        return slot
     }
 
     const createAppointment = async (e) => {
@@ -114,7 +92,7 @@ const BookAppointment = (props) => {
                 <br />
                 {availableSlots.length !== 0 ? (
                     <div>
-                        {slot ? <></> : setSlot(availableSlots[0])}
+                        {slot ? <></> : setSlot(availableSlots[0][0])}
                         <h3>Select slot</h3>
                     <Form onSubmit={createAppointment}>
                         <Form.Select
@@ -124,7 +102,7 @@ const BookAppointment = (props) => {
                             style={{ marginRight: "3px" }}
                             >
                             {availableSlots.map(slot => {
-                                return <option value={slot} key={slot}>{slot}</option>
+                                return <option value={slot[0]} key={slot[0]}>{slot[0] + " - " + slot[1]}</option>
                             })}
                         </Form.Select>
                         <Button variant="primary" type="submit" style={{ width: "70px" }}>
