@@ -15,9 +15,9 @@ export default function Message({message,own}){
       let res;
       try{
         if(own){
-           res = await axios("http://localhost:3000/doctor/"+userID);
-        }else{
            res = await axios("http://localhost:3000/patient/"+userID);
+        }else{
+           res = await axios("http://localhost:3000/doctor/"+userID);
         }
         setUser(res.data);
       }catch(e){

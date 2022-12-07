@@ -12,12 +12,13 @@ const ChatWindow = props => {
     const [user , setUser] = useState(null);
     const [chat , setChat] = useState(null);
     const scrollRef = useRef();
-    let doctorID="638ad54868dfe87d4ed59099"
+    let patientID="638e99f2a35941bab37f1434"
     //const {user} = useContext(authContext);
     useEffect(() =>{
         const getConversations = async () =>{
             try{
-                const res = await axios.get("http://localhost:3000/chat/"+doctorID);
+                const res = await axios.get("http://localhost:3000/chat/"+patientID);
+                console.log(res);
                 setConversations(res.data)
             }catch(e){
                 console.log(e);
@@ -28,7 +29,7 @@ const ChatWindow = props => {
     useEffect(() =>{
         const getMessages = async () =>{
             try{
-                const res = await axios.get("http://localhost:3000/chat/"+doctorID+"/"+currentChat);
+                const res = await axios.get("http://localhost:3000/chat/"+currentChat+"/"+patientID);
                 setMessages(res.data);
             }catch(e){
                 console.log(e);
@@ -39,7 +40,7 @@ const ChatWindow = props => {
     const handleSubmit = async (e) =>{
         e.preventDefault();
         const message = {
-            senderId : "638ad54868dfe87d4ed59099",
+            senderId : "638e99f2a35941bab37f1434",
             receiverId : currentChat,
             message : newMessage
         };
@@ -79,7 +80,7 @@ const ChatWindow = props => {
                     <div className="chatBoxTop">
                         {messages.map((m) => ( 
                         <div ref={scrollRef}>
-                        <ChatEngine message={m} own={m.senderId === "638ad54868dfe87d4ed59099"} />
+                        <ChatEngine message={m} own={m.senderId === patientID} />
                         </div>
                         ))}
                     </div>
