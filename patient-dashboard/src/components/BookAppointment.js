@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-// import { components } from '.';
+import React, { useState } from 'react';
 import { api } from '../api';
 import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
@@ -14,7 +13,6 @@ const BookAppointment = (props) => {
     const [availableSlots, setAvailableSlots] = useState([]);
     const [slot, setSlot] = useState('')
     const [notUpdated, setNotUpdated] = useState(false)
-    const [noAvailableSlots, setNoAvailableSlots] = useState(false)
     
     const checkDate = (startDate) => {  
     const currDate = new Date();  
@@ -39,17 +37,13 @@ const BookAppointment = (props) => {
         if(!checkDate(startDate))
             return;
         const response = await api.doctor.getDoctorSlot(props.doctor._id, startDate.toLocaleDateString());
-        if(response.data.length === 0)
-            setNoAvailableSlots(true)
-        else{
-            const slots = response.data.filter(element =>{
-                let time = element[0].split(":")
-                let curTime = new Date();
-                if(parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes()))
-                  return element;
-              })
-            setAvailableSlots(slots);
-        }
+        const slots = response.data.filter(element =>{
+            let time = element[0].split(":")
+            let curTime = new Date();
+            if((startDate.getDate() !== curTime.getDate()) || (parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes())))
+                return element;
+            })
+        setAvailableSlots(slots);
     };
 
     const getTime = (slot) => {
@@ -123,12 +117,7 @@ const BookAppointment = (props) => {
                     </div>
                 ) : (
                     <>
-                        {noAvailableSlots ? (
-                            <p>All appointments are booked. Please try for another day.</p>
-                        ) : (
-                            <></>
-                        )}
-                        
+                        <p>All appointments are booked. Please try for another day.</p>
                     </>
                 )}
             </>
