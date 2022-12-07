@@ -19,7 +19,7 @@ const Dashboard = () => {
       }
     },[]);
 
-    const handleSearch = (keyword, speciality) =>{
+    const handleSearch = (keyword, speciality="") =>{
       let filtered = [];
       if(speciality)
       {
@@ -28,7 +28,7 @@ const Dashboard = () => {
             filtered.push(element);
         });
       }else{
-        filtered = [...data.doctor];
+        filtered = [...data.doctors];
       }
 
       if(keyword)

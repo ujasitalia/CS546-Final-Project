@@ -21,7 +21,8 @@ const Navbar = (props) => {
       setSpecialty(e.target.value);
       props.handleSearch(search, e.target.value);
     }else{
-      props.handleSearch(search, specialty);
+      setSpecialty("")
+      props.handleSearch(search);
     }
   }
 
