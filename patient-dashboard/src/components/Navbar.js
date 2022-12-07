@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import { helper } from "../helper";
 import { Link } from "react-router-dom";
 
+
 const Navbar = (props) => {
   const [search, setSerarch] = useState("");
   const [specialty, setSpecialty] = useState("")
@@ -20,7 +21,7 @@ const Navbar = (props) => {
       setSpecialty(e.target.value);
       props.handleSearch(search, e.target.value);
     }else{
-      props.handleSearch(search, specialty)
+      props.handleSearch(search, specialty);
     }
   }
 
@@ -36,6 +37,10 @@ const Navbar = (props) => {
           <ul className="links">
             <li>
               <a href="/profile">profile</a>
+            </li>
+
+            <li>
+              <a href="/dashboard">dashboard</a>
             </li>
 
           {(window.location.pathname==="/dashboard" || window.location.pathname==="/dashboard/") && <li>

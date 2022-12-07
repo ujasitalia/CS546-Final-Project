@@ -1,5 +1,6 @@
 const mongoCollections = require('../config/mongoCollections');
 const patients = mongoCollections.patient;
+const doctors = mongoCollections.doctor;
 const bcryptjs = require('bcryptjs');
 const patientHelper = require('../helper/patient')
 const commonHelper = require('../helper/common')
@@ -81,9 +82,46 @@ const checkUser = async (email, password) => {
   throw {status:401,error:'Invalid email or password'};
 };
 
+const getSearchResult = async (data) => {
+  data = commonHelper.validateSearchData(data);
+  data = data.toLowerCase();
+  const doctorCollection = await doctors();
+  const allDoctors = await doctorCollection
+    .find({}, { projection: { hashedPassword: 0 } })
+    .toArray();
+  let res = [];
+  for (i of allDoctors) {
+    if (i.name.toLowerCase().includes(data) || i.specialty.toLowerCase().includes(data)){
+      res.push(i);
+    }
+  }
+  if (!res) throw { status: "404", error: "No match found." };
+  // console.log(res);
+  return res;
+};
+
+const getFilterResult = async (data) => {
+  data = commonHelper.isValidString(data);
+  data = data.toLowerCase();
+  const doctorCollection = await doctors();
+  const allDoctors = await doctorCollection
+    .find({}, { projection: { hashedPassword: 0 } })
+    .toArray();
+  let res = [];
+  for (i of allDoctors) {
+    if (i.specialty.toLowerCase() === data ){
+      res.push(i);
+    }
+  }
+  if (!res) throw { status: "404", error: "No match found." };
+  return res;
+};
+
 module.exports = {
   createPatient,
   getPatientById,
   updatePatient,
-  checkUser
+  checkUser,
+  getSearchResult,
+  getFilterResult,
 };

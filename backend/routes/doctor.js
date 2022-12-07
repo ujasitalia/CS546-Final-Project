@@ -41,7 +41,7 @@ router
     }
 
     try{
-      const createDoctor = await doctorData.createDoctor(data.email, data.profilePicture, data.name, data.specialty, 
+      const createDoctor = await doctorData.createDoctor(data.email, data.profilePicture, data.name, data.speciality, 
         data.clinicAddress, data.city, data.state, data.zip, data.password)//, data.schedule);
       res.json(createDoctor);
     }catch(e){

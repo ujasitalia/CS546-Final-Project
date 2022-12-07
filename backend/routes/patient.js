@@ -185,6 +185,7 @@ router
     try {
       data = await helper.common.validateSearchData(data)
     } catch (e) {
+      console.log(e);
       if(e.status)
       {
         res.status(e.status).json(e.error);
@@ -199,6 +200,7 @@ router
       res.json(result)
       return
     } catch (e) {
+      console.log(e);
       if(e.status)
       {
         res.status(e.status).json(e.error);
@@ -213,10 +215,13 @@ router
   router
   .route('/filter')
   .post(async (req, res) => {
-    let data = req.body.speciality;
+    // console.log(req.body);
+    let data = req.body.specialty;
+    // console.log(data);
     try {
       data = await helper.common.isValidString(data)
     } catch (e) {
+      console.log(e);
       if(e.status)
       {
         res.status(e.status).json(e.error);
@@ -230,6 +235,7 @@ router
       res.json(result)
       return
     } catch (e) {
+      console.log(e);
       if(e.status)
       {
         res.status(e.status).json(e.error);

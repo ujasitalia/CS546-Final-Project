@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 const Dashboard = () => {    
     const [data, setData] = useState('');
     const [filteredDoctors, setFilteredDoctors] = useState('');
+    
     useEffect(() => {
       const fetchData = async()=>{
         const response = await api.doctor.getAllDoctor();

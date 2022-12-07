@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import {useLocation} from 'react-router-dom';
 import { components } from '../components';
 import { api } from '../api';
 
 const Dashboard = () => {
-    const location = useLocation();
     const [tab, setTab] = useState('appointmentTab');
     const [data, setData] = useState('');
     useEffect(() => {
       const fetchData = async()=>{
-        const response = await api.doctor.getDoctor(location.state.doctor._id);
+        const response = await api.doctor.getDoctor(JSON.parse(localStorage.getItem('id')));
         setData({doctor : response.data});
       }
       if(!data)
@@ -27,16 +25,18 @@ const Dashboard = () => {
     }
 
     return (
-        // <Nav/>
+      <div>
+        {data && <components.Navbar/>}
         <div>
           {console.log(data)}
             <ul>
               <li id="appointmentTab" onClick={handleTabChange}>Appointment</li>
               <li id="availabilityTab" onClick={handleTabChange}>Availability</li>  
             </ul>
-            {data && tab === 'appointmentTab' && <components.DoctorAppointment doctorId={data.doctor._id}/>}
+            {data && tab === 'appointmentTab' && <components.DoctorAppointment doctorId={data.doctor._id} />}
             {data && tab === 'availabilityTab' && <components.Availability doctorId={data.doctor._id} doctorSchedule={data.doctor.schedule} handleAvailabilityChange={handleAvailabilityChange}/>}
         </div>
+      </div>
       )
 }
 
