@@ -9,7 +9,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const EditAppointment = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const location = useLocation();
   const [appointment, setAppointment] = useState("");
   const [day, setDay] = useState("monday");
@@ -20,6 +20,7 @@ const EditAppointment = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [hasError, setHasError] = useState(false);
   const [notUpdated, setNotUpdated] = useState(false);
+  const [noAvailableSlots, setNoAvailableSlots] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,43 +40,46 @@ const EditAppointment = () => {
     }
   }, []);
 
-  const getTimeDay = async (startDate) => {    
-    if (startDate < new Date()){
+  const checkDate = (startDate) => {    
+    const currDate = new Date();
+    if(startDate.getDate() < currDate.getDate()){
         setHasError(true)
-        return 0
+        return false
     }
     const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const d = weekdays[startDate.getDay()].toLowerCase()
     if(!days.includes(d)){
         setHasError(true)
-        return 0
+        return false
     }
     else{
         setHasError(false)
-        return d
+        return true
     }    
   }
 
   const handleForm = async (e) => {
     e.preventDefault();
-    let getDay = await getTimeDay(startDate)
-    // console.log(day, appointment.doctorID);
-    if(getDay !== 0){
-        const data = { doctorID: appointment.doctorID, day: getDay };
-        const availableSlots = await api.appointment.getAvailableSlots(data);
-        setAvailableSlots(availableSlots.data);
+    if(!checkDate(startDate))
+      return;
+    const response = await api.doctor.getDoctorSlot(appointment.doctorID, startDate.toLocaleDateString());
+    if(response.data.length === 0)
+        setNoAvailableSlots(true)
+    else{
+      const slots = response.data.filter(element =>{
+        let time = element[0].split(":")
+        let curTime = new Date();
+        if(parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes()))
+          return element;
+      })
+      setAvailableSlots(slots);
     }
   };
 
-  const getTime = (updatedSlot) => {
-    let ft = updatedSlot.split(':')[0]
-    if(ft.length == 1) {
-        ft = '0'+ft+':'+updatedSlot.split(':')[1]+':00.000Z'
-    }
-    else{
-        ft = ft+':00:00.000Z'
-    }
-    return ft
+  const getTime = (slot) => {
+    slot = slot.split(':')
+    slot = slot[0]+':'+slot[1]+':00.000'
+    return slot
   }
 
   const updateAppointment = async (e) => {
@@ -129,7 +133,7 @@ const EditAppointment = () => {
                 <br />
                 {availableSlots.length !== 0 ? (
                     <div>
-                        {updatedSlot ? <></> : setUpdatedSlot(availableSlots[0])}
+                        {updatedSlot ? <></> : setUpdatedSlot(availableSlots[0][0])}
                         <h3>Select slot to update</h3>
                     <Form onSubmit={updateAppointment}>
                         <Form.Select
@@ -139,7 +143,7 @@ const EditAppointment = () => {
                             style={{ marginRight: "3px" }}
                             >
                             {availableSlots.map(slot => {
-                                return <option value={slot} key={slot}>{slot}</option>
+                                return <option value={slot[0]} key={slot[0]}>{slot[0] + " - " + slot[1]}</option>
                             })}
                         </Form.Select>
                         <Button variant="primary" type="submit" style={{ width: "70px" }}>
@@ -148,7 +152,9 @@ const EditAppointment = () => {
                     </Form>                   
                     </div>
                 ) : (
-                    <></>
+                    <>
+                      <p>All slots are taken. Please try for a different day.</p>
+                    </>
                 )}
             </>
             )}

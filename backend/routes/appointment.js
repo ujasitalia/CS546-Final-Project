@@ -5,6 +5,7 @@ const { appointment: appointmentData } = require("../data");
 
 router.route("/").post(async (req, res) => {
   const data = req.body;
+  // console.log(data);
   try {
     data.doctorID = helper.common.isValidId(data.doctorID);
     data.patientID = helper.common.isValidId(data.patientID);
@@ -13,6 +14,7 @@ router.route("/").post(async (req, res) => {
       data.appointmentLocation
     );
   } catch (e) {
+    console.log(e);
     if (typeof e !== "object" || !("status" in e) || e.status === "500") {
       console.log(e);
       res.status(500).json(e.error);
@@ -118,12 +120,14 @@ router
     }
   });
 
-router.route("/slots/:doctorID&:day").get(async (req, res) => {
+router.route("/slots/:doctorID&:day&:date").get(async (req, res) => {
   let id = req.params.doctorID;                 
   let day = req.params.day;
+  let date = req.params.date;  
   try {
     id = helper.common.isValidId(id);
     day = helper.common.isValidString(day);
+    date = helper.common.isValidString(date);
   } catch (e) {
     console.log(e);
     if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
@@ -131,7 +135,7 @@ router.route("/slots/:doctorID&:day").get(async (req, res) => {
     return;
   }
   try {
-    const a = await appointmentData.getAvailableSlots(id, day);
+    const a = await appointmentData.getAvailableSlots(id, day, date);
     res.json(a);
   } catch (e) {
     console.log(e);

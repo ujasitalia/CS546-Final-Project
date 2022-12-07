@@ -176,10 +176,10 @@ router
   .get(async (req, res) => {
     try{
       req.params.doctorId = helper.common.isValidId(req.params.doctorId);
-      if(req.body.date)
-        req.body.date = helper.common.isValidTime(req.body.date);
+      if(req.query.date)
+        req.query.date = helper.common.isValidTime(req.query.date);
       else
-      req.body.date = new Date();
+        req.query.date = new Date();
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json(e);
@@ -188,7 +188,7 @@ router
       return;
     }
     try{
-      const doctorSlots = await appointmentData.getDoctorSlots(req.params.doctorId, req.body.date);
+      const doctorSlots = await appointmentData.getDoctorSlots(req.params.doctorId, req.query.date);
       res.json(doctorSlots);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
