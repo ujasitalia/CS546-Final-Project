@@ -12,6 +12,7 @@ function App() {
           <Route path="/dashboard" element={<pages.Dashboard/>}/>
           <Route path="/doctor/:id" element={<pages.DoctorInfo/>}/>
           <Route path="/profile" element={<pages.Profile/>}/>
+          <Route path="/healthyHabits" element={<pages.HealthyHabits/>}/>
           {/* <Route path="/create-account" element={<CreateAccount/>} /> */}
           {/* <Route path="/nav" element={<Navbar/>} /> had written this to test */}
         </Routes>
