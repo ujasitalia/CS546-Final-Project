@@ -4,6 +4,7 @@ const { ObjectId } = require("mongodb");
 const apCol = mongoCollections.appointment;
 const doctorData = require("./doctor");
 const patientData = require("./patient")
+const {email} = require("../service");
 
 const getAvailableSlots = async (id, day, date) => {  
   const appointments = await getDoctorAppointments(id)
@@ -77,12 +78,14 @@ const createAppointment = async (
   appointmentLocation = helper.appointment.isValidAddress(appointmentLocation);
 
   //get doctor data to verify the time and day
-  await doctorData.getDoctorById(doctorId);
+  const doctor = await doctorData.getDoctorById(doctorId);
+  const patient = await patientData.getPatientById(patientId);
 
-  const slots = await getDoctorSlots(appointment.doctorId, new Date(data.startTime));
+  const slots = await getDoctorSlots(doctorId, new Date(startTime));
+
   let flag = false;
   slots.forEach(slot =>{
-    if(slot[0].split(":")[0] === data.startTime.split("T")[1].split(":")[0])
+    if(slot[0].split(":")[0] === startTime.split("T")[1].split(":")[0])
       flag = true;
   })
   
@@ -106,6 +109,7 @@ const createAppointment = async (
   const newId = insertInfo.insertedId.toString();
   const appointment = await getAppointmentById(newId);
 
+  await email.sendAppointmentConfirmation({doctor,patient,appointment});
   return appointment;
 };
 
@@ -204,9 +208,9 @@ const updateAppointmentById = async (id, data) => {
   let appointmentCollection = await apCol();
 
   //check if appointment exists
-  const appointment = await getAppointmentById(id)
-  const docData = await doctorData.getDoctorById(appointment.doctorId)
-    
+  const appointment = await getAppointmentById(id);
+  const doctor = await doctorData.getDoctorById(appointment.doctorId);
+  const patient = await patientData.getPatientById(appointment.patientId);
   //if startTime... check startTime
   const slots = await getDoctorSlots(appointment.doctorId, new Date(data.startTime));
   let flag = false;
@@ -226,7 +230,11 @@ const updateAppointmentById = async (id, data) => {
     return "select a different date/time than original" ;
   }
 
-  return await getAppointmentById(id);
+  const newAppointment = await getAppointmentById(id);
+
+  await email.sendAppointmentUpdate({doctor,patient,appointment:newAppointment});
+
+  return newAppointment;
 };
 
 const getDoctorSlots = async (doctorId, date = new Date()) => {
