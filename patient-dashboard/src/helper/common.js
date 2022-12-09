@@ -1,3 +1,4 @@
+import { TestReports } from "../components/TestReports";
 
 export const isValidString = (string, parameter) =>{
     if (!string) throw new Error(`You must provide a ${parameter} `);
@@ -8,11 +9,28 @@ export const isValidString = (string, parameter) =>{
     return string;
 }
 
+export const isValidId = (id) => {
+  id = isValidString(id, "ID");
+  if (!ObjectId.isValid(id)) throw {status: '400', error : 'Invalid object ID'};
+  return id;
+}
+
 export const isValidMedicalHistory = (medicalHistory) => {
   for(let mh of medicalHistory){
+    
     isValidString(mh.disease,'disease');
+    isValidId(mh.medicalHistoryId);
     // isValidDate(mf.startDate);
     // isValidDate(mf.endDate);
+  }
+}
+
+export const isValidTestReports = (TestReport) => {
+  for(let test in TestReport)
+  {
+    isValidId(test.testReportId);
+    isValidString(test.testName,'Test Name');
+    isValidString(test.document, 'Document');
   }
 }
 

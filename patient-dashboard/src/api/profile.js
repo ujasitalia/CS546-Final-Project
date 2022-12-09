@@ -11,3 +11,7 @@ export const patch = (id,data) => {
 export const patchMedicalHistory = (patientId,data,medicalHistoryId) => {
     return axiosNoAuth.patch(`/${patientId}/medicalHistory/${medicalHistoryId}`, data)
 }
+
+export const patchTestReports = (patientId,data,testReportId) => {
+    return axiosNoAuth.patch(`/${patientId}/testReport/${testReportId}`, data)
+}

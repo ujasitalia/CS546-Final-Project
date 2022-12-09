@@ -82,7 +82,8 @@ const Profile = ({patientId}) => {
         
         <div> {patientData && aboutTab && <About patientData={patientData} handleChange={handleAbout}/> }</div>
         <div> {patientData && prescriptionsTab && <Prescriptions patientData={patientData}/> }</div>
-        <div> {patientData && medicalHistoryTab && <MedicalHistory patientData={patientData}/> }</div>        
+        <div> {patientData && medicalHistoryTab && <MedicalHistory patientData={patientData}/> }</div>
+        <div> {patientData && testReportsTab && <TestReports patientData={patientData}/> }</div>        
         {hasError && <div className="error">{error}</div>}
     </div>
   )

@@ -72,16 +72,16 @@ export const MedicalHistory = (props) => {
             <form onSubmit={validateSignUp} id={disease.medicalHistoryId}>
                 <div>
                     <div>
-                        <label for={disease.medicalHistoryId+'disease'}>Disease</label>
-                        <input placeholder="Disease" id={index+'-disease'} value={medicalHistory[index]['disease']} onChange={handleInputChange} type="text" className="disease"/>
+                        <label for={disease.medicalHistoryId+'-'+index+'-disease'}>Disease</label>
+                        <input placeholder="Disease" id={disease.medicalHistoryId+'-'+index+'-disease'} value={medicalHistory[index]['disease']} onChange={handleInputChange} type="text" className="disease"/>
                     </div>
                     <div>
-                        <label for={disease.medicalHistoryId+'startDate'}>Start Date</label>
-                        <input placeholder="Start Date" id={index+'-startDate'} value={processDate(medicalHistory[index]['startDate'])} onChange={handleInputChange} type="date" className="startDate" max={getTodaysDate()}/>
+                        <label for={disease.medicalHistoryId+'-'+index+'-startDate'}>Start Date</label>
+                        <input placeholder="Start Date" id={disease.medicalHistoryId+'-'+index+'-startDate'} value={processDate(medicalHistory[index]['startDate'])} onChange={handleInputChange} type="date" className="startDate" max={getTodaysDate()}/>
                     </div>
                     <div>
-                        <label for={disease.medicalHistoryId+'endDate'}>End Date</label>
-                        <input placeholder="End Date" id={index+'-endDate'} value={processDate(medicalHistory[index]['endDate'])} onChange={handleInputChange} type="date" className="endDate" min={medicalHistory[index]['startDate']} max={getTodaysDate()}/>
+                        <label for={disease.medicalHistoryId+'-'+index+'-endDate'}>End Date</label>
+                        <input placeholder="End Date" id={disease.medicalHistoryId+'-'+index+'-endDate'} value={processDate(medicalHistory[index]['endDate'])} onChange={handleInputChange} type="date" className="endDate" min={medicalHistory[index]['startDate']} max={getTodaysDate()}/>
                     </div>
                     <button type="submit" className="loginButton">
                         <div className="buttonBox">
