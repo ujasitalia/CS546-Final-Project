@@ -7,25 +7,23 @@ router.route("/").post(async (req, res) => {
   const data = req.body;
   // console.log(data);
   try {
-    data.doctorID = helper.common.isValidId(data.doctorID);
-    data.patientID = helper.common.isValidId(data.patientID);
+    data.doctorId = helper.common.isValidId(data.doctorId);
+    data.patientId = helper.common.isValidId(data.patientId);
     data.startTime = helper.appointment.isValidStartTime(data.startTime);
     data.appointmentLocation = helper.appointment.isValidAddress(
       data.appointmentLocation
     );
   } catch (e) {
-    console.log(e);
-    if (typeof e !== "object" || !("status" in e) || e.status === "500") {
-      console.log(e);
-      res.status(500).json(e.error);
-    } else res.status(e.status).json(e.error);
+    if (typeof e !== "object" || !("status" in e)) {
+      res.status(500).json("Internal server error");
+    } else res.status(parseInt(e.status)).json(e.error);
     return;
   }
 
   try {
     const createAppointment = await appointmentData.createAppointment(
-      data.doctorID,
-      data.patientID,
+      data.doctorId,
+      data.patientId,
       data.startTime,
       data.appointmentLocation
     );
@@ -120,29 +118,29 @@ router
     }
   });
 
-router.route("/slots/:doctorID&:day&:date").get(async (req, res) => {
-  let id = req.params.doctorID;                 
-  let day = req.params.day;
-  let date = req.params.date;  
-  try {
-    id = helper.common.isValidId(id);
-    day = helper.common.isValidString(day);
-    date = helper.common.isValidString(date);
-  } catch (e) {
-    console.log(e);
-    if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
-    else res.status(parseInt(e.status)).json(e.error);
-    return;
-  }
-  try {
-    const a = await appointmentData.getAvailableSlots(id, day, date);
-    res.json(a);
-  } catch (e) {
-    console.log(e);
-    if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
-    else res.status(parseInt(e.status)).json(e.error);
-    return;
-  }
-});
+// router.route("/slots/:doctorId&:day&:date").get(async (req, res) => {
+//   let id = req.params.doctorId;                 
+//   let day = req.params.day;
+//   let date = req.params.date;  
+//   try {
+//     id = helper.common.isValidId(id);
+//     day = helper.common.isValidString(day);
+//     date = helper.common.isValidString(date);
+//   } catch (e) {
+//     console.log(e);
+//     if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
+//     else res.status(parseInt(e.status)).json(e.error);
+//     return;
+//   }
+//   try {
+//     const a = await appointmentData.getAvailableSlots(id, day, date);
+//     res.json(a);
+//   } catch (e) {
+//     console.log(e);
+//     if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
+//     else res.status(parseInt(e.status)).json(e.error);
+//     return;
+//   }
+// });
 
 module.exports = router;

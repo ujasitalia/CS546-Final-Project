@@ -17,8 +17,21 @@ const isValidAddress = (address) =>{
     return address;
 }
 
+const isValidAppointmentDuration = (appointmentDuration) =>{
+    if(isNaN(appointmentDuration) || typeof appointmentDuration != 'number'){
+        throw {status: '400', error : 'Not a number'}
+    }
+    if(appointmentDuration%15!=0 || appointmentDuration>90)
+        throw {status: '400', error : 'Invalid Appointment Duration'}
+    return appointmentDuration;
+}
+
 const isValidSchedule = (schedule) =>{
     const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+    if(typeof schedule !== "object" || Array.isArray(schedule))
+        throw {status: '400', error : `Invalid data type for schedule`};
+
     for(let day in schedule)
     {
         for(let i=0;i<weekDays.length;i++){
@@ -42,9 +55,9 @@ const isValidSchedule = (schedule) =>{
             if(startTime.length !==2 || endTime.length !== 2)
                 throw {status: '400', error : `Invalid slot for ${day}`};
 
-            if(startTime[0].length !==2 || !startTime[0].match(/^[0-9]+$/i) || parseInt(startTime[0])>23 || startTime[1].length !==2 || !startTime[1].match(/^[0-9]+$/i) || parseInt(startTime[1])>59)
+            if(startTime[0].length !==2 || !startTime[0].match(/^[0-9]+$/i) || parseInt(startTime[0])>23 || startTime[1].length !==2 || !startTime[1].match(/^[0-9]+$/i) || parseInt(startTime[1])>59 || (parseInt(startTime[1])%15)!=0)
                 throw {status: '400', error : `Invalid slot for ${day}`};
-            if(endTime[0].length !==2 || !endTime[0].match(/^[0-9]+$/i) || parseInt(endTime[0])>23 || endTime[1].length !==2 || !endTime[1].match(/^[0-9]+$/i) || parseInt(endTime[1])>59 || parseInt(startTime[0])>parseInt(endTime[0]) || (parseInt(startTime[0])==parseInt(endTime[0]) && parseInt(startTime[1])>parseInt(endTime[1])))
+            if(endTime[0].length !==2 || !endTime[0].match(/^[0-9]+$/i) || parseInt(endTime[0])>23 || endTime[1].length !==2 || !endTime[1].match(/^[0-9]+$/i) || parseInt(endTime[1])>59 || (parseInt(endTime[1])%15)!=0 ||parseInt(startTime[0])>parseInt(endTime[0]) || (parseInt(startTime[0])==parseInt(endTime[0]) && parseInt(startTime[1])>parseInt(endTime[1])))
                 throw {status: '400', error : `Invalid slot for ${day}`};
         }    
         
@@ -71,12 +84,6 @@ const isValidDoctorData = (data) =>{
             case "clinicAddress":
                 data.clinicAddress = isValidAddress(data.clinicAddress);
                 break;
-            case "city":
-                data.city = common.isValidCity(data.city);
-                break;
-            case "state":
-                data.state = common.isValidState(data.state);
-                break;
             case "zip":
                 data.zip = common.isValidZip(data.zip);
                 break;
@@ -85,6 +92,9 @@ const isValidDoctorData = (data) =>{
                 break;
             case "schedule":
                 data.schedule = isValidSchedule(data.schedule);
+                break;
+            case "appointmentDuration":
+                data.appointmentDuration = isValidAppointmentDuration(data.appointmentDuration);
                 break;
             default:
                 throw {status: '400', error : `Invalid key - ${key}`};

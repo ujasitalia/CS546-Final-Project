@@ -20,11 +20,8 @@ const createDoctor = async(
     name,
     speciality,
     clinicAddress,
-    city,
-    state,
     zip,
     password
-    //schedule
 ) => {
     email = helper.common.isValidEmail(email);
     if(await isDoctorEmailInDb(email)) throw {status:400,error:'An account already exists with this email'};
@@ -32,11 +29,8 @@ const createDoctor = async(
     name = helper.common.isValidName(name);
     speciality = helper.doctor.isValidSpeciality(speciality);
     clinicAddress = helper.doctor.isValidAddress(clinicAddress);
-    city = helper.common.isValidCity(city);
-    state = helper.common.isValidState(state);
     zip = helper.common.isValidZip(zip);
     password = helper.common.isValidPassword(password);
-    //schedule = helper.doctor.isValidSchedule(schedule);
 
     const doctorCollection = await doctorCol();
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -46,11 +40,10 @@ const createDoctor = async(
         name,
         speciality,
         clinicAddress,
-        city,
-        state,
         zip,
         hashedPassword,
         schedule:{},
+        appointmentDuration : 30,
         rating : 0
       };
   
