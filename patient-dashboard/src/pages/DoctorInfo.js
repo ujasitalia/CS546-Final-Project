@@ -31,7 +31,7 @@ const DoctorInfo = () => {
             <li id="bookAppointment" onClick={handleTabChange}>Book Appointment</li> 
         </ul>
         {data && tab === 'detailTab' && <components.DoctorDetail doctor={data.doctor}/>}
-        {data && tab === 'doctorAvailabilityTab' && <components.DoctorAvailability doctorSchedule={data.doctor.schedule}/>}
+        {data && tab === 'doctorAvailabilityTab' && <components.DoctorAvailability doctorSchedule={data.doctor.schedule} appointmentDuration={data.doctor.appointmentDuration}/>}
         {data && tab === 'reviewTab' && <components.DoctorReviews doctorId={data.doctor._id}/>} 
         {data && tab === 'bookAppointment' && <components.BookAppointment doctor={data.doctor}/>}
     </div>

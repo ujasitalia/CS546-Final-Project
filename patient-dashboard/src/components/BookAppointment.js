@@ -81,6 +81,8 @@ const BookAppointment = (props) => {
                 return <li key={day}>{day}</li>
             })}
         </ul>
+        <br/>
+        <p>Appointment Duration : {props.doctor.appointmentDuration}</p>
         <br />
         <h4>Pick a date for your appointment</h4>
         <Form onSubmit={handleForm}>
