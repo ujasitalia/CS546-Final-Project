@@ -20,6 +20,12 @@ export const isValidEmail = (email) => {
   return email.toLowerCase();
 };
 
+export const isPasswordSame = (repassword, password) => {
+  repassword = isValidPassword(repassword);
+  if(repassword==password) return repassword
+  throw new Error('Passwords dont match')
+}
+
 export const isValidPassword = (passowrd) => {
   if (
     !passowrd.match(/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,12}$/)
@@ -28,11 +34,33 @@ export const isValidPassword = (passowrd) => {
   return passowrd;
 };
 
-export const validateSearchData = (data) => {
-  if (!data.trim()) throw new Error("Enter doctor name");
-  data = data.trim();
-  const reg = new RegExp(/[~`!@#$%^&*()_+\-=\[\]{};:'"\\|,.<>\/?0-9]/g);
-  if (reg.test(data) || data.search(/\s\s/) > 0)
-    throw new Error("Invalid doctor name");
-  return data;
-};
+export const isValidZip = (zip) => {
+    
+    if(!zip.match(/(^\d{5}$)|(^\d{5}-\d{4}$)/)) throw new Error('Invalid zip');
+    return zip;
+}
+
+export const isValidName = (inputName) => {
+  inputName = isValidString(inputName,"Name");
+  let name=inputName.split(' '); 
+  if(name.length!=2) throw new Error('Invalid name'); 
+  if(name[0].length<3)
+    throw new Error('First name should be atleast 3 character');
+  if(name[1].length<3)
+    throw new Error('Last name should be atleast 3 character');
+  if(name[0].match(/^[^a-zA-Z0-9]+$/) || (name[0].replace(/[^a-zA-Z0-9 ]/g, '').length !== name[0].length && name[0].replace(/[^a-zA-Z0-9 ]/g, '').length !== name[0].length-1))
+    throw new Error( 'Invalid first name');
+  if(name[1].match(/^[^a-zA-Z0-9]+$/) || (name[1].replace(/[^a-zA-Z0-9 ]/g, '').length !== name[1].length && name[1].replace(/[^a-zA-Z0-9 ]/g, '').length !== name[1].length-1))
+    throw new Error( 'Invalid last name');
+  if(!name[0].match(/^[a-z.'-]+$/i))
+    throw new Error('Invalid first name');
+  if(!name[1].match(/^[a-z.'-]+$/i))
+    throw new Error('Invalid last name');
+    return inputName;
+}
+
+export const isValidAge = (age) => {
+    age = parseInt(age);
+    if(!age || typeof age!='number' || age<1 || age>120 || age%1) throw new Error('Invalid age');
+    return age;
+}
