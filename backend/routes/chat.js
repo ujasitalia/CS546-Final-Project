@@ -13,7 +13,7 @@ router
       data.message = helper.chat.checkMessage(data.message);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -24,7 +24,7 @@ router
       res.json(newMessage);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -40,7 +40,7 @@ router
       data.doctorId = helper.common.isValidId(req.params.doctorId);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -51,7 +51,7 @@ router
       res.json(chatHistory);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -66,7 +66,7 @@ router
       id = helper.common.isValidId(req.params.id);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -77,7 +77,7 @@ router
       res.json(people);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
