@@ -23,7 +23,7 @@ const EditAppointment = () => {
     const fetchData = async () => {
       const response = await api.appointment.getAppointmentById(appointmentId);
       setAppointment(response.data);
-      const doctor = await api.doctor.getDoctor(response.data.doctorID)
+      const doctor = await api.doctor.getDoctor(response.data.doctorId)
       setDoctor(doctor.data)
       const schedule = Object.keys(doctor.data.schedule)
       setDays(schedule)
@@ -55,7 +55,7 @@ const EditAppointment = () => {
     e.preventDefault();
     if(!checkDate(startDate))
       return;
-    const response = await api.doctor.getDoctorSlot(appointment.doctorID, startDate.toLocaleDateString());
+    const response = await api.doctor.getDoctorSlot(appointment.doctorId, startDate.toLocaleDateString());
     const slots = response.data.filter(element =>{
       let time = element[0].split(":")
       let curTime = new Date();

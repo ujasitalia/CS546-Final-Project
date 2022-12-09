@@ -12,12 +12,12 @@ const ChatWindow = props => {
     const [user , setUser] = useState(null);
     const [chat , setChat] = useState(null);
     const scrollRef = useRef();
-    let doctorID="638ad54868dfe87d4ed59099"
+    let doctorId="638ad54868dfe87d4ed59099"
     //const {user} = useContext(authContext);
     useEffect(() =>{
         const getConversations = async () =>{
             try{
-                const res = await axios.get("http://localhost:3000/chat/"+doctorID);
+                const res = await axios.get("http://localhost:3000/chat/"+doctorId);
                 setConversations(res.data)
             }catch(e){
                 console.log(e);
@@ -28,7 +28,7 @@ const ChatWindow = props => {
     useEffect(() =>{
         const getMessages = async () =>{
             try{
-                const res = await axios.get("http://localhost:3000/chat/"+doctorID+"/"+currentChat);
+                const res = await axios.get("http://localhost:3000/chat/"+doctorId+"/"+currentChat);
                 setMessages(res.data);
             }catch(e){
                 console.log(e);
