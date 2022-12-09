@@ -12,12 +12,12 @@ const ChatWindow = props => {
     const [user , setUser] = useState(null);
     const [chat , setChat] = useState(null);
     const scrollRef = useRef();
-    let patientID="638e99f2a35941bab37f1434"
+    let patientId="638e99f2a35941bab37f1434"
     //const {user} = useContext(authContext);
     useEffect(() =>{
         const getConversations = async () =>{
             try{
-                const res = await axios.get("http://localhost:3000/chat/"+patientID);
+                const res = await axios.get("http://localhost:3000/chat/"+patientId);
                 console.log(res);
                 setConversations(res.data)
             }catch(e){
@@ -29,7 +29,7 @@ const ChatWindow = props => {
     useEffect(() =>{
         const getMessages = async () =>{
             try{
-                const res = await axios.get("http://localhost:3000/chat/"+currentChat+"/"+patientID);
+                const res = await axios.get("http://localhost:3000/chat/"+currentChat+"/"+patientId);
                 setMessages(res.data);
             }catch(e){
                 console.log(e);
@@ -80,7 +80,7 @@ const ChatWindow = props => {
                     <div className="chatBoxTop">
                         {messages.map((m) => ( 
                         <div ref={scrollRef}>
-                        <ChatEngine message={m} own={m.senderId === patientID} />
+                        <ChatEngine message={m} own={m.senderId === patientId} />
                         </div>
                         ))}
                     </div>

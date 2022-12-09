@@ -9,7 +9,7 @@ export const getAppointmentById = (id) => {
 }
 
 export const getAvailableSlots = (data) => {
-    return axiosAuth.get(`/appointment/slots/${data.doctorID}&${data.day}&${data.date}`)
+    return axiosAuth.get(`/appointment/slots/${data.doctorId}&${data.day}&${data.date}`)
 }
 
 export const updateAppointment = (data) => {
