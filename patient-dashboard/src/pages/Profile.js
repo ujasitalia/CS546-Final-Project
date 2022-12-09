@@ -6,6 +6,7 @@ import arrow from "../assets/images/arrow.svg";
 import {helper} from '../helper';
 import { About } from '../components/About';
 import { Prescriptions } from '../components/Prescriptions';
+import { MedicalHistory } from '../components/MedicalHistory';
 
 const Profile = ({patientId}) => {
 
@@ -60,6 +61,10 @@ const Profile = ({patientId}) => {
         setTestReportsTab(true);
         return
     }
+
+    const handleAbout = (aboutData) => {
+        setPatientData(aboutData);
+    }
   return (
     <div>
         <div className="blueContainer">
@@ -75,8 +80,9 @@ const Profile = ({patientId}) => {
             <li onClick={testReportsTabClick}>Test Reports</li>
         </ul>
         
-        <div> { aboutTab && <About patientData={patientData}/> }</div>
-        <div> { prescriptionsTab && <Prescriptions patientData={patientData}/> }</div>        
+        <div> {patientData && aboutTab && <About patientData={patientData} handleChange={handleAbout}/> }</div>
+        <div> {patientData && prescriptionsTab && <Prescriptions patientData={patientData}/> }</div>
+        <div> {patientData && medicalHistoryTab && <MedicalHistory patientData={patientData}/> }</div>        
         {hasError && <div className="error">{error}</div>}
     </div>
   )

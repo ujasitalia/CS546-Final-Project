@@ -26,7 +26,7 @@ export const About = (props) => {
             setAge(props.patientData.age);
             setZip(props.patientData.zip);
         }
-    })
+    },[])
     const validateSignUp = async (e) =>{
         e.preventDefault();
         try
@@ -41,9 +41,11 @@ export const About = (props) => {
         }
         
         try{
-            const data = { "age":age, "name": fullName, "zip":zip,"profilePicture":"nopic","city":"Hoboken","state":"New Jersey"}
+            const data = { "age":helper.common.isValidAge(age), "name": fullName, "zip":zip,"profilePicture":"nopic","city":"Hoboken","state":"New Jersey"}
             const response = await api.profile.patch(props.patientData._id,data);
             console.log(response);
+            props.handleChange(response.data);
+            setHasError(false);
         }catch(e){
             setHasError(true);
             setError(e.response.data);
@@ -54,20 +56,27 @@ export const About = (props) => {
     <div>
         
        <form onSubmit={validateSignUp}>
-            <div className="emailText">Name</div>
-            <input placeholder="Patrik Hill" id="aboutName" value={fullName} onChange={handleInputChange} type="text" className="loginInput" autoFocus/>
+            <div className="emailText">
+                <label for='aboutName'>Name</label>
+                <input placeholder="Patrik Hill" id="aboutName" value={fullName} onChange={handleInputChange} type="text" className="loginInput" autoFocus/>
+            </div>
             <br/>
-            <div className="emailText">Age</div>
-            <input placeholder="XX years" id="aboutAge" value={age} onChange={handleInputChange} type="number" className="loginInput" autoFocus/>
+            <div className="emailText">
+                <label for='aboutAge'>Age</label>
+                <input placeholder="XX years" id="aboutAge" value={age} onChange={handleInputChange} type="number" className="loginInput" />
+            </div>
             <br/>
-            <div className="emailText">Zip</div>
-            <input placeholder="07307" id="aboutZip" value={zip} onChange={handleInputChange} type="number" className="loginInput" autoFocus/>
+            <div className="emailText">
+                <label for='aboutZip'>Zip</label>
+                <input placeholder="07307" id="aboutZip" value={zip} onChange={handleInputChange} type="number" className="loginInput" />
+            </div>
             <br/>
             <button type="submit" className="loginButton">
                 <div className="buttonBox">
                     <img src={arrow} className="arrow" loading="lazy" alt="logo" />
                 </div>
             </button>
+            {hasError && <div className="error">{error}</div>}
         </form>
     </div>
   )

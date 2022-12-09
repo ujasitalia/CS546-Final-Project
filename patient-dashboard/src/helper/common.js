@@ -1,10 +1,19 @@
+
 export const isValidString = (string, parameter) =>{
-    if (!string) throw new Error(`You must provide an ${parameter} to search for`);
+    if (!string) throw new Error(`You must provide a ${parameter} `);
     if (typeof string !== 'string') throw new Error(`${parameter} must be a string`);
     string = string.trim()
     if (string.length === 0)
       throw new Error(`${parameter} cannot be an empty string or just spaces`);
     return string;
+}
+
+export const isValidMedicalHistory = (medicalHistory) => {
+  for(let mh of medicalHistory){
+    isValidString(mh.disease,'disease');
+    // isValidDate(mf.startDate);
+    // isValidDate(mf.endDate);
+  }
 }
 
 export const isValidEmail = (email) => {
