@@ -18,6 +18,11 @@ export const DoctorAvailability = (props) => {
   }
   return (
     <div>
+      <br/>
+      Appointment Duration : {props.appointmentDuration}
+      <br/>
+      <br/>
+      Schedule
       {getAvailability()}
     </div>
   )

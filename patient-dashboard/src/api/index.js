@@ -6,8 +6,6 @@ import * as signup from "./signup"
 
 const api = {
     login,
-    search, 
-    filter,
     doctor,
     appointment,
     patient,

@@ -6,7 +6,9 @@ import {helper} from '../helper';
 const Availability = (props) => {
   const week = ["monday", "tuesday", "wednesday", "thursday", "friday"];
   const [schedule, setSchedule] = useState(props.doctorSchedule);
+  const [appointmentDuration, setAppointmentDuration] = useState(props.appointmentDuration);
   const [slots, setSlots] =  useState({});
+  const [hasSuccessMessage, setHasSuccessMessage] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [error, setError] = useState('');
 
@@ -32,7 +34,7 @@ const Availability = (props) => {
 
   const getStartTime = (day, index, start, end, prev) =>{
     return(
-      <div>
+      <>
         Start Time:
         <select name="hour" id={`${day}-hour-start-${index}`} onChange={handleInputChange}>
         {prev ? getHour(prev[0], end[0]).map(option => {
@@ -60,13 +62,13 @@ const Availability = (props) => {
             return (<option value={option}> {option} </option>);
         })}
         </select>  
-      </div>
+      </>
     );
   }
 
   const getEndTime = (day, index, start, end, next) =>{
     return(
-      <div>
+      <>
         End Time:
         <select name="hour" id={`${day}-hour-end-${index}`} onChange={handleInputChange}>
         {(next) ? getHour(parseInt(start[0]+1),next[0]+1).map(option => {
@@ -101,7 +103,7 @@ const Availability = (props) => {
           return (<option value={option}> {option} </option>);
         })}
         </select>  
-      </div>
+      </>
     );
   }
 
@@ -130,29 +132,26 @@ const Availability = (props) => {
     week.forEach( day => {
       if(slots[day])
       {
-        let child = []
-        slots[day].map( (slot, index) => {
+        let child = slots[day].map( (slot, index) => {
           const start = slot[0];
           const end = slot[1];
-          child.push(
+          return (
             <div id={`${day}-availability-${index}`}>
-              <button type="button" id={`${day}-deleteAvailability-${index}`} onClick={deletAvailability}>Delete Availability</button>
-              <br/>
               {slots[day][index-1] ? getStartTime(day, index, start, end, slots[day][index-1][1]) : getStartTime(day, index, start, end)}
-              <br/>
               {slots[day][index+1] ? getEndTime(day, index, start, end, slots[day][index+1][0]) : getEndTime(day, index, start, end)}
+              <button type="button" id={`${day}-deleteAvailability-${index}`} onClick={deletAvailability}>Delete Availability</button>
             </div>
           )
         })
         daysCards.push(<div className={day}>
-          {day}
+          {day + " : "}
           {child}
           {!(slots[day][slots[day].length-1][0][0]===slots[day][slots[day].length-1][1][0] && slots[day][slots[day].length-1][0][1]===slots[day][slots[day].length-1][1][1])&& slots[day][slots[day].length-1][1][0]!==20 && <button type="button" id={`addSlot-${day}`} onClick={addAvailability}>Add Availability</button>}
         </div>)
       }else{
         daysCards.push(
           <div className={day}>
-            {day}
+            {day + " : "}
             <div>No Availability</div>
             <button type="button" id={`addSlot-${day}`} onClick={addAvailability}>Add Availability</button>
           </div>
@@ -176,7 +175,23 @@ const Availability = (props) => {
     return minute;
   }
 
+  const getAppointmentDurations = () =>{
+    let durations = [];
+    for(let i=15;i<91;i+=15)
+      durations.push(i);
+    return durations;
+  }
+
   const handleInputChange = (e) => {
+    if(hasSuccessMessage)
+      setHasSuccessMessage(false);
+    if(hasError)
+      setError(false);
+    if(e.target.id === "appointmentDurations")
+    {
+      setAppointmentDuration(e.target.value);
+      return;
+    }
     let slot = {...slots};
     let change  = e.target.id.split("-");
     if(change[2]==="start")
@@ -224,8 +239,11 @@ const Availability = (props) => {
   const validateSchedule = async (e) =>{
     e.preventDefault();
     let newSchedule = createNewSchedule();
+    let duration;
     try
     {
+      duration = helper.common.isValidAppointmentDuration(appointmentDuration)
+      setAppointmentDuration(duration);
       setSchedule(helper.common.isValidSchedule(newSchedule));
     }catch(e){
       setHasError(true);
@@ -234,13 +252,15 @@ const Availability = (props) => {
     }
     
     try{
-      const data = {schedule:newSchedule}
+      const data = {schedule:newSchedule, appointmentDuration:duration}
       const response = await api.doctor.updateDoctor(props.doctorId, data);
       // console.log(response);
       setHasError(false);
+      setHasSuccessMessage(true);
       setAvaibility(response.data.schedule);
       props.handleAvailabilityChange(response.data);
     }catch(e){
+      setHasSuccessMessage(false);
       setHasError(true);
       console.log(typeof e);
       if(!e.response)
@@ -253,15 +273,29 @@ const Availability = (props) => {
 
   return (
     <div className="scheduleCard">
+        {hasSuccessMessage && <div className='successMessage'>Successfully updated</div>}
+        {hasError && <div className="error">{error}</div>}
+        <br/>
         <form onSubmit={validateSchedule}>
+        <label htmlFor='appointmentDurations'>Appointment Duration : </label>
+        <select name='appointmentDurations' id='appointmentDurations' value={appointmentDuration} onChange={handleInputChange}>
+            {getAppointmentDurations().map((element, index)=>{
+              return <option value={element} key={index}> {element} </option>
+            })}
+        </select>
+        <br/>
+        <br/>
+        <label htmlFor=''>
+            Schedule : 
+        </label>
           {getSchedule()}
+          <br/>
             <button type="submit" className="button">
                 <div className="buttonBox">
                     <img src={arrow} className="arrow" loading="lazy" alt="logo" />
                 </div>
             </button>
         </form>
-        {hasError && <div className="error">{error}</div>}
     </div>
   )
 }
