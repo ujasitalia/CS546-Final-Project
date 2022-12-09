@@ -1,0 +1,1 @@
+export const specialities = ['Cardiologist', 'General Physician', 'Dentist', 'Orthopedic', 'Pediatrician', 'Gynecologist', 'MBBS']

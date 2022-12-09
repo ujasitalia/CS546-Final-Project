@@ -1,5 +1,7 @@
+import { specialities } from "./constants";
+
 export const isValidString = (string, parameter) =>{
-    if (!string) throw new Error(`You must provide an ${parameter} to search for`);
+    if (!string) throw new Error(`You must provide a ${parameter} to search for`);
     if (typeof string !== 'string') throw new Error(`${parameter} must be a string`);
     string = string.trim()
     if (string.length === 0)
@@ -16,9 +18,15 @@ export const isValidEmail = (email) => {
     return email.toLowerCase();
 }
 
+export const isPasswordSame = (repassword, password) => {
+  repassword = isValidPassword(repassword);
+  if(repassword==password) return repassword
+  throw new Error('Passwords dont match')
+}
+
 export const isValidPassword = (passowrd) => {
     if(!passowrd.match(/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,12}$/))
-        throw new Error('Invalid Password');
+        throw new Error('Invalid password');
     return passowrd
 }
 
@@ -86,4 +94,13 @@ export const isValidSchedule = (schedule) =>{
         }    
     }
     return schedule;
+}
+
+export const isValidSpeciality = (speciality) =>{
+  speciality = isValidString(speciality, "Speciality");
+
+  for(let i=0;i<speciality.length;i++)
+      if(speciality.toLowerCase() === specialities[i].toLowerCase())
+          return specialities[i];
+  throw new Error( "Invalid Speciality");
 }

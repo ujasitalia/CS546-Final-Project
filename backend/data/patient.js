@@ -12,8 +12,10 @@ const isPatientEmailInDb = async(email) => {
   email=commonHelper.isValidEmail(email).toLowerCase();
   const patientCollection = await patients();
   const patientInDb = await patientCollection.findOne({email:email});
-  if (patientInDb === null) return false;
-  return true;
+  if (patientInDb == null) 
+    return false;
+  else 
+    return true;
 }
   
 const createPatient = async (email,age,profilePicture,name,city,state,zip,password) => {
