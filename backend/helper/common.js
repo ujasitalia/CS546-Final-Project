@@ -38,7 +38,7 @@ const isValidPassword = (passowrd) => {
 
 const isValidZip = (zip) => {
     
-    if(!zip.match(/(^\d{5}$)|(^\d{5}-\d{4}$)/)) throw {status:400, error:'Invalid zip'};
+    if(!zip.match(/(^\d{5}$)|(^\d{5}-\d{4}$)/)) throw {status:"400", error:'Invalid zip'};
     return zip;
 }
 

@@ -3,6 +3,7 @@ const mongoCollections = require('../config/mongoCollections');
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 const doctorCol = mongoCollections.doctor;
+const commonHelper = require('../helper/common')
 const {ObjectId} = require('mongodb');
 
 const isDoctorEmailInDb = async(email) => {
@@ -17,25 +18,19 @@ const createDoctor = async(
     email,
     profilePicture,
     name,
-    specialty,
+    speciality,
     clinicAddress,
-    city,
-    state,
     zip,
-    password,
-    schedule
+    password
 ) => {
     email = helper.common.isValidEmail(email);
-    if(isDoctorEmailInDb(email)) throw {Status:400,error:'An account already exists with this email'};
+    if(await isDoctorEmailInDb(email)) throw {status:400,error:'An account already exists with this email'};
     profilePicture = helper.common.isValidFilePath(profilePicture);
     name = helper.common.isValidName(name);
-    specialty = helper.doctor.isValidSpecialty(specialty);
+    speciality = helper.doctor.isValidSpeciality(speciality);
     clinicAddress = helper.doctor.isValidAddress(clinicAddress);
-    city = helper.common.isValidCity(city);
-    state = helper.common.isValidState(state);
     zip = helper.common.isValidZip(zip);
     password = helper.common.isValidPassword(password);
-    schedule = helper.doctor.isValidSchedule(schedule);
 
     const doctorCollection = await doctorCol();
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -43,13 +38,12 @@ const createDoctor = async(
         email,
         profilePicture,
         name,
-        specialty,
+        speciality,
         clinicAddress,
-        city,
-        state,
         zip,
         hashedPassword,
-        schedule,
+        schedule:{},
+        appointmentDuration : 30,
         rating : 0
       };
   
@@ -110,13 +104,13 @@ const getAllDoctor = async () => {
       delete data.password;
     }
 
-    const updatedInfo = await doctorCollection.updateOne(
+    const updatedInfo = await doctorCollection.updateMany(
       {_id: ObjectId(doctorId)},
       {$set: data}
     );
       
     if (updatedInfo.modifiedCount === 0) {
-      throw {status: '400', error : 'could not update doctor successfully'};
+      throw {status: '400', error : 'could not update because values are same as previous one'};
     }
   
     const doctor = await getDoctorById(doctorId);

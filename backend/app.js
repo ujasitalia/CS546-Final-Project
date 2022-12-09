@@ -14,17 +14,20 @@ app.use('/', (req, res, next) => {
       let token  = req.headers.authorization;
       token = token.split(" ")[1];
       if (!token) {
-        return res.status(403).json('Forbidden');
+        res.status(403).json('Forbidden');
+        return;
       } else {
         const decoded = jwt.verify(token, "pd");
         req.user = decoded;
         next();
+        return;
       }
     }catch(e){
-      return res.status(403).json('Forbidden');
+      res.status(403).json('Forbidden')
+      return;
     }
   }
-  next()
+  next();
 });
 
 

@@ -5,19 +5,41 @@ const {ObjectId} = require('mongodb');
 const patient = require('./patient');
 const doctor = require('./doctor');
 
-const getAllchat = async (doctorID, patientID) => {
-    doctorID = helper.common.isValidId(doctorID);
-    patientID = helper.common.isValidId(patientID);
+const getAllchat = async (doctorId, patientId) => {
+    doctorId = helper.common.isValidId(doctorId);
+    patientId = helper.common.isValidId(patientId);
 
-    await doctor.getDoctorById(doctorID);
-    await patient.getPatientById(patientID);
+    await doctor.getDoctorById(doctorId);
+    await patient.getPatientById(patientId);
     const chatCollection = await chatCol();
 
-    const chatHistory = await chatCollection.find( {$or : [{receiverId: ObjectId(doctorID), senderId: ObjectId(patientID)}, {receiverId: ObjectId(patientID),senderId: ObjectId(doctorID)}] }).toArray();
+    const chatHistory = await chatCollection.find( {$or : [{receiverId: ObjectId(doctorId), senderId: ObjectId(patientId)}, {receiverId: ObjectId(patientId),senderId: ObjectId(doctorId)}] }).toArray();
   
     if (!chatHistory) throw {status: '404', error : 'Could not get chat'};
   
     return chatHistory;
+  }
+
+  const getPeople = async (userId) => {
+    userId = helper.common.isValidId(userId);
+    const chatCollection = await chatCol();
+
+    const chatHistory = await chatCollection.find( {$or : [{receiverId: ObjectId(userId)}, {senderId: ObjectId(userId)}] }).toArray();
+    let people = [];
+    for(var message in chatHistory){
+        if(chatHistory[message].senderId.toString() == userId.toString()){
+            if(!people.includes(chatHistory[message].receiverId.toString())){
+            people.push(chatHistory[message].receiverId.toString());
+            }
+        }
+        if(chatHistory[message].receiverId.toString() == userId.toString()){
+            if(!people.includes(chatHistory[message].senderId.toString())){
+            people.push(chatHistory[message].senderId.toString());
+            }
+        }
+    }
+    if (people.length ==0) throw {status: '404', error : 'Could not get chat history'};
+    return people;
   }
 
 const createChat = async (senderId, receiverId, message) => {
@@ -52,5 +74,6 @@ const createChat = async (senderId, receiverId, message) => {
 
 module.exports = {
     getAllchat,
-    createChat
+    createChat,
+    getPeople
 };

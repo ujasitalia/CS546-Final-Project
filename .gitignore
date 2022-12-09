@@ -1,2 +1,7 @@
 /backend/node_modules
 /backend/config/settings.json
+/backend/package-lock.json
+/doctor-dashboard/node_modules
+/patient-dashboard/node_modules
+/patient-dashboard/package-lock.json
+/doctor-dashboard/package-lock.json

@@ -1,7 +1,8 @@
 const commonHelper = require('./common');
 
 const isValidAge = (age) => {
-    if(!age || typeof age!='number' || age<1 || age>120 || age%1) throw {status:400, error:'Invalid age'};
+    age = parseInt(age)
+    if(!age || typeof age!='number' || age<1 || age>120 || age%1) throw {status:"400", error:'Invalid age'};
     return age;
 }
 
@@ -19,7 +20,7 @@ const isValidPatientUpdate = (body) => {
             }
         }
         if(flag) continue;
-        else throw {code:400, error:`Invalid update field for patient - ${bodyField}`};
+        else throw {code:"400", error:`Invalid update field for patient - ${bodyField}`};
     }
     
     for(let bodyField in body)

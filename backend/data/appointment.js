@@ -5,10 +5,7 @@ const apCol = mongoCollections.appointment;
 const doctorData = require("./doctor");
 const patientData = require("./patient")
 
-const getAvailableSlots = async (id, day) => {
-  // get doctor's schedule, get all appointment that were booked ( get all doctor's appointments), get the available slots
-
-  
+const getAvailableSlots = async (id, day, date) => {  
   const appointments = await getDoctorAppointments(id)
   
   const docData = await doctorData.getDoctorById(id)
@@ -27,18 +24,20 @@ const getAvailableSlots = async (id, day) => {
   for (i of appointments){   
     // console.log(i.startTime); 
     let startTime = i.startTime
+    const da = i.startTime.split('T')[0]
     const d = weekdays[new Date(startTime).getDay()].toLocaleLowerCase();
     // console.log(d);
-    if(d === day.toLocaleLowerCase()){
+    if(d === day.toLocaleLowerCase() && da === date){
+      // console.log(da);
       const t = startTime.slice(11, 16);
       const [time, modifier] = t.split(" ");
       let [hours, minutes] = time.split(":");
-      if (hours === "12") {
-        hours = "00";
-      }
-      if (modifier === "PM") {
-        hours = parseInt(hours, 10) + 12;
-      }
+      // if (hours === "24") {
+      //   hours = "00";
+      // }
+      // if (modifier === "PM") {
+      //   hours = parseInt(hours, 10) + 12;
+      // }
       const apTime = hours + ":" + minutes;
       timeSlotsTaken.push(apTime)
     }
@@ -66,62 +65,35 @@ const getAvailableSlots = async (id, day) => {
 
 
 const createAppointment = async (
-  doctorID,
-  patientID,
+  doctorId,
+  patientId,
   startTime,
   appointmentLocation
 ) => {
   //verify data using helper functions
-  doctorID = helper.common.isValidId(doctorID);
-  patientID = helper.common.isValidId(patientID);
+  doctorId = helper.common.isValidId(doctorId);
+  patientId = helper.common.isValidId(patientId);
   startTime = helper.appointment.isValidStartTime(startTime);
   appointmentLocation = helper.appointment.isValidAddress(appointmentLocation);
 
   //get doctor data to verify the time and day
-  const docData = await doctorData.getDoctorById(doctorID);
+  await doctorData.getDoctorById(doctorId);
 
-  //verify if startTime has valid day
-  const weekdays = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-  const day = weekdays[new Date(startTime).getDay()].toLocaleLowerCase();
-  if (!Object.keys(docData.schedule).includes(day))
-    throw { status: "400", error: `Doctor is not available on ${day}` };
-
-  //check for slots
-  const t = startTime.slice(11, 16);
-  const [time, modifier] = t.split(" ");
-  let [hours, minutes] = time.split(":");
-  if (hours === "12") {
-    hours = "00";
-  }
-  if (modifier === "PM") {
-    hours = parseInt(hours, 10) + 12;
-  }
-  const apTime = hours + ":" + minutes;
-
-  let flag = 0;
-  const docScheduleForThatDay = docData.schedule[day];
-  docScheduleForThatDay.forEach((sch) => {
-    if (apTime >= sch[0] && apTime < sch[1]) {
-      flag = 1;
-    }
-  });
-  if (flag === 0)
-    throw { status: "400", error: `doctor is not available during ${apTime}` };
-
+  const slots = await getDoctorSlots(appointment.doctorId, new Date(data.startTime));
+  let flag = false;
+  slots.forEach(slot =>{
+    if(slot[0].split(":")[0] === data.startTime.split("T")[1].split(":")[0])
+      flag = true;
+  })
+  
+  if(!flag)
+    throw { status: "400", error: `slot not available` };
   //if everything is fine get appointment collection and create a new appointment
   const appointmentCollection = await apCol();
 
   const newAppointment = {
-    doctorID,
-    patientID,
+    doctorId,
+    patientId,
     startTime,
     appointmentLocation,
   };
@@ -129,7 +101,7 @@ const createAppointment = async (
   const insertInfo = await appointmentCollection.insertOne(newAppointment);
 
   if (!insertInfo.acknowledged || !insertInfo.insertedId)
-    throw { status: "500", error: "Could not add appointment" };
+    return "Could not add appointment"
 
   const newId = insertInfo.insertedId.toString();
   const appointment = await getAppointmentById(newId);
@@ -146,15 +118,15 @@ const getDoctorAppointments = async (id) => {
   const appointmentCollection = await apCol();
   
   const appointments = await appointmentCollection
-  .find({ doctorID: id })
+  .find({ doctorId: id })
   .toArray();  
 
   if (!appointments)
     throw { status: "404", error: "No apoointments for doctor with that id" };
 
   appointments.forEach((a) => {
-    a.doctorID = a.doctorID.toString();
-    a.patientID = a.patientID.toString();
+    a.doctorId = a.doctorId.toString();
+    a.patientId = a.patientId.toString();
   });
 
   return appointments;
@@ -169,15 +141,15 @@ const getPatientAppointment = async (id) => {
   const appointmentCollection = await apCol();
   
   const appointments = await appointmentCollection
-  .find({ patientID: id })
+  .find({ patientId: id })
   .toArray();  
 
   if (!appointments)
     throw { status: "404", error: "No apoointments for doctor with that id" };
 
   appointments.forEach((a) => {
-    a.doctorID = a.doctorID.toString();
-    a.patientID = a.patientID.toString();
+    a.doctorId = a.doctorId.toString();
+    a.patientId = a.patientId.toString();
   });
 
   return appointments;
@@ -233,53 +205,25 @@ const updateAppointmentById = async (id, data) => {
 
   //check if appointment exists
   const appointment = await getAppointmentById(id)
-  const docData = await doctorData.getDoctorById(appointment.doctorID)
+  const docData = await doctorData.getDoctorById(appointment.doctorId)
     
   //if startTime... check startTime
-  if(Object.keys(data).includes("startTime")) {
-    const weekdays = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    const day = weekdays[new Date(data.startTime).getDay()].toLocaleLowerCase();
-    if (!Object.keys(docData.schedule).includes(day))
-      throw { status: "400", error: `Doctor is not available on ${day}` };
-
-    //check for slots
-    const t = data.startTime.slice(11, 16);
-    const [time, modifier] = t.split(" ");
-    let [hours, minutes] = time.split(":");
-    if (hours === "12") {
-      hours = "00";
-    }
-    if (modifier === "PM") {
-      hours = parseInt(hours, 10) + 12;
-    }
-    const apTime = hours + ":" + minutes;
-
-    flag = 0;
-    const docScheduleForThatDay = docData.schedule[day];
-    docScheduleForThatDay.forEach((sch) => {
-      if (apTime >= sch[0] && apTime < sch[1]) {
-        flag = 1;
-      }
-    });
-    if (flag === 0)
-      throw { status: "400", error: `doctor is not available during ${apTime}` };
-  }
+  const slots = await getDoctorSlots(appointment.doctorId, new Date(data.startTime));
+  let flag = false;
+  slots.forEach(slot =>{
+    if(slot[0].split(":")[0] === data.startTime.split("T")[1].split(":")[0])
+      flag = true;
+  })
+  
+  if(!flag)
+    throw { status: "400", error: `slot not available` };
 
   const updatedInfo = await appointmentCollection.updateOne(
     { _id: ObjectId(id) },
     { $set: data }
   );
-
   if (updatedInfo.modifiedCount === 0) {
-    throw { status: "400", error: "could not update appointment successfully" };
+    return "select a different date/time than original" ;
   }
 
   return await getAppointmentById(id);
@@ -287,7 +231,6 @@ const updateAppointmentById = async (id, data) => {
 
 const getDoctorSlots = async (doctorId, date = new Date()) => {
   const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-  const slotSize = 30;
   const doctor = await doctorData.getDoctorById(doctorId);
 
   if(date.getDay()>5)
@@ -295,6 +238,7 @@ const getDoctorSlots = async (doctorId, date = new Date()) => {
 
   const day = weekDays[date.getDay() - 1];
   const schedule = doctor.schedule[day.toLowerCase()];
+  const slotSize = doctor.appointmentDuration;
 
   if(!schedule)
     return [];
@@ -331,7 +275,7 @@ const getDoctorSlots = async (doctorId, date = new Date()) => {
     endTime[1] = parseInt(endTime[1]);
     while(1)
     {
-      if((startTime[1] + slotSize < 60 && startTime[0]==endTime[0] && startTime[1] + slotSize > endTime[1]) || (startTime[1] + slotSize > 59 && (startTime[0]==endTime[0] || (startTime[0]+1 == endTime[0] && (startTime[1] + slotSize > 60)%60 > endTime[1]))))
+      if((startTime[1] + slotSize < 60 && startTime[0]==endTime[0] && startTime[1] + slotSize > endTime[1]) || (startTime[1] + slotSize > 59 && (startTime[0]==endTime[0] || (startTime[0]+parseInt((startTime[1] + slotSize)/60) > endTime[0]) || (startTime[0]+parseInt((startTime[1] + slotSize)/60) == endTime[0] && (startTime[1] + slotSize > 60) && (startTime[1] + slotSize)%60 >= endTime[1]))))
         break;
       if(startTime[1] + slotSize < 60)
       {
@@ -340,8 +284,8 @@ const getDoctorSlots = async (doctorId, date = new Date()) => {
         startTime[1] += slotSize; 
       }else{
         if(isAppointmentNotExistInSlot(startTime[0], startTime[1]))
-          slot = [...slot, [startTime[0].toString().padStart(2, '0') + ':' + startTime[1].toString().padStart(2, '0'), (startTime[0] + 1).toString().padStart(2, '0') + ':' + ((startTime[1] + slotSize)%60).toString().padStart(2, '0')]];
-        startTime[0] += 1;
+          slot = [...slot, [startTime[0].toString().padStart(2, '0') + ':' + startTime[1].toString().padStart(2, '0'), (startTime[0] + parseInt((startTime[1] + slotSize)/60)).toString().padStart(2, '0') + ':' + ((startTime[1] + slotSize)%60).toString().padStart(2, '0')]];
+        startTime[0] += parseInt((startTime[1] + slotSize)/60);
         startTime[1] = (startTime[1] + slotSize)%60; 
       }
     }

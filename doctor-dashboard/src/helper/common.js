@@ -30,8 +30,14 @@ export const isValidPassword = (passowrd) => {
     return passowrd
 }
 
+export const isValidAddress = (address) =>{
+    address = isValidString(address, "Address");
+    if(!address.match(/^[a-zA-Z0-9 \s,.'-]{3,}$/))
+        throw new Error('Invalid Address');
+    return address;
+}
+
 export const isValidZip = (zip) => {
-    
     if(!zip.match(/(^\d{5}$)|(^\d{5}-\d{4}$)/)) throw new Error('Invalid zip');
     return zip;
 }
@@ -55,10 +61,39 @@ export const isValidName = (inputName) => {
     return inputName;
 }
 
-export const isValidAge = (age) => {
-    age = parseInt(age);
-    if(!age || typeof age!='number' || age<1 || age>120 || age%1) throw new Error('Invalid age');
-    return age;
+export const isValidSchedule = (schedule) =>{
+    const weekDays = ["monday", "tuesday", "wednesday", "thursday", "friday"];
+    for(let day in schedule)
+    {
+        for(let i=0;i<weekDays.length;i++){
+            if(weekDays[i].toLowerCase() === day.toLowerCase())
+                break;
+            else if(weekDays.length-1 === i)
+                throw new Error('Invalid day in schedule');
+        }
+        if(!Array.isArray(schedule[day]))
+            throw new Error(`Invalid data type in slot for ${day}`);
+        for(let i=0;i<schedule[day].length;i++)
+        {            
+            if(schedule[day][i].length!==2)
+                throw new Error(`Invalid slot for ${day}`);
+
+            schedule[day][i][0] = isValidString(schedule[day][i][0]);
+            schedule[day][i][1] = isValidString(schedule[day][i][1]);
+
+            const startTime = schedule[day][i][0].split(':');
+            const endTime = schedule[day][i][1].split(':');
+
+            if(startTime.length !==2 || endTime.length !== 2)
+                throw new Error(`Invalid slot for ${day}`);
+
+            if(startTime[0].length !==2 || !startTime[0].match(/^[0-9]+$/i) || parseInt(startTime[0])>23 || startTime[1].length !==2 || !startTime[1].match(/^[0-9]+$/i) || parseInt(startTime[1])>59)
+                throw new Error(`Invalid slot for ${day}`);
+            if(endTime[0].length !==2 || !endTime[0].match(/^[0-9]+$/i) || parseInt(endTime[0])>23 || endTime[1].length !==2 || !endTime[1].match(/^[0-9]+$/i) || parseInt(endTime[1])>59 || parseInt(startTime[0])>parseInt(endTime[0]) || (parseInt(startTime[0])===parseInt(endTime[0]) && parseInt(startTime[1])>parseInt(endTime[1])))
+                throw new Error(`Invalid slot for ${day}`);
+        }    
+    }
+    return schedule;
 }
 
 export const isValidSpeciality = (speciality) =>{
@@ -68,11 +103,4 @@ export const isValidSpeciality = (speciality) =>{
       if(speciality.toLowerCase() === specialities[i].toLowerCase())
           return specialities[i];
   throw new Error( "Invalid Speciality");
-}
-
-export const isValidAddress = (address) =>{
-  address = isValidString(address, "Address");
-  if(!address.match(/^[a-zA-Z0-9 \s,.'-]{3,}$/))
-      throw new Error( 'Invalid Address')
-  return address;
 }
