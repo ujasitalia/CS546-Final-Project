@@ -1,12 +1,14 @@
 import Login from "./Login";
 import Dashboard from "./Dashboard";
 import DoctorInfo from "./DoctorInfo";
-import Profile from './Profile';
+import MyAppointment from './MyAppointment'; 
+import EditAppointment from './EditAppointment'
 
 const pages = {
     Login,
     Dashboard,
     DoctorInfo,
-    Profile,
+    MyAppointment,
+    EditAppointment,
 }
 export { pages }

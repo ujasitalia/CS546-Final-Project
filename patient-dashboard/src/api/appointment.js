@@ -22,3 +22,7 @@ export const updateAppointment = (data) => {
 export const createAppointment = (data) => {
     return axiosAuth.post('/appointment', data)
 }
+
+export const deleteAppointment = (id) => {
+    return axiosAuth.delete(`/appointment/${id}`)
+}

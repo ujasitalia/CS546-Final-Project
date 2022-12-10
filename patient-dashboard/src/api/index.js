@@ -5,8 +5,6 @@ import * as patient from "./patient"
 
 const api = {
     login,
-    search, 
-    filter,
     doctor,
     appointment,
     patient,

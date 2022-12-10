@@ -79,11 +79,11 @@ const createAppointment = async (
   //get doctor data to verify the time and day
   await doctorData.getDoctorById(doctorID);
 
-  const slots = await getDoctorSlots(appointment.doctorID, new Date(data.startTime));
+  const slots = await getDoctorSlots(doctorID, new Date(startTime));
   let flag = false;
   slots.forEach(slot =>{
-    if(slot[0].split(":")[0] === data.startTime.split("T")[1].split(":")[0])
-      flag = true;
+    if(slot[0].split(":")[0] === startTime.split("T")[1].split(":")[0])
+      flag = true
   })
   
   if(!flag)

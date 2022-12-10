@@ -46,6 +46,7 @@ const Dashboard = () => {
     return (
         <div>
           <components.Navbar handleSearch={handleSearch}/>
+          <components.SecondaryNavbar/>
           <div>
           {filteredDoctors !== '' 
             ? <div className="doctorsContainer">

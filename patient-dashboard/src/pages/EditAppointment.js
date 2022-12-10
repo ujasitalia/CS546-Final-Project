@@ -7,21 +7,22 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Chat from '../chat'
 
 const EditAppointment = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [appointment, setAppointment] = useState("");
-  // const [day, setDay] = useState("monday");
-  const [availableSlots, setAvailableSlots] = useState([]);
   const [days,setDays] = useState([])
   const [doctor, setDoctor] = useState('')
+  const [availableSlots, setAvailableSlots] = useState([]);
+//   const [days,setDays] = useState([])
+//   const [doctor, setDoctor] = useState('')
   const [updatedSlot, setUpdatedSlot] = useState('')
   const [startDate, setStartDate] = useState(new Date());
   const [hasError, setHasError] = useState(false);
   const [notUpdated, setNotUpdated] = useState(false);
   const [noAvailableSlots, setNoAvailableSlots] = useState(false)
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,8 +34,8 @@ const EditAppointment = () => {
       const doctor = await api.doctor.getDoctor(response.data.doctorID)
       setDoctor(doctor.data)
       const schedule = Object.keys(doctor.data.schedule)
-    //   console.log(schedule);
-    setDays(schedule)
+      setDays(schedule)
+    //   console.log(schedule);        
     };
     if (!appointment) {
       fetchData();
@@ -70,7 +71,7 @@ const EditAppointment = () => {
       const slots = response.data.filter(element =>{
         let time = element[0].split(":")
         let curTime = new Date();
-        if((startDate.getDate() !== curTime.getDate()) || (parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes())))
+        if(parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes()))
           return element;
       })
       setAvailableSlots(slots);
@@ -95,17 +96,23 @@ const EditAppointment = () => {
     }
     else{
         setNotUpdated(false)
-        navigate("/dashboard", {state : {doctor : doctor} });
+        navigate("/myAppointments", {state : {doctor : doctor} });
     }
   }
 
-  return (
-    <>
-      <components.Navbar />
-      <br />
-      {appointment ? (
-        <>
-            <h2 style={{position:"center"}}>Edit Appointment</h2>
+  const handleCancel = async (e) => {
+    e.preventDefault()
+    const cancelRequest = await api.appointment.deleteAppointment(location.state.appointmentId)
+    navigate("/myAppointments", {state : {doctor : doctor} });
+  }
+
+  return(
+    <div>
+        <components.Navbar />
+        <components.SecondaryNavbar/>
+        {appointment ? (
+        <div style={{marginLeft: "5px"}}>
+            <h2 style={{position:"center"}}>Edit/Cancel Appointment</h2>
             <br />
             <h4>Original Appointment</h4>
           <div className="card">
@@ -117,6 +124,12 @@ const EditAppointment = () => {
             </div>
           </div>
           <br />
+          <h4>would you like to cancel the appointment?</h4>
+          <Button variant="danger" type="button" onClick={handleCancel} style={{ width: "70px" }}>
+              Cancel
+          </Button>
+          <br />
+          <br />
           <h4>Update to:</h4>
           <Form onSubmit={handleForm}>
             <Form.Label style={{ marginRight: "10px" }}>Date</Form.Label>            
@@ -127,7 +140,7 @@ const EditAppointment = () => {
           </Form>
           <br />
           {hasError ? (
-            <p>You don't work on that day doctor!</p>
+            <p>Doctor is unavailable on that day doctor!</p>
              ):(
                 
             <>
@@ -170,13 +183,12 @@ const EditAppointment = () => {
                     <p>Select a different date/time than original</p>
                 ) : ( <></> )
             }
-        </>
+        </div>
       ) : (
         <div>Loading...</div>
       )}
-      <Chat />
-    </>
-  );
-};
+    </div>
+  )
+}
 
-export default EditAppointment;
+export default EditAppointment 

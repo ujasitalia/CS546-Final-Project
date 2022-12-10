@@ -24,6 +24,7 @@ const DoctorInfo = () => {
   return (
     <div>
         <components.Navbar/>
+        <components.SecondaryNavbar/>
         <ul>
             <li id="detailTab" onClick={handleTabChange}>Details</li>
             <li id="doctorAvailabilityTab" onClick={handleTabChange}>Doctor's Availability</li> 
