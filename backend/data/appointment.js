@@ -4,6 +4,7 @@ const { ObjectId } = require("mongodb");
 const apCol = mongoCollections.appointment;
 const doctorData = require("./doctor");
 const patientData = require("./patient")
+const {email} = require("../service");
 
 const getAvailableSlots = async (id, day, date) => {  
   const appointments = await getDoctorAppointments(id)
@@ -65,25 +66,27 @@ const getAvailableSlots = async (id, day, date) => {
 
 
 const createAppointment = async (
-  doctorID,
-  patientID,
+  doctorId,
+  patientId,
   startTime,
   appointmentLocation
 ) => {
   //verify data using helper functions
-  doctorID = helper.common.isValidId(doctorID);
-  patientID = helper.common.isValidId(patientID);
+  doctorId = helper.common.isValidId(doctorId);
+  patientId = helper.common.isValidId(patientId);
   startTime = helper.appointment.isValidStartTime(startTime);
   appointmentLocation = helper.appointment.isValidAddress(appointmentLocation);
 
   //get doctor data to verify the time and day
-  await doctorData.getDoctorById(doctorID);
+  const doctor = await doctorData.getDoctorById(doctorId);
+  const patient = await patientData.getPatientById(patientId);
 
-  const slots = await getDoctorSlots(doctorID, new Date(startTime));
+  const slots = await getDoctorSlots(doctorId, new Date(startTime));
+
   let flag = false;
   slots.forEach(slot =>{
     if(slot[0].split(":")[0] === startTime.split("T")[1].split(":")[0])
-      flag = true
+      flag = true;
   })
   
   if(!flag)
@@ -92,8 +95,8 @@ const createAppointment = async (
   const appointmentCollection = await apCol();
 
   const newAppointment = {
-    doctorID,
-    patientID,
+    doctorId,
+    patientId,
     startTime,
     appointmentLocation,
   };
@@ -106,6 +109,7 @@ const createAppointment = async (
   const newId = insertInfo.insertedId.toString();
   const appointment = await getAppointmentById(newId);
 
+  await email.sendAppointmentConfirmation({doctor,patient,appointment});
   return appointment;
 };
 
@@ -118,15 +122,15 @@ const getDoctorAppointments = async (id) => {
   const appointmentCollection = await apCol();
   
   const appointments = await appointmentCollection
-  .find({ doctorID: id })
+  .find({ doctorId: id })
   .toArray();  
 
   if (!appointments)
     throw { status: "404", error: "No apoointments for doctor with that id" };
 
   appointments.forEach((a) => {
-    a.doctorID = a.doctorID.toString();
-    a.patientID = a.patientID.toString();
+    a.doctorId = a.doctorId.toString();
+    a.patientId = a.patientId.toString();
   });
 
   return appointments;
@@ -141,15 +145,15 @@ const getPatientAppointment = async (id) => {
   const appointmentCollection = await apCol();
   
   const appointments = await appointmentCollection
-  .find({ patientID: id })
+  .find({ patientId: id })
   .toArray();  
 
   if (!appointments)
     throw { status: "404", error: "No apoointments for doctor with that id" };
 
   appointments.forEach((a) => {
-    a.doctorID = a.doctorID.toString();
-    a.patientID = a.patientID.toString();
+    a.doctorId = a.doctorId.toString();
+    a.patientId = a.patientId.toString();
   });
 
   return appointments;
@@ -204,11 +208,11 @@ const updateAppointmentById = async (id, data) => {
   let appointmentCollection = await apCol();
 
   //check if appointment exists
-  const appointment = await getAppointmentById(id)
-  const docData = await doctorData.getDoctorById(appointment.doctorID)
-    
+  const appointment = await getAppointmentById(id);
+  const doctor = await doctorData.getDoctorById(appointment.doctorId);
+  const patient = await patientData.getPatientById(appointment.patientId);
   //if startTime... check startTime
-  const slots = await getDoctorSlots(appointment.doctorID, new Date(data.startTime));
+  const slots = await getDoctorSlots(appointment.doctorId, new Date(data.startTime));
   let flag = false;
   slots.forEach(slot =>{
     if(slot[0].split(":")[0] === data.startTime.split("T")[1].split(":")[0])
@@ -226,12 +230,15 @@ const updateAppointmentById = async (id, data) => {
     return "select a different date/time than original" ;
   }
 
-  return await getAppointmentById(id);
+  const newAppointment = await getAppointmentById(id);
+
+  await email.sendAppointmentUpdate({doctor,patient,appointment:newAppointment});
+
+  return newAppointment;
 };
 
 const getDoctorSlots = async (doctorId, date = new Date()) => {
   const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-  const slotSize = 30;
   const doctor = await doctorData.getDoctorById(doctorId);
 
   if(date.getDay()>5)
@@ -239,6 +246,7 @@ const getDoctorSlots = async (doctorId, date = new Date()) => {
 
   const day = weekDays[date.getDay() - 1];
   const schedule = doctor.schedule[day.toLowerCase()];
+  const slotSize = doctor.appointmentDuration;
 
   if(!schedule)
     return [];
@@ -275,7 +283,7 @@ const getDoctorSlots = async (doctorId, date = new Date()) => {
     endTime[1] = parseInt(endTime[1]);
     while(1)
     {
-      if((startTime[1] + slotSize < 60 && startTime[0]==endTime[0] && startTime[1] + slotSize > endTime[1]) || (startTime[1] + slotSize > 59 && (startTime[0]==endTime[0] || (startTime[0]+1 == endTime[0] && (startTime[1] + slotSize > 60)%60 > endTime[1]))))
+      if((startTime[1] + slotSize < 60 && startTime[0]==endTime[0] && startTime[1] + slotSize > endTime[1]) || (startTime[1] + slotSize > 59 && (startTime[0]==endTime[0] || (startTime[0]+parseInt((startTime[1] + slotSize)/60) > endTime[0]) || (startTime[0]+parseInt((startTime[1] + slotSize)/60) == endTime[0] && (startTime[1] + slotSize > 60) && (startTime[1] + slotSize)%60 >= endTime[1]))))
         break;
       if(startTime[1] + slotSize < 60)
       {
@@ -284,8 +292,8 @@ const getDoctorSlots = async (doctorId, date = new Date()) => {
         startTime[1] += slotSize; 
       }else{
         if(isAppointmentNotExistInSlot(startTime[0], startTime[1]))
-          slot = [...slot, [startTime[0].toString().padStart(2, '0') + ':' + startTime[1].toString().padStart(2, '0'), (startTime[0] + 1).toString().padStart(2, '0') + ':' + ((startTime[1] + slotSize)%60).toString().padStart(2, '0')]];
-        startTime[0] += 1;
+          slot = [...slot, [startTime[0].toString().padStart(2, '0') + ':' + startTime[1].toString().padStart(2, '0'), (startTime[0] + parseInt((startTime[1] + slotSize)/60)).toString().padStart(2, '0') + ':' + ((startTime[1] + slotSize)%60).toString().padStart(2, '0')]];
+        startTime[0] += parseInt((startTime[1] + slotSize)/60);
         startTime[1] = (startTime[1] + slotSize)%60; 
       }
     }

@@ -12,13 +12,15 @@ const isPatientEmailInDb = async(email) => {
   email=commonHelper.isValidEmail(email).toLowerCase();
   const patientCollection = await patients();
   const patientInDb = await patientCollection.findOne({email:email});
-  if (patientInDb === null) return false;
-  return true;
+  if (patientInDb == null) 
+    return false;
+  else 
+    return true;
 }
   
 const createPatient = async (email,age,profilePicture,name,city,state,zip,password) => {
     email=commonHelper.isValidEmail(email).toLowerCase();
-    if(await isPatientEmailInDb(email)) throw {Status:400,error:'An account already exists with this email'};
+    if(await isPatientEmailInDb(email)) throw {Status:"400",error:'An account already exists with this email'};
     age = patientHelper.isValidAge(age);
     profilePicture=commonHelper.isValidFilePath(profilePicture);
     name=commonHelper.isValidName(name);
@@ -33,7 +35,7 @@ const createPatient = async (email,age,profilePicture,name,city,state,zip,passwo
     const patientCollection = await patients(); 
     const insertInfo = await patientCollection.insertOne(newPatient);
     if (!insertInfo.acknowledged || !insertInfo.insertedId)
-    throw {status:400,error:'Could not add patient'};
+    throw {status:"400",error:'Could not add patient'};
 
     const newPatientId = insertInfo.insertedId.toString();
     return await getPatientById(newPatientId);
@@ -44,7 +46,7 @@ const getPatientById = async (id) => {
 
   const patientCollection = await patients();
   const patient = await patientCollection.findOne({_id: ObjectId(id)},{projection:{hashedPassword:0}});
-  if (patient === null) throw {status:404,error:'No patient with that id'};
+  if (patient === null) throw {status:"404",error:'No patient with that id'};
   patient['_id']=patient['_id'].toString()
   return patient;
 };
@@ -52,7 +54,7 @@ const getPatientById = async (id) => {
 const updatePatient = async (body,id) => {
   id = commonHelper.isValidId(id);
   let patientInDb = await getPatientById(id);
-  if(!patientInDb) throw {status: 404, error: `No patient with that ID`};
+  if(!patientInDb) throw {status: "404", error: `No patient with that ID`};
   
   body = patientHelper.isValidPatientUpdate(body);
   if(body.password){
@@ -77,9 +79,9 @@ const checkUser = async (email, password) => {
   password=commonHelper.isValidPassword(password);
   const patientCollection = await patients();
   const patientInDb = await patientCollection.findOne({email:email});
-  if (patientInDb === null) throw {status:401,error:'Invalid email or password'};
+  if (patientInDb === null) throw {status:"401",error:'Invalid email or password'};
   else if(await bcryptjs.compare(password,patientInDb.hashedPassword)) return patientInDb; 
-  throw {status:401,error:'Invalid email or password'};
+  throw {status:"401",error:'Invalid email or password'};
 };
 
 const getSearchResult = async (data) => {

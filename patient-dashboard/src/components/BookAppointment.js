@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-// import { components } from '.';
+import React, { useState } from 'react';
 import { api } from '../api';
 import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
@@ -14,7 +13,6 @@ const BookAppointment = (props) => {
     const [availableSlots, setAvailableSlots] = useState([]);
     const [slot, setSlot] = useState('')
     const [notUpdated, setNotUpdated] = useState(false)
-    const [noAvailableSlots, setNoAvailableSlots] = useState(false)
     
     const checkDate = (startDate) => {  
     const currDate = new Date();  
@@ -39,17 +37,13 @@ const BookAppointment = (props) => {
         if(!checkDate(startDate))
             return;
         const response = await api.doctor.getDoctorSlot(props.doctor._id, startDate.toLocaleDateString());
-        if(response.data.length === 0)
-            setNoAvailableSlots(true)
-        else{
-            const slots = response.data.filter(element =>{
-                let time = element[0].split(":")
-                let curTime = new Date();
-                if(parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes()))
-                  return element;
-              })
-            setAvailableSlots(slots);
-        }
+        const slots = response.data.filter(element =>{
+            let time = element[0].split(":")
+            let curTime = new Date();
+            if((startDate.getDate() !== curTime.getDate()) || (parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes())))
+                return element;
+            })
+        setAvailableSlots(slots);
     };
 
     const getTime = (slot) => {
@@ -63,7 +57,7 @@ const BookAppointment = (props) => {
     const time = getTime(slot);
     let temp = startDate.toISOString().split('T')[0]+'T'+time
     // console.log(slot);
-    const newAppointment = {doctorID: props.doctor._id, patientID: JSON.parse(localStorage.getItem('id')),  startTime: temp, appointmentLocation: props.doctor.clinicAddress}
+    const newAppointment = {doctorId: props.doctor._id, patientId: JSON.parse(localStorage.getItem('id')),  startTime: temp, appointmentLocation: props.doctor.clinicAddress}
     const udA = await api.appointment.createAppointment(newAppointment)
     // console.log(udA.data);
     if(udA.data === 'Could not add appointment'){
@@ -87,6 +81,8 @@ const BookAppointment = (props) => {
                 return <li key={day}>{day}</li>
             })}
         </ul>
+        <br/>
+        <p>Appointment Duration : {props.doctor.appointmentDuration}</p>
         <br />
         <h4>Pick a date for your appointment</h4>
         <Form onSubmit={handleForm}>
@@ -123,12 +119,7 @@ const BookAppointment = (props) => {
                     </div>
                 ) : (
                     <>
-                        {noAvailableSlots ? (
-                            <p>All appointments are booked. Please try for another day.</p>
-                        ) : (
-                            <></>
-                        )}
-                        
+                        <p>All appointments are booked. Please try for another day.</p>
                     </>
                 )}
             </>

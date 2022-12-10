@@ -28,11 +28,11 @@ const validateData = (data) => {
       case "appointmentLocation":
         data.appointmentLocation = isValidAddress(data.appointmentLocation);
         break;
-      case "doctorID":
-        data.doctorID = common.isValidId(data.doctorID)
+      case "doctorId":
+        data.doctorId = common.isValidId(data.doctorId)
         break
-      case "patientID":
-        data.patientID = common.isValidId(data.patientID)
+      case "patientId":
+        data.patientId = common.isValidId(data.patientId)
         break
       default:
         throw { status: "400", error: `Invalid key - ${key}` };

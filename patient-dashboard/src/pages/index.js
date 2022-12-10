@@ -3,6 +3,8 @@ import Dashboard from "./Dashboard";
 import DoctorInfo from "./DoctorInfo";
 import MyAppointment from './MyAppointment'; 
 import EditAppointment from './EditAppointment'
+import Profile from './Profile';
+import SignUp from "./SignUp";
 
 const pages = {
     Login,
@@ -10,5 +12,7 @@ const pages = {
     DoctorInfo,
     MyAppointment,
     EditAppointment,
+    Profile,
+    SignUp
 }
 export { pages }

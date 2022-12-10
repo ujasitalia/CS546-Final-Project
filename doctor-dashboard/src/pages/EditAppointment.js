@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { components } from "../components";
 import { api } from "../api";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import DatePicker from "react-datepicker";
@@ -10,10 +9,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import Chat from '../chat'
 
 const EditAppointment = () => {
+  const { appointmentId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const [appointment, setAppointment] = useState("");
+<<<<<<< HEAD
   // const [day, setDay] = useState("monday");
+=======
+>>>>>>> 6af15d3e90d6893cf67c998177094c1c5358c0f2
   const [availableSlots, setAvailableSlots] = useState([]);
   const [days,setDays] = useState([])
   const [doctor, setDoctor] = useState('')
@@ -21,20 +23,15 @@ const EditAppointment = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [hasError, setHasError] = useState(false);
   const [notUpdated, setNotUpdated] = useState(false);
-  const [noAvailableSlots, setNoAvailableSlots] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.appointment.getAppointmentById(
-        location.state.appointmentId
-      );
-      //   console.log(response.data);
+      const response = await api.appointment.getAppointmentById(appointmentId);
       setAppointment(response.data);
-      const doctor = await api.doctor.getDoctor(response.data.doctorID)
+      const doctor = await api.doctor.getDoctor(response.data.doctorId)
       setDoctor(doctor.data)
       const schedule = Object.keys(doctor.data.schedule)
-    //   console.log(schedule);
-    setDays(schedule)
+      setDays(schedule)
     };
     if (!appointment) {
       fetchData();
@@ -63,6 +60,7 @@ const EditAppointment = () => {
     e.preventDefault();
     if(!checkDate(startDate))
       return;
+<<<<<<< HEAD
     const response = await api.doctor.getDoctorSlot(appointment.doctorID, startDate.toLocaleDateString());
     if(response.data.length === 0)
         setNoAvailableSlots(true)
@@ -72,9 +70,16 @@ const EditAppointment = () => {
         let curTime = new Date();
         if((startDate.getDate() !== curTime.getDate()) || (parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes())))
           return element;
+=======
+    const response = await api.doctor.getDoctorSlot(appointment.doctorId, startDate.toLocaleDateString());
+    const slots = response.data.filter(element =>{
+      let time = element[0].split(":")
+      let curTime = new Date();
+      if((startDate.getDate() !== curTime.getDate()) || (parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes())))
+        return element;
+>>>>>>> 6af15d3e90d6893cf67c998177094c1c5358c0f2
       })
-      setAvailableSlots(slots);
-    }
+    setAvailableSlots(slots);
   };
 
   const getTime = (slot) => {
@@ -154,6 +159,7 @@ const EditAppointment = () => {
                     </div>
                 ) : (
                     <>
+<<<<<<< HEAD
                       {noAvailableSlots ? (
                         <p>All slots are taken. Please try for a different day.</p>
                       ) : (
@@ -161,6 +167,9 @@ const EditAppointment = () => {
                         </>
                       )} 
                                            
+=======
+                      <p>All appointments are booked. Please try for another day.</p>
+>>>>>>> 6af15d3e90d6893cf67c998177094c1c5358c0f2
                     </>
                 )}
             </>
