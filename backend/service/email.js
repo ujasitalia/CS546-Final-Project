@@ -20,7 +20,15 @@ const sendAppointmentUpdate = async(data) =>{
   await sendEmail(data.doctor.email, "Appointment Update", html);
   await sendEmail(data.patient.email, "Appointment Update", html);
 }
+
+const sendAppointmentReminder = async(data) =>{
+  const html = `<h1> Appointment Confirmation </h1> <br/> <span> Time : </span> <span> ${data.startTime} </span> <br/> <span> Address : </span> <span> ${data.appointmentLocation} </span>`;
+  await sendEmail(data.doctorEmail, "Appointment Reminder", html);
+  await sendEmail(data.patientEmail, "Appointment Reminder", html);
+}
+
 module.exports = {
   sendAppointmentConfirmation,
-  sendAppointmentUpdate
+  sendAppointmentUpdate,
+  sendAppointmentReminder
 }
