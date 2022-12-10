@@ -96,9 +96,14 @@ const createAppointment = async (
 
   const newAppointment = {
     doctorId,
+    doctorEmail:doctor.email,
+    doctotName:doctor.name,
     patientId,
+    patientEmail:patient.email,
+    patientName:patient.name,
     startTime,
     appointmentLocation,
+    isReminded : false,
   };
 
   const insertInfo = await appointmentCollection.insertOne(newAppointment);
@@ -307,6 +312,25 @@ const getDoctorSlots = async (doctorId, date = new Date()) => {
   return slot;
 }
 
+const sendAppointmentReminder = async()=>{
+  const appointmentCollection = await apCol();
+  const allAppointments = await appointmentCollection.find({isReminded: false}).toArray();
+  let curTime = new Date();
+  curTime = new Date(curTime.getTime() + 60 * 60 * 1000);
+  const remindedIds = []
+  allAppointments.forEach(appointment => {
+    const appointmentTime = new Date(appointment.startTime);
+    if(appointmentTime<=curTime)
+    {
+      email.sendAppointmentReminder(appointment);
+      remindedIds.push(appointment._id);
+    }
+  });
+  const updatedInfo = await appointmentCollection.updateOne(
+    { _id: {$in : remindedIds} },
+    { $set: {isReminded : true} }
+  );
+}
 module.exports = {
   createAppointment,
   getDoctorAppointments,
@@ -315,5 +339,6 @@ module.exports = {
   deleteAppointmentById,
   updateAppointmentById,
   getAvailableSlots,
-  getDoctorSlots
+  getDoctorSlots,
+  sendAppointmentReminder
 };
