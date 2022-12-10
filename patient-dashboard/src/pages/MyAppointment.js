@@ -8,9 +8,8 @@ const MyAppointment = () => {
     const [idName, setIdName] = useState({});
     useEffect(() => {
       const fetchData = async()=>{
-        const patientID = JSON.parse(localStorage.getItem('id'));
-        const response = await api.patient.getPatientAppointments(patientID);
-        // console.log(response.data);
+        const patientId = JSON.parse(localStorage.getItem('id'));        
+        const response = await api.patient.getPatientAppointments(patientId);
         setData({appointments : response.data});
         const resDoctors = await api.doctor.getAllDoctor();
         let temp = {}
@@ -32,10 +31,11 @@ const MyAppointment = () => {
         <br />
         <h3>Your Appointments</h3>
         <br />
+        
         {data ? (
           <div>
             {data.appointments.map(ap => {
-              const name = idName[ap.doctorID]
+              const name = idName[ap.doctorId]
               return (                
                 <Link to={`/myAppointment/${ap._id}`} state={{appointmentId : ap._id, name: name}} style={{color:"black"}}>
                   <h5>Doctor Name: </h5> {name}

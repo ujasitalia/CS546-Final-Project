@@ -18,3 +18,7 @@ export const updateAppointment = (data) => {
     console.log(data);
     return axiosAuth.patch(`/appointment/${id}`, {data:data})
 }
+
+export const deleteAppointment = (id) => {
+    return axiosAuth.delete(`/appointment/${id}`)
+}

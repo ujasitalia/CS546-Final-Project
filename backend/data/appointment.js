@@ -147,14 +147,15 @@ const getPatientAppointment = async (id) => {
   const appointments = await appointmentCollection
   .find({ patientId: id })
   .toArray();  
-
+  // console.log(appointments);
   if (!appointments)
-    throw { status: "404", error: "No apoointments for doctor with that id" };
+    throw { status: "404", error: "No apointments for patient with that id" };
 
   appointments.forEach((a) => {
     a.doctorId = a.doctorId.toString();
     a.patientId = a.patientId.toString();
   });
+
 
   return appointments;
 }
@@ -240,7 +241,7 @@ const updateAppointmentById = async (id, data) => {
 const getDoctorSlots = async (doctorId, date = new Date()) => {
   const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const doctor = await doctorData.getDoctorById(doctorId);
-
+  
   if(date.getDay()>5)
     return [];
 
@@ -257,7 +258,7 @@ const getDoctorSlots = async (doctorId, date = new Date()) => {
     if(new Date(appointment.startTime).getDate() == date.getDate())
       return appointment;
   })
-
+  
   const isAppointmentNotExistInSlot = (hour, minite) => {
 
     for(let i=0;i<appointments.length;i++)
@@ -281,13 +282,17 @@ const getDoctorSlots = async (doctorId, date = new Date()) => {
     startTime[1] = parseInt(startTime[1]);
     endTime[0] = parseInt(endTime[0]);
     endTime[1] = parseInt(endTime[1]);
+    
     while(1)
     {
-      if((startTime[1] + slotSize < 60 && startTime[0]==endTime[0] && startTime[1] + slotSize > endTime[1]) || (startTime[1] + slotSize > 59 && (startTime[0]==endTime[0] || (startTime[0]+parseInt((startTime[1] + slotSize)/60) > endTime[0]) || (startTime[0]+parseInt((startTime[1] + slotSize)/60) == endTime[0] && (startTime[1] + slotSize > 60) && (startTime[1] + slotSize)%60 >= endTime[1]))))
+      // console.log(schedule[i], startTime, endTime);
+      if((startTime[1] + slotSize < 60 && startTime[0]==endTime[0] && startTime[1] + slotSize > endTime[1]) || (startTime[1] + slotSize > 59 && (startTime[0]==endTime[0] || (startTime[0]+parseInt((startTime[1] + slotSize)/60) > endTime[0]) || (startTime[0]+parseInt((startTime[1] + slotSize)/60) == endTime[0] && (startTime[1] + slotSize > 60) && (startTime[1] + slotSize)%60 >= endTime[1])))){
         break;
+      }
       if(startTime[1] + slotSize < 60)
       {
         if(isAppointmentNotExistInSlot(startTime[0], startTime[1]))
+        console.log(slot);
           slot = [...slot, [startTime[0].toString().padStart(2, '0') + ':' + startTime[1].toString().padStart(2, '0'), startTime[0].toString().padStart(2, '0') + ':' + (startTime[1] + slotSize).toString().padStart(2, '0')]];
         startTime[1] += slotSize; 
       }else{
@@ -296,6 +301,7 @@ const getDoctorSlots = async (doctorId, date = new Date()) => {
         startTime[0] += parseInt((startTime[1] + slotSize)/60);
         startTime[1] = (startTime[1] + slotSize)%60; 
       }
+      
     }
   }
   return slot;

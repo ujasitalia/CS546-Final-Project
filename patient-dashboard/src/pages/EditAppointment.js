@@ -31,7 +31,7 @@ const EditAppointment = () => {
       );
       //   console.log(response.data);
       setAppointment(response.data);
-      const doctor = await api.doctor.getDoctor(response.data.doctorID)
+      const doctor = await api.doctor.getDoctor(response.data.doctorId)
       setDoctor(doctor.data)
       const schedule = Object.keys(doctor.data.schedule)
       setDays(schedule)
@@ -42,15 +42,16 @@ const EditAppointment = () => {
     }
   }, []);
 
-  const checkDate = (startDate) => {    
+  const checkDate = (startDate) => {  
+    // console.log('checkDate', startDate);  
     const currDate = new Date();
-    if(startDate.getDate() < currDate.getDate()){
+    if(startDate.getDate() < currDate.getDate()){      
         setHasError(true)
         return false
     }
     const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const d = weekdays[startDate.getDay()].toLowerCase()
-    if(!days.includes(d)){
+    if(!days.includes(d)){      
         setHasError(true)
         return false
     }
@@ -62,18 +63,22 @@ const EditAppointment = () => {
 
   const handleForm = async (e) => {
     e.preventDefault();
-    if(!checkDate(startDate))
+    // console.log('handleForm', startDate);
+    if(!checkDate(startDate)){
       return;
-    const response = await api.doctor.getDoctorSlot(appointment.doctorID, startDate.toLocaleDateString());
+    }
+    const response = await api.doctor.getDoctorSlot(appointment.doctorId, startDate.toLocaleDateString());
+    
     if(response.data.length === 0)
         setNoAvailableSlots(true)
     else{
-      const slots = response.data.filter(element =>{
+      let slots = response.data.filter(element =>{
         let time = element[0].split(":")
         let curTime = new Date();
         if(parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes()))
           return element;
       })
+      console.log(slots);
       setAvailableSlots(slots);
     }
   };
@@ -124,11 +129,18 @@ const EditAppointment = () => {
             </div>
           </div>
           <br />
-          <h4>would you like to cancel the appointment?</h4>
+          <h4>Would you like to cancel the appointment?</h4>
           <Button variant="danger" type="button" onClick={handleCancel} style={{ width: "70px" }}>
               Cancel
           </Button>
           <br />
+          <br />
+          <h4>Dr. {doctor.name} is available on:</h4>
+          <ul>
+            {days.map(d => {
+              return <li key={d}>{d}</li>
+            })}
+          </ul>
           <br />
           <h4>Update to:</h4>
           <Form onSubmit={handleForm}>
@@ -145,6 +157,7 @@ const EditAppointment = () => {
                 
             <>
                 <br />
+                {console.log()}
                 {availableSlots.length !== 0 ? (
                     <div>
                         {updatedSlot ? <></> : setUpdatedSlot(availableSlots[0][0])}
