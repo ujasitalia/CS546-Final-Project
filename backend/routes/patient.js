@@ -138,7 +138,7 @@ router
   router
   .route('/:patientId/prescription')
   .get(async (req, res) => {
-    
+
   })
 
   router
@@ -213,7 +213,7 @@ router
         bodyData.endDate == null;
       }
 
-      let newMedicalHistory = await patientData.createMedicalHistory(id,diseaseData);
+      let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate,diseaseData.endDate);
       res.json(newMedicalHistory);
       }catch(e){
       if(e.status)
@@ -234,10 +234,80 @@ router
   router
   .route('/:patientId/testReport')
   .get(async (req, res) => {
+    //check patient id 
+    let id = req.params.patientId;
+    try {
+      id = helper.common.isValidId(req.params.patientId);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    //check if the patient with that id is present
+    try {
+      await patientData.getPatientById(id);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    //get all test reports of that patient
+    try {
+      const patientTestReport = await patientData.getTestReport(id)
+      res.json(patientTestReport)
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
 
   })
   .post(async (req, res) => {
 
+    try{
+
+      let id = req.params.patientId;
+      const testData = req.body;
+      try {
+        id = helper.common.isValidId(req.params.patientId);
+      } catch (e) {
+        if(typeof e !== 'object' || !('status' in e))
+          res.status(500).json(e);
+        else
+          res.status(parseInt(e.status)).json(e.error);
+        return;
+      }
+      //check if the patient with that id is present
+      try {
+        await patientData.getPatientById(id);
+      } catch (e) {
+        if(typeof e !== 'object' || !('status' in e))
+          res.status(500).json(e);
+        else
+          res.status(parseInt(e.status)).json(e.error);
+        return;
+      }
+
+      testData.testName=commonHelper.isValidString(testData.testName);
+      testData.testDocument=commonHelper.isValidFilePath(testData.testDocument);
+      
+
+      let newTestReport = await patientData.updateTestReport(id,testData.testName,testData.testDocument);
+      res.json(newTestReport);
+      }catch(e){
+      if(e.status)
+      {
+        res.status(e.status).json(e.error);
+      }
+      else
+        res.status(500).json(e);
+      }
   })
 
   router

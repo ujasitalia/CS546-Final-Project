@@ -118,7 +118,7 @@ const getFilterResult = async (data) => {
 };
 
 
-const createMedicalHistory = async (patientId,disease, startDate, endDate) => {
+const updateMedicalHistory = async (patientId,disease, startDate, endDate) => {
   
   patientId = commonHelper.isValidId(patientId);
   disease = commonHelper.isValidString(disease);
@@ -131,7 +131,9 @@ const createMedicalHistory = async (patientId,disease, startDate, endDate) => {
   const patient = await patientCollection.getPatientById(patientId);
   let newMedicalHistory = {disease,startDate,endDate};
 
-  await patientCollection.updateOne({_id: ObjectId(patientId)},{$set:{newMedicalHistory}});
+  const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{medicalHistory: newMedicalHistory}});
+
+  if (updatePatient.modifiedCount === 0) throw "Error: Could not add Medical History";
 
   const updatedPatient = await getPatientById(patientId);
   return updatedPatient;
@@ -151,6 +153,43 @@ const getMedicalHistory = async (id) => {
 
 };
 
+const updateTestReport = async (patientId, testName, testDocument) => {
+
+  patientId = commonHelper.isValidId(patientId);
+  testName = commonHelper.isValidString(testName);
+  testDocument = commonHelper.isValidFilePath(testDocument);
+
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var yyyy = today.getFullYear();
+
+  today = mm + '/' + dd + '/' + yyyy;
+  testDate = today.toString();
+
+  const patientCollection = await patients();
+  const patient = await patientCollection.getPatientById(patientId);
+  let newTestReports = {testName,testDocument,testDate};
+
+  const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{testReports: newTestReports}});
+
+  if (updatePatient.modifiedCount === 0) throw "Error: Could not add Medical History";
+
+  const updatedPatient = await getPatientById(patientId);
+  return updatedPatient;
+};
+
+const getTestReport = async(id) => {
+  id = commonHelper.isValidId(id);
+  const patientCollection = await patients();
+  const patient = await patientCollection.getPatientById(id);
+  let testReportList=[];
+  for(let i=0;i<patient.testReports.length;i++){
+    testReportList.push(patient.testReports[i]);
+  }
+  return testReportList;
+};
+
 
 
 module.exports = {
@@ -160,6 +199,8 @@ module.exports = {
   checkUser,
   getSearchResult,
   getFilterResult,
-  createMedicalHistory,
-  getMedicalHistory
+  updateMedicalHistory,
+  getMedicalHistory,
+  updateTestReport,
+  getTestReport
 };
