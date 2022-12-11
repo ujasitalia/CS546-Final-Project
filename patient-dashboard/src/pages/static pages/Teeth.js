@@ -1,4 +1,5 @@
 import React from 'react';
+import "../styles.css";
 import { components } from '../components';
 
 const Teeth = () => {
@@ -7,16 +8,16 @@ const Teeth = () => {
             <components.Navbar handleSearch={handleSearch}/>
             <div>
             <header>
-        <div class="header-content">
+        <div className="header-content">
             <h1>Teeth</h1>
-            <div class="line"></div>
+            <div className="line"></div>
             <h2>Teeth help us chew and digest food, they help us to talk and speak clearly and they also give our face its shape therefore it's very important t take care of teeth</h2>
         </div>
     </header>
 
-    <div class="disease">
+    <div className="disease">
 
-        <div class="food-choices">
+        <div className="food-choices">
             <h1>Healthy Food Choices</h1>
             <ul>Cheese is one of the best foods for healthy teeth for a number of reasons.</ul>
             <ul>Water is unlike any other drink, and is by far the healthiest drink available.</ul> 

@@ -1,4 +1,5 @@
 import React from 'react';
+import "../styles.css";
 import { components } from '../components';
 
 const Liver = () => {
@@ -7,16 +8,16 @@ const Liver = () => {
             <components.Navbar handleSearch={handleSearch}/>
             <div>
             <header>
-        <div class="header-content">
+        <div className="header-content">
             <h1>Liver</h1>
-            <div class="line"></div>
+            <div className="line"></div>
             <h2>The liver filters all of the blood in the body therefore a healty liver is essential.</h2>
         </div>
     </header>
 
-    <div class="disease">
+    <div className="disease">
 
-        <div class="food-choices">
+        <div className="food-choices">
             <h1>Healthy Food Choices</h1>
             <ul>Berries</ul>
             <ul>Grape fruit</ul> 
@@ -27,7 +28,7 @@ const Liver = () => {
         </div>
     
     
-        <div class="exercise">
+        <div className="exercise">
             <h1>Exercise</h1>
             <ul>Walking</ul>
             <ul>Weight training</ul>
