@@ -139,6 +139,39 @@ router
   .route('/:patientId/prescription')
   .get(async (req, res) => {
 
+    //check patient id 
+    let id = req.params.patientId
+    try {
+      id = helper.common.isValidId(req.params.patientId);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    //check if the patient with that id is present
+    try {
+      await patientData.getPatientById(id);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    //get all the prescriptions of that patient
+    try {
+      const patientPrescriptions = await prescriptionData.getPatientPrescription(id)
+      res.json(patientPrescriptions)
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+
   })
 
   router

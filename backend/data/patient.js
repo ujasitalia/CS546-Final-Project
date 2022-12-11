@@ -191,6 +191,18 @@ const getTestReport = async(id) => {
 };
 
 
+const getPatientPrescription = async(id) => {
+  id = commonHelper.isValidId(id);
+  const patientCollection = await patients();
+  const patient = await patientCollection.getPatientById(id);
+  let patientPrescriptionList=[];
+  for(let i=0;i<patient.prescription.length;i++){
+    patientPrescriptionList.push(patient.prescriptions[i]);
+  }
+  return patientPrescriptionList;
+};
+
+
 
 module.exports = {
   createPatient,
@@ -202,5 +214,6 @@ module.exports = {
   updateMedicalHistory,
   getMedicalHistory,
   updateTestReport,
-  getTestReport
+  getTestReport,
+  getPatientPrescription
 };

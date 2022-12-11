@@ -86,6 +86,10 @@ const validateSearchData = (data) => {
   return data;
 };
 
+const isValidObjectofArrays = (data) => {
+
+}
+
 module.exports = {
     isValidId,
     isValidString,
@@ -98,4 +102,5 @@ module.exports = {
     isValidName,
     isValidTime,
     validateSearchData,
+    isValidObjectofArrays
 };

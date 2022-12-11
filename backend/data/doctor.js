@@ -1,5 +1,6 @@
 const helper = require('../helper');
 const mongoCollections = require('../config/mongoCollections');
+const patients = mongoCollections.patient;
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 const doctorCol = mongoCollections.doctor;
@@ -133,6 +134,27 @@ const getAllDoctor = async () => {
     else if(await bcrypt.compare(password,doctorInDb.hashedPassword)) return doctorInDb; 
     throw {status:400,error:'Invalid email or password'};
   };
+
+  const updatePrescription = async (doctorId,patientId,disease,medicines,documents,doctorSuggestion) => {
+    
+    patientId = commonHelper.isValidId(patientId);
+    doctorId = commonHelper.isValidId(doctorId);
+    disease=commonHelper.isValidString(disease);
+    medicines=commonHelper.isValidString(medicines);
+    documents=commonHelper.isValidFilePath(documents);
+    doctorSuggestion=commonHelper.isValidString(doctorSuggestion);
+
+    const patientCollection = await patients();
+    const patient = await patientCollection.getPatientById(patientId);
+    let newPrescription = {doctorId,disease,medicines,documents,doctorSuggestion};
+
+    const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{prescriptions: newPrescription}});
+
+    if (updatePatient.modifiedCount === 0) throw "Error: Could not add Medical History";
+
+    const updatedPatient = await getPatientById(patientId);
+    return updatedPatient;
+  }
   
 
 module.exports = {
@@ -140,5 +162,6 @@ module.exports = {
     getDoctorById,
     getAllDoctor,
     updateDoctor,
-    checkDoctor
+    checkDoctor,
+    updatePrescription
 };
