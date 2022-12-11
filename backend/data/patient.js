@@ -118,18 +118,20 @@ const getFilterResult = async (data) => {
 };
 
 
-const updateMedicalHistory = async (patientId,disease, startDate, endDate) => {
+const updateMedicalHistory = async (patientId,disease, startDate) => {
   
   patientId = commonHelper.isValidId(patientId);
   disease = commonHelper.isValidString(disease);
   startDate = commonHelper.isValidTime(startDate);
+  /*
   if(endDate !== null){
     endDate = commonHelper.isValidTime(endDate);
-  }
+  }*/
 
   const patientCollection = await patients();
   const patient = await patientCollection.getPatientById(patientId);
-  let newMedicalHistory = {disease,startDate,endDate};
+  //let newMedicalHistory = {disease,startDate,endDate};
+  let newMedicalHistory = {disease,startDate};
 
   const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{medicalHistory: newMedicalHistory}});
 

@@ -318,6 +318,86 @@ router
   router
   .route('/:doctorId/patient/:patientId/prescription/:prescriptionId')
   .patch(async (req, res) => {
+    
+  })
+
+  
+  router
+  .route('/:doctorId/patient/:patientId/medicalHistory')
+  .get(async (req, res) => {
+
+    //check patient id 
+    let id = req.params.patientId
+    try {
+      id = helper.common.isValidId(req.params.patientId);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    //check if the patient with that id is present
+    try {
+      await patientData.getPatientById(id);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    //get all medical history of that patient
+    try {
+      const patientMedicalHistory = await patientData.getMedicalHistory(id)
+      res.json(patientMedicalHistory)
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+
+  })
+
+  
+  router
+  .route('/:doctorId/patient/:patientId/testReport')
+  .get(async (req, res) => {
+
+    //check patient id 
+    let id = req.params.patientId
+    try {
+      id = helper.common.isValidId(req.params.patientId);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    //check if the patient with that id is present
+    try {
+      await patientData.getPatientById(id);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    //get all test reports of that patient
+    try {
+      const patientTestReport = await patientData.getTestReport(id)
+      res.json(patientTestReport)
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
 
   })
   

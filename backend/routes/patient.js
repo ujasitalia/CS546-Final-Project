@@ -237,16 +237,18 @@ router
         return;
       }
 
-      diseaseData.disease=commonHelper.isValidString(diseaseData.disease);
+      diseaseData.disease = commonHelper.isValidString(diseaseData.disease);
       diseaseData.startDate = commonHelper.isValidTime(diseaseData.startDate);
+      /*
       if(diseaseData.endDate){
         diseaseData.endDate=commonHelper.isValidTime(diseaseData.endDate);
       }
       else{
         bodyData.endDate == null;
-      }
+      }*/
 
-      let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate,diseaseData.endDate);
+      //let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate,diseaseData.endDate);
+      let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate);
       res.json(newMedicalHistory);
       }catch(e){
       if(e.status)
@@ -261,7 +263,7 @@ router
   router
   .route('/:patientId/medicalHistory/:medicalHistoryId')
   .patch(async (req, res) => {
-    
+    // Only start date being considered and patient not given the access to update the medical history once entered
   })
 
   router
@@ -346,7 +348,7 @@ router
   router
   .route('/:patientId/testReport/:testReportId')
   .patch(async (req, res) => {
-
+    //No update of test reports option given to patient 
   })
 
 
