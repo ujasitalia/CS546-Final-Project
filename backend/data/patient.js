@@ -117,6 +117,42 @@ const getFilterResult = async (data) => {
   return res;
 };
 
+
+const createMedicalHistory = async (patientId,disease, startDate, endDate) => {
+  
+  patientId = commonHelper.isValidId(patientId);
+  disease = commonHelper.isValidString(disease);
+  startDate = commonHelper.isValidTime(startDate);
+  if(endDate !== null){
+    endDate = commonHelper.isValidTime(endDate);
+  }
+
+  const patientCollection = await patients();
+  const patient = await patientCollection.getPatientById(patientId);
+  let newMedicalHistory = {disease,startDate,endDate};
+
+  await patientCollection.updateOne({_id: ObjectId(patientId)},{$set:{newMedicalHistory}});
+
+  const updatedPatient = await getPatientById(patientId);
+  return updatedPatient;
+  
+};
+
+const getMedicalHistory = async (id) => {
+
+  id = commonHelper.isValidId(id);
+  const patientCollection = await patients();
+  const patient = await patientCollection.getPatientById(id);
+  let medicalHistoryList=[];
+  for(let i=0;i<patient.medicalHistory.length;i++){
+    medicalHistoryList.push(patient.medicalHistory[i]);
+  }
+  return medicalHistoryList;
+
+};
+
+
+
 module.exports = {
   createPatient,
   getPatientById,
@@ -124,4 +160,6 @@ module.exports = {
   checkUser,
   getSearchResult,
   getFilterResult,
+  createMedicalHistory,
+  getMedicalHistory
 };

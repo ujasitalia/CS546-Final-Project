@@ -6,7 +6,7 @@ const Bones = () => {
         <div>
             <components.Navbar handleSearch={handleSearch}/>
             <div>
-            <header>
+                <header>
         <div class="header-content">
             <h1>Bones</h1>
             <div class="line"></div>

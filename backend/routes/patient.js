@@ -138,22 +138,97 @@ router
   router
   .route('/:patientId/prescription')
   .get(async (req, res) => {
-
+    
   })
 
   router
   .route('/:patientId/medicalHistory')
   .get(async (req, res) => {
+    //check patient id 
+    let id = req.params.patientId;
+    try {
+      id = helper.common.isValidId(req.params.patientId);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+    //check if the patient with that id is present
+    try {
+      await patientData.getPatientById(id);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+
+    //get all medical history of that patient
+    try {
+      const patientMedicalHistory = await patientData.getMedicalHistory(id)
+      res.json(patientMedicalHistory)
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
 
   })
   .post(async (req, res) => {
+    try{
 
+      let id = req.params.patientId;
+      const diseaseData = req.body;
+      try {
+        id = helper.common.isValidId(req.params.patientId);
+      } catch (e) {
+        if(typeof e !== 'object' || !('status' in e))
+          res.status(500).json(e);
+        else
+          res.status(parseInt(e.status)).json(e.error);
+        return;
+      }
+      //check if the patient with that id is present
+      try {
+        await patientData.getPatientById(id);
+      } catch (e) {
+        if(typeof e !== 'object' || !('status' in e))
+          res.status(500).json(e);
+        else
+          res.status(parseInt(e.status)).json(e.error);
+        return;
+      }
+
+      diseaseData.disease=commonHelper.isValidString(diseaseData.disease);
+      diseaseData.startDate = commonHelper.isValidTime(diseaseData.startDate);
+      if(diseaseData.endDate){
+        diseaseData.endDate=commonHelper.isValidTime(diseaseData.endDate);
+      }
+      else{
+        bodyData.endDate == null;
+      }
+
+      let newMedicalHistory = await patientData.createMedicalHistory(id,diseaseData);
+      res.json(newMedicalHistory);
+      }catch(e){
+      if(e.status)
+      {
+        res.status(e.status).json(e.error);
+      }
+      else
+        res.status(500).json(e);
+      }
   })
 
   router
   .route('/:patientId/medicalHistory/:medicalHistoryId')
   .patch(async (req, res) => {
-
+    
   })
 
   router
