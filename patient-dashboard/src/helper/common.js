@@ -60,7 +60,6 @@ export const isValidName = (inputName) => {
 }
 
 export const isValidAge = (age) => {
-    age = parseInt(age);
-    if(!age || typeof age!='number' || age<1 || age>120 || age%1) throw new Error('Invalid age');
+     if(!age.match(/^\d+$/) || !age || age<1 || age>120 || age%1) throw new Error('Invalid age');
     return age;
 }
