@@ -53,6 +53,25 @@ async(req, res, next) => {
   next();
 });
 
+app.use('/chat',
+async(req, res, next) => {
+  if(req.url === '/')
+    if(req.body.senderId !== req.user.userId)
+    {
+      res.status(403).json('Forbidden')
+      return;
+    }else{
+      next();
+      return;
+    }
+  if(req.url.split('/')[1] !== req.user.userId)
+  { 
+    res.status(403).json('Forbidden')
+    return;
+  }
+  next();
+});
+
 configRoutes(app);
 
 app.listen(3000, () => {
