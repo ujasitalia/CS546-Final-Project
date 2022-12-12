@@ -54,7 +54,7 @@ const SignUp = () => {
         }
         
         try{
-            const data = {"email" : email, 'npi':npi, "password" : password, "speciality":speciality, "name":fullName, "zip":zip,"profilePicture":"nopic","city":"Hoboken","state":"New Jersey","clinicAddress":clinicAddress}
+            const data = {"email" : email, 'npi':npi, "password" : password, "speciality":speciality, "name":fullName, "zip":zip,"profilePicture":"nopic","clinicAddress":clinicAddress}
             const response = await api.signup.post(data);
             console.log(response);
             localStorage.setItem('token_data', JSON.stringify(response.data.token))
