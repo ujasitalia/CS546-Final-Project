@@ -53,8 +53,7 @@ async(req, res, next) => {
   next();
 });
 
-app.use('/chat',
-async(req, res, next) => {
+app.use('/chat', (req, res, next) => {
   if(req.url === '/')
     if(req.body.senderId !== req.user.userId)
     {
@@ -65,6 +64,15 @@ async(req, res, next) => {
       return;
     }
   if(req.url.split('/')[1] !== req.user.userId)
+  { 
+    res.status(403).json('Forbidden')
+    return;
+  }
+  next();
+});
+
+app.use('/patient/:patientId', (req, res, next) => {
+  if(req.params.patientId !== req.user.userId)
   { 
     res.status(403).json('Forbidden')
     return;
