@@ -7,6 +7,7 @@ import {specialities} from '../helper/constants'
 
 const SignUp = () => {
     const [email, setEmail] = useState('');
+    const [npi,setNpi] = useState(''); 
     const [password, setPassword] = useState('');
     const [repassword, setRepassword] = useState('');
     const [fullName, setName] = useState('');
@@ -19,6 +20,8 @@ const SignUp = () => {
     const handleInputChange = (e) => {
         if(e.target.id === 'signUpEmail')
             setEmail(e.target.value); 
+        else if(e.target.id === 'signUpNpi')
+            setNpi(e.target.value);
         else if(e.target.id === 'signUpPassword')
             setPassword(e.target.value);
         else if(e.target.id === 'signUpRepassword')
@@ -37,6 +40,7 @@ const SignUp = () => {
         try
         {
             setEmail(helper.common.isValidEmail(email));
+            setNpi(helper.common.isValidNpi(npi));
             setPassword(helper.common.isValidPassword(password));
             setRepassword(helper.common.isPasswordSame(repassword,password));
             setSpeciality(helper.common.isValidSpeciality(speciality));
@@ -50,7 +54,7 @@ const SignUp = () => {
         }
         
         try{
-            const data = {"email" : email, "password" : password, "speciality":speciality, "name":fullName, "zip":zip,"profilePicture":"nopic","city":"Hoboken","state":"New Jersey","clinicAddress":clinicAddress}
+            const data = {"email" : email, 'npi':npi, "password" : password, "speciality":speciality, "name":fullName, "zip":zip,"profilePicture":"nopic","city":"Hoboken","state":"New Jersey","clinicAddress":clinicAddress}
             const response = await api.signup.post(data);
             console.log(response);
             localStorage.setItem('token_data', JSON.stringify(response.data.token))
@@ -75,10 +79,14 @@ const SignUp = () => {
             <input placeholder="username@example.com" id="signUpEmail" value={email} onChange={handleInputChange} type="email" className="loginInput" autoFocus/>
             <br/>
             <div className="emailText">Enter Password</div>
-            <input placeholder="********" id="signUpPassword" value={password} onChange={handleInputChange} type="password" className="loginInput" autoFocus/>
+            <input placeholder="********" id="signUpPassword" value={password} onChange={handleInputChange} type="password" className="loginInput" />
             <br/>
             <div className="emailText">Re-Enter Password</div>
-            <input placeholder="********" id="signUpRepassword" value={repassword} onChange={handleInputChange} type="password" className="loginInput" autoFocus/>
+            <input placeholder="********" id="signUpRepassword" value={repassword} onChange={handleInputChange} type="password" className="loginInput" />
+            <br/>
+            <br/>
+            <div className="emailText">National Provider Identifier (NPI)</div>
+            <input placeholder="XXX1234567" id="signUpNpi" value={npi} onChange={handleInputChange} type="text" className="loginInput" />
             <br/>
             <div className="emailText">Enter Speciality</div>
             {/* <input placeholder="Cardiologist" id="signUpSpeciality" value={speciality} onChange={handleInputChange} type="text" className="loginInput" autoFocus/> */}
@@ -93,13 +101,13 @@ const SignUp = () => {
             </select>
             <br/>
             <div className="emailText">Enter name</div>
-            <input placeholder="Patrik Hill" id="signUpName" value={fullName} onChange={handleInputChange} type="text" className="loginInput" autoFocus/>
+            <input placeholder="Patrik Hill" id="signUpName" value={fullName} onChange={handleInputChange} type="text" className="loginInput" />
             <br/>
             <div className="emailText">Enter zip</div>
-            <input placeholder="07307" id="signUpZip" value={zip} onChange={handleInputChange} type="number" className="loginInput" autoFocus/>
+            <input placeholder="07307" id="signUpZip" value={zip} onChange={handleInputChange} type="number" className="loginInput" />
             <br/>
             <div className="emailText">Enter Clinic Address</div>
-            <input placeholder="1 Castle point" id="signUpClinicAddress" value={clinicAddress} onChange={handleInputChange} type="text" className="loginInput" autoFocus/>
+            <input placeholder="1 Castle point" id="signUpClinicAddress" value={clinicAddress} onChange={handleInputChange} type="text" className="loginInput" />
             <br/>
             <button type="submit" className="loginButton">
                 <div className="buttonBox">
