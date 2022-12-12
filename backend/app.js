@@ -8,7 +8,7 @@ const cron = require("node-cron");
 app.use(express.json());
 app.use(cors());
 
-aapp.use('/', (req, res, next) => {
+app.use('/', (req, res, next) => {
   if(!((req.originalUrl === '/doctor/login' || req.originalUrl === '/patient/login') || (req.originalUrl === '/doctor' && req.method === 'POST') || (req.originalUrl === '/patient' && req.method === 'POST')))
   {
     try{
