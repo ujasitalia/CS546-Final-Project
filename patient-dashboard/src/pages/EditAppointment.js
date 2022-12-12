@@ -1,47 +1,57 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { components } from "../components";
 import { api } from "../api";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const EditAppointment = () => {
-  const { appointmentId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [appointment, setAppointment] = useState("");
-  const [availableSlots, setAvailableSlots] = useState([]);
   const [days,setDays] = useState([])
   const [doctor, setDoctor] = useState('')
+  const [availableSlots, setAvailableSlots] = useState([]);
+//   const [days,setDays] = useState([])
+//   const [doctor, setDoctor] = useState('')
   const [updatedSlot, setUpdatedSlot] = useState('')
   const [startDate, setStartDate] = useState(new Date());
   const [hasError, setHasError] = useState(false);
   const [notUpdated, setNotUpdated] = useState(false);
+  const [noAvailableSlots, setNoAvailableSlots] = useState(false)
+
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.appointment.getAppointmentById(appointmentId);
+      const response = await api.appointment.getAppointmentById(
+        location.state.appointmentId
+      );
+      //   console.log(response.data);
       setAppointment(response.data);
       const doctor = await api.doctor.getDoctor(response.data.doctorId)
       setDoctor(doctor.data)
       const schedule = Object.keys(doctor.data.schedule)
       setDays(schedule)
+    //   console.log(schedule);        
     };
     if (!appointment) {
       fetchData();
     }
   }, []);
 
-  const checkDate = (startDate) => {    
+  const checkDate = (startDate) => {  
+    // console.log('checkDate', startDate);  
     const currDate = new Date();
-    if(startDate.getDate() < currDate.getDate()){
+    if(startDate.getDate() < currDate.getDate()){      
         setHasError(true)
         return false
     }
     const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const d = weekdays[startDate.getDay()].toLowerCase()
-    if(!days.includes(d)){
+    if(!days.includes(d)){      
         setHasError(true)
         return false
     }
@@ -83,17 +93,23 @@ const EditAppointment = () => {
     }
     else{
         setNotUpdated(false)
-        navigate("/dashboard", {state : {doctor : doctor} });
+        navigate("/myAppointments", {state : {doctor : doctor} });
     }
   }
 
-  return (
-    <>
-      <components.Navbar />
-      <br />
-      {appointment ? (
-        <>
-            <h2 style={{position:"center"}}>Edit Appointment</h2>
+  const handleCancel = async (e) => {
+    e.preventDefault()
+    const cancelRequest = await api.appointment.deleteAppointment(location.state.appointmentId)
+    navigate("/myAppointments", {state : {doctor : doctor} });
+  }
+
+  return(
+    <div>
+        <components.Navbar />
+        <components.SecondaryNavbar/>
+        {appointment ? (
+        <div style={{marginLeft: "5px"}}>
+            <h2 style={{position:"center"}}>Edit/Cancel Appointment</h2>
             <br />
             <h4>Original Appointment</h4>
           <div className="card">
@@ -105,6 +121,19 @@ const EditAppointment = () => {
             </div>
           </div>
           <br />
+          <h4>Would you like to cancel the appointment?</h4>
+          <Button variant="danger" type="button" onClick={handleCancel} style={{ width: "70px" }}>
+              Cancel
+          </Button>
+          <br />
+          <br />
+          <h4>Dr. {doctor.name} is available on:</h4>
+          <ul>
+            {days.map(d => {
+              return <li key={d}>{d}</li>
+            })}
+          </ul>
+          <br />
           <h4>Update to:</h4>
           <Form onSubmit={handleForm}>
             <Form.Label style={{ marginRight: "10px" }}>Date</Form.Label>            
@@ -115,11 +144,12 @@ const EditAppointment = () => {
           </Form>
           <br />
           {hasError ? (
-            <p>You don't work on that day doctor!</p>
+            <p>Doctor is unavailable on that day doctor!</p>
              ):(
                 
             <>
                 <br />
+                {console.log()}
                 {availableSlots.length !== 0 ? (
                     <div>
                         {updatedSlot ? <></> : setUpdatedSlot(availableSlots[0][0])}
@@ -142,7 +172,13 @@ const EditAppointment = () => {
                     </div>
                 ) : (
                     <>
-                      <p>All appointments are booked. Please try for another day.</p>
+                      {noAvailableSlots ? (
+                        <p>All slots are taken. Please try for a different day.</p>
+                      ) : (
+                        <>                          
+                        </>
+                      )} 
+                                           
                     </>
                 )}
             </>
@@ -152,12 +188,12 @@ const EditAppointment = () => {
                     <p>Select a different date/time than original</p>
                 ) : ( <></> )
             }
-        </>
+        </div>
       ) : (
         <div>Loading...</div>
       )}
-    </>
-  );
-};
+    </div>
+  )
+}
 
-export default EditAppointment;
+export default EditAppointment 

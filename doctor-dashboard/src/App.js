@@ -11,6 +11,7 @@ function App() {
           <Route path="/dashboard" element={<pages.Dashboard/>}/>
           <Route path="/dashboard/appointment/:appointmentId" element={<pages.EditAppointment/>}/>
           <Route path="/profile" element={<pages.Profile/>}/>
+          <Route path="/signup" element={<pages.SignUp/>} />
           {/* <Route path="/create-account" element={<CreateAccount/>} /> */}
         </Routes>
       </Router>

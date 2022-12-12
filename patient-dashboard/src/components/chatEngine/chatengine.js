@@ -11,13 +11,13 @@ export default function Message({message,own}){
 
   useEffect(() =>{
     const getUser = async()=>{
-      const userID = message.senderId;
+      const userId = message.senderId;
       let res;
       try{
         if(own){
-           res = await axios("http://localhost:3000/patient/"+userID);
+           res = await axios("http://localhost:3000/patient/"+userId);
         }else{
-           res = await axios("http://localhost:3000/doctor/"+userID);
+           res = await axios("http://localhost:3000/doctor/"+userId);
         }
         setUser(res.data);
       }catch(e){

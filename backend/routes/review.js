@@ -17,7 +17,7 @@ router
         data.reviewText = null
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -28,7 +28,7 @@ router
       res.json(newReview);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;

@@ -34,7 +34,7 @@ const Dashboard = () => {
               <li id="availabilityTab" onClick={handleTabChange}>Availability</li>  
             </ul>
             {data && tab === 'appointmentTab' && <components.DoctorAppointment doctorId={data.doctor._id} />}
-            {data && tab === 'availabilityTab' && <components.Availability doctorId={data.doctor._id} doctorSchedule={data.doctor.schedule} handleAvailabilityChange={handleAvailabilityChange}/>}
+            {data && tab === 'availabilityTab' && <components.Availability doctorId={data.doctor._id} doctorSchedule={data.doctor.schedule} appointmentDuration={data.doctor.appointmentDuration} handleAvailabilityChange={handleAvailabilityChange}/>}
         </div>
       </div>
       )

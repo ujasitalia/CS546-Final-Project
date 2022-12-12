@@ -57,7 +57,7 @@ const BookAppointment = (props) => {
     const time = getTime(slot);
     let temp = startDate.toISOString().split('T')[0]+'T'+time
     // console.log(slot);
-    const newAppointment = {doctorID: props.doctor._id, patientID: JSON.parse(localStorage.getItem('id')),  startTime: temp, appointmentLocation: props.doctor.clinicAddress}
+    const newAppointment = {doctorId: props.doctor._id, patientId: JSON.parse(localStorage.getItem('id')),  startTime: temp, appointmentLocation: props.doctor.clinicAddress}
     const udA = await api.appointment.createAppointment(newAppointment)
     // console.log(udA.data);
     if(udA.data === 'Could not add appointment'){
@@ -81,6 +81,8 @@ const BookAppointment = (props) => {
                 return <li key={day}>{day}</li>
             })}
         </ul>
+        <br/>
+        <p>Appointment Duration : {props.doctor.appointmentDuration}</p>
         <br />
         <h4>Pick a date for your appointment</h4>
         <Form onSubmit={handleForm}>

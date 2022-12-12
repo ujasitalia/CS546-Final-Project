@@ -26,12 +26,11 @@ router
       res.json(newPatient);
 
     }catch(e){
-    if(e.status)
-      {
-        res.status(e.status).json(e.error);
-      }
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json("Internal server error");
       else
-        res.status(500).json(e);
+        res.status(parseInt(e.status)).json(e.error);
+      return;
     }
   })
   
@@ -54,15 +53,12 @@ router
       } else throw {status:401,error:'Invalid email or password'};
       
     }catch(e){
-      console.log(e);
-      if(e.status)
-      {
-        res.status(e.status).json(e.error);
-      }
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json("Internal server error");
       else
-        res.status(500).json('Internal server error');
+        res.status(parseInt(e.status)).json(e.error);
+      return;
     }
-
   })
 
   router
@@ -73,12 +69,11 @@ router
       const patient = await patientData.getPatientById(req.params.patientId);
       res.json(patient);
     }catch(e){
-      if(e.status)
-      {
-        res.status(e.status).json(e.error);
-      }
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json("Internal server error");
       else
-        res.status(500).json(e);
+        res.status(parseInt(e.status)).json(e.error);
+      return;
     }
   })
   .patch(async (req, res) => {
@@ -89,12 +84,11 @@ router
       let updatedPatient = await patientData.updatePatient(body,id);
       res.json(updatedPatient);
     }catch(e){
-      if(e.status)
-      {
-        res.status(e.status).json(e.error);
-      }
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json("Internal server error");
       else
-        res.status(500).json(e);
+        res.status(parseInt(e.status)).json(e.error);
+      return;
     }
   })
 
@@ -102,12 +96,12 @@ router
   .route('/:patientId/appointment')
   .get(async (req, res) => {
     //check patient id 
-    let patientId = req.params.patientId
     try {
       id = helper.common.isValidId(req.params.patientId);
     } catch (e) {
+      console.log(e);
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -116,8 +110,9 @@ router
     try {
       await patientData.getPatientById(id);
     } catch (e) {
+      console.log(e);
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -127,8 +122,9 @@ router
       const patientAppointments = await appointmentData.getPatientAppointment(id)
       res.json(patientAppointments)
     } catch (e) {
+      console.log(e);
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
