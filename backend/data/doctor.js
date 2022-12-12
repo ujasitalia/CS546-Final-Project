@@ -44,7 +44,8 @@ const createDoctor = async(
         hashedPassword,
         schedule:{},
         appointmentDuration : 30,
-        rating : 0
+        rating : 0,
+        myPatients : []
       };
   
     const insertInfo = await doctorCollection.insertOne(newDoctor);
@@ -117,6 +118,18 @@ const getAllDoctor = async () => {
     return doctor;
   };
 
+  const addMyPatient = async(doctorId, patientId) =>{
+    doctorId = helper.common.isValidId(doctorId);
+    patientId = helper.common.isValidId(patientId);
+    const doctorCollection = await doctorCol();
+    const updatedInfo = await doctorCollection.updateOne({_id: ObjectId(doctorId)},{$push:{myPatients: patientId}});
+    if (updatedInfo.modifiedCount === 0) {
+      throw {status: '400', error : 'could not update because values are same as previous one'};
+    }
+    const doctor = await getDoctorById(doctorId);
+    return doctor;
+  }
+
   const checkDoctor = async (email, password) => { 
     email=helper.common.isValidEmail(email).toLowerCase();
     password=helper.common.isValidPassword(password);
@@ -127,11 +140,18 @@ const getAllDoctor = async () => {
     throw {status:400,error:'Invalid email or password'};
   };
   
-
+const isDoctorsPatient = async(doctorId, patientId) =>{
+  const doctorCollection = await doctorCol();
+  const doctorInDb = await doctorCollection.findOne({_id:ObjectId(doctorId), myPatients : { $all: [patientId] }});
+  if (doctorInDb === null) throw {status:404,error:'doctor not found'};
+  return doctorInDb;
+}
 module.exports = {
     createDoctor,
     getDoctorById,
     getAllDoctor,
     updateDoctor,
-    checkDoctor
+    addMyPatient,
+    checkDoctor,
+    isDoctorsPatient
 };

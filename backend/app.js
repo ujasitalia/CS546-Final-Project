@@ -72,8 +72,63 @@ app.use('/chat', (req, res, next) => {
 });
 
 app.use('/patient/:patientId', (req, res, next) => {
-  if(req.params.patientId !== req.user.userId)
+  if(req.params.patientId !== 'login' && req.params.patientId !== req.user.userId)
   { 
+    res.status(403).json('Forbidden')
+    return;
+  }
+  next();
+});
+
+app.use('/doctor', (req, res, next) => {
+  if(req.url === '/' && req.method === 'GET' && req.user.role !== 'patient')
+  { 
+    res.status(403).json('Forbidden')
+    return;
+  }
+  next();
+});
+
+app.use('/doctor/:doctorId', (req, res, next) => {
+  if(req.url === '/' && req.method==='GET' && req.user.role !== 'patient' && req.params.doctorId !== req.user.userId)
+  { 
+    res.status(403).json('Forbidden')
+    return;
+  }else if(req.url === '/' && req.method==='PATCH' && req.params.doctorId !== req.user.userId)
+  {
+    res.status(403).json('Forbidden')
+    return;
+  }
+  next();
+});
+
+app.use('/doctor/:doctorId/appointment', (req, res, next) => {
+  if(req.params.doctorId !== req.user.userId)
+  {
+    res.status(403).json('Forbidden')
+    return;
+  }
+  next();
+});
+
+app.use('/doctor/:doctorId/review', (req, res, next) => {
+  if(req.user.role !== 'patient' && req.params.doctorId !== req.user.userId)
+  {
+    res.status(403).json('Forbidden')
+    return;
+  }
+  next();
+});
+
+app.use('/doctor/:doctorId/patient/:patientId', async(req, res, next) => {
+  try{
+    const doctor = await data.doctor.isDoctorsPatient(req.params.doctorId, req.params.patientId)
+    if(req.params.doctorId !== req.user.userId && !doctor)
+    {
+      res.status(403).json('Forbidden')
+      return;
+    }
+  }catch(e){
     res.status(403).json('Forbidden')
     return;
   }

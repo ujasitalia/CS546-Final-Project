@@ -54,6 +54,9 @@ const createAppointment = async (
   if (!insertInfo.acknowledged || !insertInfo.insertedId)
     return "Could not add appointment"
 
+  if(!doctor.myPatients.includes(patientId))
+    await doctorData.addMyPatient(doctorId,patientId);
+    
   const newId = insertInfo.insertedId.toString();
   const appointment = await getAppointmentById(newId);
 
