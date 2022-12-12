@@ -4,6 +4,7 @@ const cors = require('cors');
 const configRoutes = require('./routes');
 const jwt = require("jsonwebtoken");
 const cron = require("node-cron");
+const data = require('./data');
 
 app.use(express.json());
 app.use(cors());
@@ -31,6 +32,26 @@ app.use('/', (req, res, next) => {
   next();
 });
 
+app.use('/appointment',
+async(req, res, next) => {
+  if(req.url === '/')
+    if(req.body.patientId !== req.user.userId)
+    {
+      res.status(403).json('Forbidden')
+      return;
+    }else{
+      next();
+      return;
+    }
+    
+  try{
+      await data.appointment.checkAppointmentExist(req.user.role, req.user.userId,req.url.split('/')[1]);
+  }catch(e){
+    res.status(403).json('Forbidden')
+    return;
+  }
+  next();
+});
 
 configRoutes(app);
 
@@ -40,7 +61,6 @@ app.listen(3000, () => {
 });
 
 cron.schedule("*/60 * * * * *", function() {
-  const data = require("./data");
   data.appointment.sendAppointmentReminder();
   data.appointment.changeAppointmentCompleteStatus();
 });
