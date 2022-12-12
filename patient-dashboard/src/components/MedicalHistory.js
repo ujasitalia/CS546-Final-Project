@@ -15,12 +15,12 @@ export const MedicalHistory = (props) => {
     const handleInputChange = (e) => {
         let field = e.target.id.split('-');
         let newMedicalHistory = [...medicalHistory]
-        if(field[1] === 'disease')
-            newMedicalHistory[field[0]]['disease']=e.target.value;
-        else if(field[1] === 'startDate')
-        newMedicalHistory[field[0]]['startDate']=e.target.value;
-        else if(field[1] === 'endDate')
-        newMedicalHistory[field[0]]['endDate']=e.target.value;
+        if(field[2] == 'disease')
+            newMedicalHistory[field[1]]['disease']=e.target.value;
+        else if(field[2] === 'startDate')
+            newMedicalHistory[field[1]]['startDate']=e.target.value;
+        else if(field[2] === 'endDate')
+            newMedicalHistory[field[1]]['endDate']=e.target.value;
 
         setMedicalHistory(newMedicalHistory);
     }
@@ -34,6 +34,8 @@ export const MedicalHistory = (props) => {
         return today;
     }
     const processDate = (date) => {
+        if(date)
+        {
         var today = new Date(date);
         var dd = String(today.getDate()+1).padStart(2, '0');
         var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -41,6 +43,7 @@ export const MedicalHistory = (props) => {
 
         today = yyyy + '-' + mm + '-' + dd;
         return today;
+        }
     }
     const validateSignUp = async (e) =>{
         e.preventDefault();
@@ -56,6 +59,7 @@ export const MedicalHistory = (props) => {
         try{
             const data = { 'medicalHistory':medicalHistory }
             const response = await api.profile.patchMedicalHistory(props.patientData._id,data,e.target.id);
+            //props.handleChange();
             console.log(response);
         }catch(e){
             setHasError(true);

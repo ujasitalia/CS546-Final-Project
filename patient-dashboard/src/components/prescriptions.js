@@ -14,7 +14,7 @@ export const Prescriptions = (props) => {
     const getDoctors = async (prescriptions) => {
         try{
             prescriptions.forEach(async(p) => {
-                let doctor = await axios.get(`http://localhost:3000/doctor/${p.doctorId}`);
+                let doctor = await api.profile.getDoctor(p.doctorId);
                 //console.log(doctor.data)
                 let x = {};
                 x[doctor.data._id] = doctor.data.name

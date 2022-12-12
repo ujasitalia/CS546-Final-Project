@@ -1,17 +1,19 @@
-import {axiosNoAuth} from './axios'
+import {axiosAuth, axiosNoAuth} from './axios'
 
-export const get = (data) => {
-    return axiosNoAuth.get(`/:patientId`, data)
+export const get = (patientId) => {
+    return axiosAuth.get(`/patient/${patientId}`)
 }
-
+export const getDoctor = (doctorId) => {
+    return axiosAuth.get(`/doctor/${doctorId}`)
+}
 export const patch = (id,data) => {
-    return axiosNoAuth.patch(`/${id}`, data)
+    return axiosAuth.patch(`/patient/${id}`, data)
 }
 
 export const patchMedicalHistory = (patientId,data,medicalHistoryId) => {
-    return axiosNoAuth.patch(`/${patientId}/medicalHistory/${medicalHistoryId}`, data)
+    return axiosAuth.patch(`/patient/${patientId}/medicalHistory/${medicalHistoryId}`, data)
 }
 
 export const patchTestReports = (patientId,data,testReportId) => {
-    return axiosNoAuth.patch(`/${patientId}/testReport/${testReportId}`, data)
+    return axiosAuth.patch(`/patient/${patientId}/testReport/${testReportId}`, data)
 }

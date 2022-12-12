@@ -24,7 +24,15 @@ export const TestReports = (props) => {
 
         setTestReports(newTestReports);
     }
-    
+    const getTodaysDate = () => {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+        return today;
+    }
     const validateSignUp = async (e) =>{
         e.preventDefault();
         try
@@ -56,7 +64,7 @@ export const TestReports = (props) => {
                 <div>
                     <div>
                         <label for={test.testReportId+'-'+index+'-testName'}>Test Name</label>
-                        <input placeholder="Test Name" id={disease.testReportId+'-'+index+'-testName'} value={testReports[index]['testName']} onChange={handleInputChange} type="text" className="testName"/>
+                        <input placeholder="Test Name" id={test.testReportId+'-'+index+'-testName'} value={testReports[index]['testName']} onChange={handleInputChange} type="text" className="testName"/>
                     </div>
                     <div>
                         <label for={test.testReportId+'-'+index+'-document'}>Document</label>

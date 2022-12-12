@@ -7,13 +7,15 @@ import {helper} from '../helper';
 import { About } from '../components/About';
 import { Prescriptions } from '../components/Prescriptions';
 import { MedicalHistory } from '../components/MedicalHistory';
+import { TestReports } from '../components/TestReports';
+import { axiosAuth } from '../api/axios';
 
 const Profile = ({patientId}) => {
 
-    const getData = async() => {
+    const getData = async(patientId) => {
         try{
-            const res = await axios.get(`http://localhost:3000/patient/63720db26efe81c88657130f`);
-            console.log(res.data)
+            const res = await api.profile.get(patientId);
+            console.log(res)
             setPatientData(res.data);
         }catch(e){
             setHasError(true);
@@ -22,7 +24,7 @@ const Profile = ({patientId}) => {
         }
     }
     useEffect(() => {
-        if(patientData=='') getData();
+        if(patientData=='') getData(patientId);
     },[])
 
     const [hasError, setHasError] = useState(false);
@@ -62,7 +64,7 @@ const Profile = ({patientId}) => {
         return
     }
 
-    const handleAbout = (aboutData) => {
+    const handlePatientData = (aboutData) => {
         setPatientData(aboutData);
     }
   return (
@@ -80,10 +82,10 @@ const Profile = ({patientId}) => {
             <li onClick={testReportsTabClick}>Test Reports</li>
         </ul>
         
-        <div> {patientData && aboutTab && <About patientData={patientData} handleChange={handleAbout}/> }</div>
-        <div> {patientData && prescriptionsTab && <Prescriptions patientData={patientData}/> }</div>
-        <div> {patientData && medicalHistoryTab && <MedicalHistory patientData={patientData}/> }</div>
-        <div> {patientData && testReportsTab && <TestReports patientData={patientData}/> }</div>        
+        <div> {patientData && aboutTab && <About patientData={patientData} handleChange={handlePatientData}/> }</div>
+        <div> {patientData && prescriptionsTab && <Prescriptions patientData={patientData} handleChange={handlePatientData}/> }</div>
+        <div> {patientData && medicalHistoryTab && <MedicalHistory patientData={patientData} handleChange={handlePatientData}/> }</div>
+        <div> {patientData && testReportsTab && <TestReports patientData={patientData} handleChange={handlePatientData}/> }</div>        
         {hasError && <div className="error">{error}</div>}
     </div>
   )
