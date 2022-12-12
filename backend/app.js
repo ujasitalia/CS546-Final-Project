@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors');
 const configRoutes = require('./routes');
 const jwt = require("jsonwebtoken");
+const cron = require("node-cron");
 
 app.use(express.json());
 app.use(cors());
@@ -36,4 +37,9 @@ configRoutes(app);
 app.listen(3000, () => {
   console.log("We've now got a server!");
   console.log('Your routes will be running on http://localhost:3000');
+});
+
+cron.schedule("*/60 * * * * *", function() {
+  const reminder = require("./data");
+  reminder.appointment.sendAppointmentReminder();
 });
