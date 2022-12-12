@@ -11,7 +11,7 @@ const EditAppointment = () => {
   const { appointmentId } = useParams();
   const navigate = useNavigate();
   const [appointment, setAppointment] = useState("");
-  const [availableSlots, setAvailableSlots] = useState([]);
+  const [availableSlots, setAvailableSlots] = useState('');
   const [days,setDays] = useState([])
   const [doctor, setDoctor] = useState('')
   const [updatedSlot, setUpdatedSlot] = useState('')
@@ -142,7 +142,7 @@ const EditAppointment = () => {
                     </div>
                 ) : (
                     <>
-                      <p>All appointments are booked. Please try for another day.</p>
+                      {availableSlots  &&  <p>All slots are booked. Please try for another day.</p>}
                     </>
                 )}
             </>

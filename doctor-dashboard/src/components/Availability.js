@@ -123,7 +123,7 @@ const Availability = (props) => {
     if(slot[day[0]].length===1)
       delete slot[day[0]];
     else
-      slot[day[0]].splice(day[2], day[2]);
+      slot[day[0]].splice(day[2], 1);
     setSlots(slot);
   }
 

@@ -6,65 +6,6 @@ const doctorData = require("./doctor");
 const patientData = require("./patient")
 const {email} = require("../service");
 
-const getAvailableSlots = async (id, day, date) => {  
-  const appointments = await getDoctorAppointments(id)
-  
-  const docData = await doctorData.getDoctorById(id)
-  const scheduleThatDay = docData.schedule[day]
-  // console.log(scheduleThatDay);
-  let timeSlotsTaken = []
-  const weekdays = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-  for (i of appointments){   
-    // console.log(i.startTime); 
-    let startTime = i.startTime
-    const da = i.startTime.split('T')[0]
-    const d = weekdays[new Date(startTime).getDay()].toLocaleLowerCase();
-    // console.log(d);
-    if(d === day.toLocaleLowerCase() && da === date){
-      // console.log(da);
-      const t = startTime.slice(11, 16);
-      const [time, modifier] = t.split(" ");
-      let [hours, minutes] = time.split(":");
-      // if (hours === "24") {
-      //   hours = "00";
-      // }
-      // if (modifier === "PM") {
-      //   hours = parseInt(hours, 10) + 12;
-      // }
-      const apTime = hours + ":" + minutes;
-      timeSlotsTaken.push(apTime)
-    }
-  }
-  //creating all possible slots
-  let allPossibleSlots = []
-  for(i of scheduleThatDay){
-    const start = Number(i[0].split(':')[0])
-    const duration = Number(i[1].split(':')[0]) - Number(i[0].split(':')[0])
-    for (j=start; j<start+duration; j++){
-      allPossibleSlots.push(`${j}:00`)
-    }
-  }
-  
-  // getting all available slots
-  let allAvailableSlots = []
-  for(i of allPossibleSlots){
-    if(!timeSlotsTaken.includes(i)){
-      allAvailableSlots.push(i)
-    }
-  }
-  return allAvailableSlots
-  
-}
-
-
 const createAppointment = async (
   doctorId,
   patientId,
@@ -102,8 +43,10 @@ const createAppointment = async (
     patientEmail:patient.email,
     patientName:patient.name,
     startTime,
+    appointmentDuration: doctor.appointmentDuration,
     appointmentLocation,
     isReminded : false,
+    isCompleted : false
   };
 
   const insertInfo = await appointmentCollection.insertOne(newAppointment);
@@ -114,7 +57,7 @@ const createAppointment = async (
   const newId = insertInfo.insertedId.toString();
   const appointment = await getAppointmentById(newId);
 
-  await email.sendAppointmentConfirmation({doctor,patient,appointment});
+  email.sendAppointmentConfirmation({doctor,patient,appointment});
   return appointment;
 };
 
@@ -127,7 +70,7 @@ const getDoctorAppointments = async (id) => {
   const appointmentCollection = await apCol();
   
   const appointments = await appointmentCollection
-  .find({ doctorId: id })
+  .find({ doctorId: id , isCompleted : false})
   .toArray();  
 
   if (!appointments)
@@ -150,7 +93,7 @@ const getPatientAppointment = async (id) => {
   const appointmentCollection = await apCol();
   
   const appointments = await appointmentCollection
-  .find({ patientId: id })
+  .find({ patientId: id, isCompleted : false})
   .toArray();  
   // console.log(appointments);
   if (!appointments)
@@ -172,7 +115,9 @@ const getAppointmentById = async (id) => {
   //get all appointments of that doctor
   const appointmentCollection = await apCol();
   const appointment = await appointmentCollection.findOne(
-    { _id: ObjectId(id) }
+    { _id: ObjectId(id),
+      isCompleted : false
+     }
   );
 
   // console.log(appointment);
@@ -246,7 +191,8 @@ const updateAppointmentById = async (id, data) => {
 const getDoctorSlots = async (doctorId, date = new Date()) => {
   const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const doctor = await doctorData.getDoctorById(doctorId);
-  
+  const today = new Date();
+
   if(date.getDay()>5)
     return [];
 
@@ -264,19 +210,22 @@ const getDoctorSlots = async (doctorId, date = new Date()) => {
       return appointment;
   })
   
-  const isAppointmentNotExistInSlot = (hour, minite) => {
+  const isAppointmentNotExistInSlot = (startHour, startMinute, endHour, endMinute) => {
 
     for(let i=0;i<appointments.length;i++)
     {
-      const h = new Date(appointments[i].startTime).getHours();
-      const m = new Date(appointments[i].startTime).getMinutes();
-      if( h == hour && m == minite)
+      const startTime = new Date(appointments[i].startTime)
+      const sh = startTime.getHours();
+      const sm = startTime.getMinutes();
+      const endTime = new Date(startTime.getTime() + 1000*60*appointments[i].appointmentDuration);
+      const eh = endTime.getHours();
+      const em = endTime.getMinutes();
+      if(!(((sh<startHour || (sh===startHour && sm<startMinute)) && (eh<startHour || (eh===startHour && em<=startMinute))) || (sh>endHour || (sh===endHour && sm>=endMinute))))
       {
-        appointments.splice(i, 1);
-        return false;
+        return {flag : false, startHour:eh, startMinute:em};
       }
     }
-      return true;
+      return {flag : true};
   }
 
   for(let i=0;i<schedule.length;i++)
@@ -296,15 +245,28 @@ const getDoctorSlots = async (doctorId, date = new Date()) => {
       }
       if(startTime[1] + slotSize < 60)
       {
-        if(isAppointmentNotExistInSlot(startTime[0], startTime[1]))
-        console.log(slot);
-          slot = [...slot, [startTime[0].toString().padStart(2, '0') + ':' + startTime[1].toString().padStart(2, '0'), startTime[0].toString().padStart(2, '0') + ':' + (startTime[1] + slotSize).toString().padStart(2, '0')]];
-        startTime[1] += slotSize; 
+        const result = isAppointmentNotExistInSlot(startTime[0], startTime[1], startTime[0], startTime[1] + slotSize);
+        if(result.flag === true)
+        {
+          if(!(today.getDate() === date.getDate() && (startTime[0]<today.getHours() || (startTime[0]===today.getHours() && startTime[1]<today.getMinutes()))))
+            slot = [...slot, [startTime[0].toString().padStart(2, '0') + ':' + startTime[1].toString().padStart(2, '0'), startTime[0].toString().padStart(2, '0') + ':' + (startTime[1] + slotSize).toString().padStart(2, '0')]];
+          startTime[1] += slotSize;
+        }else{
+          startTime[0] = result.startHour;
+          startTime[1] = result.startMinute;
+        } 
       }else{
-        if(isAppointmentNotExistInSlot(startTime[0], startTime[1]))
-          slot = [...slot, [startTime[0].toString().padStart(2, '0') + ':' + startTime[1].toString().padStart(2, '0'), (startTime[0] + parseInt((startTime[1] + slotSize)/60)).toString().padStart(2, '0') + ':' + ((startTime[1] + slotSize)%60).toString().padStart(2, '0')]];
-        startTime[0] += parseInt((startTime[1] + slotSize)/60);
-        startTime[1] = (startTime[1] + slotSize)%60; 
+        const result = isAppointmentNotExistInSlot(startTime[0], startTime[1], startTime[0] + parseInt((startTime[1] + slotSize)/60), (startTime[1] + slotSize)%60);
+        if(result.flag === true)
+        {
+          if(!(today.getDate() === date.getDate() && (startTime[0]<today.getHours() || (startTime[0]===today.getHours() && startTime[1]<today.getMinutes()))))
+            slot = [...slot, [startTime[0].toString().padStart(2, '0') + ':' + startTime[1].toString().padStart(2, '0'), (startTime[0] + parseInt((startTime[1] + slotSize)/60)).toString().padStart(2, '0') + ':' + ((startTime[1] + slotSize)%60).toString().padStart(2, '0')]];
+          startTime[0] += parseInt((startTime[1] + slotSize)/60);
+          startTime[1] = (startTime[1] + slotSize)%60;
+        }else{
+          startTime[0] = result.startHour;
+          startTime[1] = result.startMinute;
+        } 
       }
       
     }
@@ -326,11 +288,29 @@ const sendAppointmentReminder = async()=>{
       remindedIds.push(appointment._id);
     }
   });
-  const updatedInfo = await appointmentCollection.updateOne(
+  await appointmentCollection.updateMany(
     { _id: {$in : remindedIds} },
     { $set: {isReminded : true} }
   );
 }
+
+const changeAppointmentCompleteStatus = async() =>{
+  const appointmentCollection = await apCol();
+  const allAppointments = await appointmentCollection.find({isCompleted: false}).toArray();
+  const completedIds = []
+  const curTime = new Date();
+  allAppointments.forEach(appointment=>{
+    startTime = new Date(appointment.startTime);
+    endTime = new Date(startTime.getTime() + 1000 * 60 * appointment.appointmentDuration);
+    if(endTime<curTime)
+      completedIds.push(appointment._id);
+  })
+  await appointmentCollection.updateMany(
+    { _id: {$in : completedIds} },
+    { $set: {isCompleted : true} }
+  );
+}
+
 module.exports = {
   createAppointment,
   getDoctorAppointments,
@@ -338,7 +318,7 @@ module.exports = {
   getAppointmentById,
   deleteAppointmentById,
   updateAppointmentById,
-  getAvailableSlots,
   getDoctorSlots,
-  sendAppointmentReminder
+  sendAppointmentReminder,
+  changeAppointmentCompleteStatus
 };

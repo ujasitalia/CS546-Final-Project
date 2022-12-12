@@ -14,15 +14,13 @@ const EditAppointment = () => {
   const [appointment, setAppointment] = useState("");
   const [days,setDays] = useState([])
   const [doctor, setDoctor] = useState('')
-  const [availableSlots, setAvailableSlots] = useState([]);
+  const [availableSlots, setAvailableSlots] = useState('');
 //   const [days,setDays] = useState([])
 //   const [doctor, setDoctor] = useState('')
   const [updatedSlot, setUpdatedSlot] = useState('')
   const [startDate, setStartDate] = useState(new Date());
   const [hasError, setHasError] = useState(false);
   const [notUpdated, setNotUpdated] = useState(false);
-  const [noAvailableSlots, setNoAvailableSlots] = useState(false)
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -172,13 +170,7 @@ const EditAppointment = () => {
                     </div>
                 ) : (
                     <>
-                      {noAvailableSlots ? (
-                        <p>All slots are taken. Please try for a different day.</p>
-                      ) : (
-                        <>                          
-                        </>
-                      )} 
-                                           
+                      {availableSlots  &&  <p>All slots are booked. Please try for another day.</p>}                    
                     </>
                 )}
             </>

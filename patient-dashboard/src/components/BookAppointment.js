@@ -10,7 +10,7 @@ const BookAppointment = (props) => {
     const navigate = useNavigate();
     const [startDate, setStartDate] = useState(new Date());
     const [hasError, setHasError] = useState(false);
-    const [availableSlots, setAvailableSlots] = useState([]);
+    const [availableSlots, setAvailableSlots] = useState('');
     const [slot, setSlot] = useState('')
     const [notUpdated, setNotUpdated] = useState(false)
     
@@ -119,7 +119,7 @@ const BookAppointment = (props) => {
                     </div>
                 ) : (
                     <>
-                        <p>All appointments are booked. Please try for another day.</p>
+                       {availableSlots  &&  <p>All slots are booked. Please try for another day.</p>}
                     </>
                 )}
             </>

@@ -34,7 +34,7 @@ const MyAppointment = () => {
         
         {data ? (
           <div>
-            {data.appointments.map(ap => {
+            {data.appointments.length !== 0 ?data.appointments.map(ap => {
               const name = idName[ap.doctorId]
               return (                
                 <Link to={`/myAppointment/${ap._id}`} state={{appointmentId : ap._id, name: name}} style={{color:"black"}}>
@@ -45,7 +45,9 @@ const MyAppointment = () => {
                   <br />
                 </Link>
               )
-            })}
+            }) 
+            :
+            <p>No Upcoming Appointments</p>}
           </div>
         ) : (
           <p>You have no upcoming appointments.</p>
