@@ -54,7 +54,16 @@ const createAppointment = async (
   if (!insertInfo.acknowledged || !insertInfo.insertedId)
     return "Could not add appointment"
 
-  if(!doctor.myPatients.includes(patientId))
+  let myP = false;
+  for(let i=0;i<doctor.myPatients.length;i++)
+  {
+    if(doctor.myPatients[i][0]===patientId)
+    {
+      myP=true;
+      break;
+    }
+  }
+  if(!myP)
     await doctorData.addMyPatient(doctorId,patientId);
     
   const newId = insertInfo.insertedId.toString();
@@ -301,13 +310,23 @@ const changeAppointmentCompleteStatus = async() =>{
   const appointmentCollection = await apCol();
   const allAppointments = await appointmentCollection.find({isCompleted: false}).toArray();
   const completedIds = []
+  const myPatients = {}
   const curTime = new Date();
   allAppointments.forEach(appointment=>{
     startTime = new Date(appointment.startTime);
     endTime = new Date(startTime.getTime() + 1000 * 60 * appointment.appointmentDuration);
     if(endTime<curTime)
+    {
       completedIds.push(appointment._id);
+      if(!(appointment.doctorId in myPatients))
+        myPatients[appointment.doctorId] = [appointment.patientId];
+      else
+        myPatients[appointment.doctorId].push(appointment.patientId);
+    }
   })
+  for(let doctor in myPatients){
+    await doctorData.changeReviewStatus(doctor,myPatients[doctor],false);
+  }
   await appointmentCollection.updateMany(
     { _id: {$in : completedIds} },
     { $set: {isCompleted : true} }

@@ -45,6 +45,7 @@ reviewText = null
     await doctor.updateDoctor(doctorId, {rating:totalRating/reviewsArray.length});
     const review = await getReviewById(newId);
   
+    await doctor.changeReviewStatus(doctorId,[patientId], true);
     review._id = review._id.toString();
     return review;
 }

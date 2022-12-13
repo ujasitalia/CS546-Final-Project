@@ -122,7 +122,7 @@ const getAllDoctor = async () => {
     doctorId = helper.common.isValidId(doctorId);
     patientId = helper.common.isValidId(patientId);
     const doctorCollection = await doctorCol();
-    const updatedInfo = await doctorCollection.updateOne({_id: ObjectId(doctorId)},{$push:{myPatients: patientId}});
+    const updatedInfo = await doctorCollection.updateOne({_id: ObjectId(doctorId)},{$push:{myPatients: [patientId, true]}});
     if (updatedInfo.modifiedCount === 0) {
       throw {status: '400', error : 'could not update because values are same as previous one'};
     }
@@ -146,6 +146,20 @@ const isDoctorsPatient = async(doctorId, patientId) =>{
   if (doctorInDb === null) throw {status:404,error:'doctor not found'};
   return doctorInDb;
 }
+
+const changeReviewStatus = async(doctorId, patientIds, flag) =>{
+  const doctorCollection = await doctorCol();
+  const doctorInDb = await doctorCollection.findOne({_id:ObjectId(doctorId)});
+  const myPatients = []
+  doctorInDb.myPatients.forEach( element => {
+    if(patientIds.includes(element[0]))
+    myPatients.push([element[0], flag])
+    else return myPatients.push([element[0], element[1]]);
+  })
+  const updatedInfo = await doctorCollection.updateMany({_id:ObjectId(doctorId)}, {$set: {myPatients : myPatients}});
+  return updatedInfo;
+}
+
 module.exports = {
     createDoctor,
     getDoctorById,
@@ -153,5 +167,6 @@ module.exports = {
     updateDoctor,
     addMyPatient,
     checkDoctor,
-    isDoctorsPatient
+    isDoctorsPatient,
+    changeReviewStatus
 };

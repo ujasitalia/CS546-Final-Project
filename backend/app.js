@@ -135,6 +135,15 @@ app.use('/doctor/:doctorId/patient/:patientId', async(req, res, next) => {
   next();
 });
 
+app.use('/review', (req, res, next) => {
+  if(req.url === '/' && req.method === 'POST' && req.user.role !== 'patient' && req.user.userId !== req.body.patientId)
+  { 
+    res.status(403).json('Forbidden')
+    return;
+  }
+  next();
+});
+
 configRoutes(app);
 
 app.listen(3000, () => {

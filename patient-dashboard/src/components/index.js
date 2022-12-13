@@ -4,6 +4,7 @@ import DoctorAvailability from './DoctorAvailability';
 import DoctorReviews from './DoctorReviews';
 import BookAppointment from './BookAppointment';
 import SecondaryNavbar from './SecondaryNavbar';
+import ReviewForm from './ReviewForm';
 
 const components = {
     Navbar,
@@ -12,5 +13,6 @@ const components = {
     DoctorReviews,
     BookAppointment,
     SecondaryNavbar,
+    ReviewForm
 }
 export { components }
