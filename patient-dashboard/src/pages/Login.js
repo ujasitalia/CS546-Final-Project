@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { api } from '../api';
-import arrow from "../assets/images/arrow.svg";
 import {helper} from '../helper';
 import Chat from '../chat'
 import "../assets/css/login.css";
