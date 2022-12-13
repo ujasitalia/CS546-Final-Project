@@ -120,20 +120,20 @@ const getFilterResult = async (data) => {
 };
 
 
-const updateMedicalHistory = async (patientId,disease, startDate) => {
+const updateMedicalHistory = async (patientId,disease, startDate, endDate) => {
   
   patientId = commonHelper.isValidId(patientId);
   disease = commonHelper.isValidString(disease);
   startDate = commonHelper.isValidTime(startDate);
-  /*
+  
   if(endDate !== null){
     endDate = commonHelper.isValidTime(endDate);
-  }*/
+  }
 
   const patientCollection = await patients();
   const patient = await patientCollection.getPatientById(patientId);
-  //let newMedicalHistory = {disease,startDate,endDate};
-  let newMedicalHistory = {disease,startDate};
+  let newMedicalHistory = {disease,startDate,endDate};
+  //let newMedicalHistory = {disease,startDate};
 
   const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{medicalHistory: newMedicalHistory}});
 
@@ -183,6 +183,51 @@ const updateTestReport = async (patientId, testName, testDocument) => {
   return updatedPatient;
 };
 
+const getMedicalHistoryById = async(id) => { 
+
+  id = commonHelper.isValidId(id);
+  const patientCollection = await patients();
+  const patientList = await patientCollection.find({}).toArray();
+  if(!patientList) throw "Could not get all patients";
+
+  const medicalHistory = await patientCollection.find({"medicalHistory._id": ObjectId(id)},{projection: {_id:0,medicalHistory:1}}).toArray();
+  if(medicalHistory.length === 0) throw "testReport not found";
+  if(!medicalHistory[0].medicalHistory) throw "testReport not found";
+
+  return medicalHistory[0].medicalHistory.find(o => o["_id"] == id);
+};
+
+const editPatientMedicalHistory = async(id,disease,startDate,endDate) => {
+
+  const patientCollection = await patients();
+
+  id = commonHelper.isValidId(id);
+  disease = commonHelper.isValidString(disease);
+  startDate = commonHelper.isValidTime(startDate);
+
+  if(endDate){
+    endDate = commonHelper.isValidTime(endDate);
+  }
+  else{
+    endDate == null;
+  }
+
+
+  let editedMedicalHistory = {disease,startDate,endDate};
+
+  await getMedicalHistoryById(id);
+
+  const patientId = await patientCollection.findOne({"medicalHistory._id": ObjectId(id)});
+
+  const updatedInfo = await patientCollection.updateMany({_id: ObjectId(patientId)},{$set:{medicalHistory: editedMedicalHistory}});
+
+  if (updatedInfo.modifiedCount === 0) {
+    throw {status: '400', error : 'could not update test reports'};
+  }
+
+  
+};
+
 const getTestReport = async(id) => {
   id = commonHelper.isValidId(id);
   const patientCollection = await patients();
@@ -194,6 +239,18 @@ const getTestReport = async(id) => {
   return testReportList;
 };
 
+const getTestReportById = async(id) => {
+  id = commonHelper.isValidId(id);
+  const patientCollection = await patients();
+  const patientList = await patientCollection.find({}).toArray();
+  if(!patientList) throw "Could not get all patients";
+
+  const testReport = await patientCollection.find({"testReports._id": ObjectId(id)},{projection: {_id:0,testReports:1}}).toArray();
+  if(testReport.length === 0) throw "testReport not found";
+  if(!testReport[0].testReports) throw "testReport not found";
+
+  return testReport[0].testReports.find(o => o["_id"] == id);
+};
 
 const getPatientPrescription = async(id) => {
   id = commonHelper.isValidId(id);
@@ -206,6 +263,34 @@ const getPatientPrescription = async(id) => {
   return patientPrescriptionList;
 };
 
+const editPatientReports = async(id,testName,testDocument) => {
+  const patientCollection = await patients();
+
+  id = commonHelper.isValidId(id);
+  testName = commonHelper.isValidString(testName);
+  testDocument = commonHelper.isValidFilePath(testDocument);
+
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var yyyy = today.getFullYear();
+
+  today = mm + '/' + dd + '/' + yyyy;
+  testDate = today.toString();
+
+  let editedTestReports = {testName,testDocument,testDate};
+
+  await getTestReportById(id);
+
+  const patientId = await patientCollection.findOne({"testReports._id": ObjectId(id)});
+
+  const updatedInfo = await patientCollection.updateMany({_id: ObjectId(patientId)},{$set:{testReports: editedTestReports}});
+
+  if (updatedInfo.modifiedCount === 0) {
+    throw {status: '400', error : 'could not update test reports'};
+  }
+}
+
 
 
 module.exports = {
@@ -217,7 +302,9 @@ module.exports = {
   getFilterResult,
   updateMedicalHistory,
   getMedicalHistory,
+  editPatientMedicalHistory,
   updateTestReport,
   getTestReport,
+  editPatientReports,
   getPatientPrescription
 };

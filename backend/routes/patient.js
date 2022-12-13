@@ -235,16 +235,15 @@ router
 
       diseaseData.disease = commonHelper.isValidString(diseaseData.disease);
       diseaseData.startDate = commonHelper.isValidTime(diseaseData.startDate);
-      /*
       if(diseaseData.endDate){
         diseaseData.endDate=commonHelper.isValidTime(diseaseData.endDate);
       }
       else{
         bodyData.endDate == null;
-      }*/
+      }
 
-      //let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate,diseaseData.endDate);
-      let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate);
+      let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate,diseaseData.endDate);
+      //let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate);
       res.json(newMedicalHistory);
       }catch(e){
       if(e.status)
@@ -259,7 +258,26 @@ router
   router
   .route('/:patientId/medicalHistory/:medicalHistoryId')
   .patch(async (req, res) => {
-    // Only start date being considered and patient not given the access to update the medical history once entered
+    try{
+      let id = commonHelper.isValidId(req.params.medicalHistoryId);
+      const medicalHistoryData = req.body;
+      medicalHistoryData.disease=commonHelper.isValidString(medicalHistoryData.disease);
+      medicalHistoryData.startDate=commonHelper.isValidTime(medicalHistoryData.startDate);
+      if(medicalHistoryData.endDate){
+        medicalHistoryData.endDate=commonHelper.isValidTime(medicalHistoryData.endDate);
+      }
+      else{
+        medicalHistoryData.endDate == null;
+      }
+      let updatedPatient = await patientData.editMedicalHistory(id,medicalHistoryData.disease,medicalHistoryData.startDate,medicalHistoryData.endDate);
+      res.json(updatedPatient);
+    }catch(e){
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json("Internal server error");
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
   })
 
   router
@@ -344,7 +362,20 @@ router
   router
   .route('/:patientId/testReport/:testReportId')
   .patch(async (req, res) => {
-    //No update of test reports option given to patient 
+    try{
+      let id = commonHelper.isValidId(req.params.testReportId);
+      const testData = req.body;
+      testData.testName=commonHelper.isValidString(testData.testName);
+      testData.testDocument=commonHelper.isValidFilePath(testData.testDocument);
+      let updatedPatient = await patientData.editPatientReports(id,testData.testName,testData.testDocument);
+      res.json(updatedPatient);
+    }catch(e){
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json("Internal server error");
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
   })
 
 
