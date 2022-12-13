@@ -33,32 +33,32 @@ const Dashboard = () => {
 integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" 
 crossorigin="anonymous"></link>
           <div class="container-fluid pt-4 px-4">
-                <div class="row g-4">
-                    <div class="col-sm-12 col-xl-6">
-                        <div class="bg-light rounded h-100 p-4">
-                          <ul>
-                              <li id="availabilityTab" onClick={handleTabChange}>Availability</li>  
-                          </ul>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-xl-6">
-                        <div class="bg-light rounded h-100 p-4">
-                          <ul>
-                              <li id="availabilityTab" onClick={handleTabChange}>Availability</li>  
-                          </ul>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-xl-6">
-                        <div class="bg-light rounded h-100 p-4">
-                            {data && tab === 'appointmentTab' && <components.DoctorAppointment doctorId={data.doctor._id} />}
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-xl-6">
-                        <div class="bg-light rounded h-100 p-4">
-                          {data && tab === 'availabilityTab' && <components.Availability doctorId={data.doctor._id} doctorSchedule={data.doctor.schedule} appointmentDuration={data.doctor.appointmentDuration} handleAvailabilityChange={handleAvailabilityChange}/>}
-                        </div>
-                    </div>
-                </div>
+              <div class="row g-4">
+                  <div class="col-sm-12 col-xl-6">
+                      <div class="bg-light rounded h-100 p-4">
+                        <ul>
+                            <li id="availabilityTab" onClick={handleTabChange}>Availability</li>  
+                        </ul>
+                      </div>
+                  </div>
+                  <div class="col-sm-12 col-xl-6">
+                      <div class="bg-light rounded h-100 p-4">
+                        <ul>
+                            <li id="availabilityTab" onClick={handleTabChange}>Availability</li>  
+                        </ul>
+                      </div>
+                  </div>
+                  <div class="col-sm-12 col-xl-6">
+                      <div class="bg-light rounded h-100 p-4">
+                        {data && tab === 'appointmentTab' && <components.DoctorAppointment doctorId={data.doctor._id} />}
+                      </div>
+                  </div>
+                  <div class="col-sm-12 col-xl-6">
+                      <div class="bg-light rounded h-100 p-4">
+                        {data && tab === 'availabilityTab' && <components.Availability doctorId={data.doctor._id} doctorSchedule={data.doctor.schedule} appointmentDuration={data.doctor.appointmentDuration} handleAvailabilityChange={handleAvailabilityChange}/>}
+                      </div>
+                  </div>
+              </div>
             </div>
         </div>
       </div>
