@@ -21,8 +21,8 @@ reviewText = null
     const reviewCollection = await reviewCol();
 
     const newReview = {
-        doctorId : ObjectId(doctorId),
-        patientId : ObjectId(patientId),
+        doctorId : doctorId,
+        patientId : patientId,
         rating
     };
 
@@ -37,6 +37,12 @@ reviewText = null
         throw {status: '500', error : 'Could not add review'};
   
     const newId = insertInfo.insertedId.toString();
+    const reviewsArray = await reviewCollection.find({doctorId: doctorId}).toArray();
+    let totalRating = 0; 
+    reviewsArray.forEach(element => {
+        totalRating += element.rating;
+    });
+    await doctor.updateDoctor(doctorId, {rating:totalRating/reviewsArray.length});
     const review = await getReviewById(newId);
   
     review._id = review._id.toString();
@@ -49,7 +55,7 @@ const getReviewById = async(reviewId) =>{
     const reviewCollection = await reviewCol();
     const review = await reviewCollection.findOne({_id: ObjectId(reviewId)});
 
-    if (review === null) 
+    if(review === null) 
     {
         throw {status: '404', error : 'No review with that id'};
     }
@@ -63,7 +69,7 @@ const getAllReviewByDoctorId = async (doctorId) => {
     doctorId = helper.common.isValidId(doctorId);
     await doctor.getDoctorById(doctorId);
     const reviewCollection = await reviewCol();
-    const reviewsArray = await reviewCollection.find({doctorId: ObjectId(doctorId)}).toArray();
+    const reviewsArray = await reviewCollection.find({doctorId: doctorId}).toArray();
   
     if (!reviewsArray) throw {status: '404', error : 'Could not get all review'};
   

@@ -13,7 +13,7 @@ const getAllchat = async (doctorId, patientId) => {
     await patient.getPatientById(patientId);
     const chatCollection = await chatCol();
 
-    const chatHistory = await chatCollection.find( {$or : [{receiverId: ObjectId(doctorId), senderId: ObjectId(patientId)}, {receiverId: ObjectId(patientId),senderId: ObjectId(doctorId)}] }).toArray();
+    const chatHistory = await chatCollection.find( {$or : [{receiverId: doctorId, senderId: patientId}, {receiverId: patientId,senderId: doctorId}] }).toArray();
   
     if (!chatHistory) throw {status: '404', error : 'Could not get chat'};
   
@@ -24,7 +24,7 @@ const getAllchat = async (doctorId, patientId) => {
     userId = helper.common.isValidId(userId);
     const chatCollection = await chatCol();
 
-    const chatHistory = await chatCollection.find( {$or : [{receiverId: ObjectId(userId)}, {senderId: ObjectId(userId)}] }).toArray();
+    const chatHistory = await chatCollection.find( {$or : [{receiverId: userId}, {senderId: userId}] }).toArray();
     let people = [];
     for(var message in chatHistory){
         if(chatHistory[message].senderId.toString() == userId.toString()){
@@ -49,8 +49,8 @@ const createChat = async (senderId, receiverId, message) => {
     const timeStamp = Date();
 
     const newMessage = {
-        receiverId : ObjectId(receiverId),
-        senderId : ObjectId(senderId),
+        receiverId : receiverId,
+        senderId : senderId,
         message,
         timeStamp
       };
