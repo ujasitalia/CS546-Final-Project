@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { components } from '../components';
 import { api } from '../api';
-
+import Chat from '../chat'
 const Dashboard = () => {
     const [tab, setTab] = useState('appointmentTab');
     const [data, setData] = useState('');
@@ -37,7 +37,7 @@ crossorigin="anonymous"></link>
                   <div class="col-sm-12 col-xl-6">
                       <div class="bg-light rounded h-100 p-4">
                         <ul>
-                            <li id="availabilityTab" onClick={handleTabChange}>Availability</li>  
+                            <li id="availabilityTab" onClick={handleTabChange}>Appointment</li>  
                         </ul>
                       </div>
                   </div>
@@ -61,6 +61,7 @@ crossorigin="anonymous"></link>
               </div>
             </div>
         </div>
+        <Chat />
       </div>
       )
 }

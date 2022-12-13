@@ -4,6 +4,7 @@ import { api } from '../api';
 import {helper} from '../helper';
 import arrow from "../assets/images/arrow.svg";
 import "../assets/css/profile.css";
+import Chat from '../chat'
 const Profile = () => {
     const [data, setData] = useState('');
     const [fullName, setName] = useState('');
@@ -162,6 +163,7 @@ const Profile = () => {
             </form>
             </div>}
             {hasError && <div className="error">{error}</div>}
+        <Chat />
     </div>
     </>
   )

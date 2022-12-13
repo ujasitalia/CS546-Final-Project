@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { components } from '../components';
 import { api } from '../api';
+import Chat from '../chat'
 
 const Profile = () => {
     const [data, setData] = useState('');
@@ -106,6 +107,7 @@ const Profile = () => {
                 </div>
             </form>
             </div>
+        <Chat />
     </div></>
     )
 }
