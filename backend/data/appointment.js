@@ -54,6 +54,9 @@ const createAppointment = async (
   if (!insertInfo.acknowledged || !insertInfo.insertedId)
     return "Could not add appointment"
 
+  if(!doctor.myPatients.includes(patientId))
+    await doctorData.addMyPatient(doctorId,patientId);
+    
   const newId = insertInfo.insertedId.toString();
   const appointment = await getAppointmentById(newId);
 
@@ -311,6 +314,27 @@ const changeAppointmentCompleteStatus = async() =>{
   );
 }
 
+const checkAppointmentExist = async(role, userId, apointmentId) =>{
+  apointmentId = helper.common.isValidId(apointmentId);
+  userId = helper.common.isValidId(userId);
+  //get all appointments of that doctor
+  const appointmentCollection = await apCol();
+  let appointment;
+  if(role === 'doctor')
+    appointment = await appointmentCollection.findOne(
+      { _id: ObjectId(apointmentId),
+        doctorId : userId
+      }
+    );
+  else if(role === 'patient')   
+    appointment = await appointmentCollection.findOne(
+      { _id: ObjectId(apointmentId),
+        patientId : userId
+      }
+    );
+  if (!appointment)
+    throw { status: "404", error: "No appointment found with that id" };
+}
 module.exports = {
   createAppointment,
   getDoctorAppointments,
@@ -320,5 +344,6 @@ module.exports = {
   updateAppointmentById,
   getDoctorSlots,
   sendAppointmentReminder,
-  changeAppointmentCompleteStatus
+  changeAppointmentCompleteStatus,
+  checkAppointmentExist
 };
