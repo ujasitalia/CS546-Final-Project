@@ -37,7 +37,7 @@ const ChatWindow = () => {
                 console.log(e);
             }
         }
-        if(currentChat!='')
+        if(currentChat!=='')
             getMessages();
     }, [currentChat])
 
@@ -52,7 +52,8 @@ const ChatWindow = () => {
             }
         }
         socket.on("recievedMessage", () => {
-            getMessages();
+            if(currentChat!=='')
+                getMessages();
           });
     }, [socket])
 
@@ -83,7 +84,7 @@ const ChatWindow = () => {
         <div className="messenger">
             <div className="chatMenu">
             <div className="chatMenuWrapper">
-                {conversations.map((c) => (
+                {conversations.length!==0 ? conversations.map((c) => (
                 <div ref={scrollRef}>
                     <div onClick={() => setCurrentChat(c)}>
                     <Conversation 
@@ -91,7 +92,8 @@ const ChatWindow = () => {
                     />
                     </div>
                 </div>
-                ))}
+                ))
+                :<p>No Patient to chat with</p>}
             </div>
             </div>
             <div className="chatBox">
