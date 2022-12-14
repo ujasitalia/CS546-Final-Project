@@ -91,9 +91,11 @@ const Profile = () => {
         {data && <div  className='container'>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet"></link>
             <form onSubmit={validateSignUp}>
-                <div className="profileInputField"><label className="profileInputText" htmlFor="profileImage"> Profile Image : </label> <img style={{height: "100px"}} id="profileImage" src={`${data.doctor.profilePicture}`} alt=""/>
-                <a download="myImage.gif" href={`${data.doctor.profilePicture}`}>Download Profile</a>
-                <input type="file" id='updatedProfileImage' onChange={handleInputChange} />
+                <div className="profileInputField">
+                    <label className="profileInputText" htmlFor="profileImage"> Profile Image : </label> 
+                    <img style={{height: "100px"}} id="profileImage" src={`${data.doctor.profilePicture}`} alt=""/>
+                    <a download="myImage.gif" href={`${data.doctor.profilePicture}`}>Download Profile</a>
+                    <input type="file" id='updatedProfileImage' onChange={handleInputChange} />
                 </div>
                 <br/>
                 <div className="profileInputField"><label className="profileInputText" htmlFor="profileEmail"> Email : </label> <span id="profileEmail">{data.doctor.email}</span> </div>
@@ -110,7 +112,7 @@ const Profile = () => {
                     <div className="buttonBox">
                         <img src={arrow} className="arrow" loading="lazy" alt="logo" />
                     </div>
-                </div>
+                </button>
             </form>
             </div>}
             {hasError && <div className="error">{error}</div>}
