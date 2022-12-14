@@ -26,8 +26,10 @@ const isValidEmail = (email) => {
 }
 
 const isValidFilePath = (filePath) => {
-    filePath = isValidString(filePath, "File path");
-    return filePath
+  const meta = filePath.split(",")[0].split(";");
+    if(meta[1] !== 'base64')
+      throw {status: '400', error : 'Invalid file'}
+    return filePath;
 }
 
 const isValidPassword = (passowrd) => {
