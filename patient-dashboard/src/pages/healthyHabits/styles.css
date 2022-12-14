@@ -32,7 +32,7 @@ p{
     font-size: 14px;
     line-height: 30px;
 }
-.card{
+.healthyContainer .card{
     width: 150px;
     height: 180px;
     display: inline-block;
