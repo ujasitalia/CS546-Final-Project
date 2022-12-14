@@ -14,6 +14,7 @@ router.route("/").post(async (req, res) => {
       data.appointmentLocation
     );
   } catch (e) {
+    console.log(e);
     if (typeof e !== "object" || !("status" in e)) {
       res.status(500).json("Internal server error");
     } else res.status(parseInt(e.status)).json(e.error);

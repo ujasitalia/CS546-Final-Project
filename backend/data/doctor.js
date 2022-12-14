@@ -3,6 +3,7 @@ const mongoCollections = require('../config/mongoCollections');
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 const doctorCol = mongoCollections.doctor;
+const linksCol = mongoCollections.links;
 const commonHelper = require('../helper/common')
 const {ObjectId} = require('mongodb');
 
@@ -21,7 +22,8 @@ const createDoctor = async(
     speciality,
     clinicAddress,
     zip,
-    password
+    password,
+    link,
 ) => {
     email = helper.common.isValidEmail(email);
     if(await isDoctorEmailInDb(email)) throw {status:400,error:'An account already exists with this email'};
@@ -31,6 +33,7 @@ const createDoctor = async(
     clinicAddress = helper.doctor.isValidAddress(clinicAddress);
     zip = helper.common.isValidZip(zip);
     password = helper.common.isValidPassword(password);
+    link = helper.common.isValidLink(link);
 
     const doctorCollection = await doctorCol();
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -44,7 +47,8 @@ const createDoctor = async(
         hashedPassword,
         schedule:{},
         appointmentDuration : 30,
-        rating : 0
+        rating : 0,
+        link,
       };
   
     const insertInfo = await doctorCollection.insertOne(newDoctor);
@@ -126,6 +130,18 @@ const getAllDoctor = async () => {
     else if(await bcrypt.compare(password,doctorInDb.hashedPassword)) return doctorInDb; 
     throw {status:400,error:'Invalid email or password'};
   };
+
+  const getLinks = async() => {
+    const linksCollection = await linksCol();
+    const links = await linksCollection.find({used: false}).toArray()
+    const temp = links[0].li
+    const data = {used: true}
+    await linksCollection.updateMany(
+      {_id: links[0]._id},
+      {$set: data}
+    );
+    return temp;
+  }
   
 
 module.exports = {
@@ -133,5 +149,6 @@ module.exports = {
     getDoctorById,
     getAllDoctor,
     updateDoctor,
-    checkDoctor
+    checkDoctor,
+    getLinks,
 };

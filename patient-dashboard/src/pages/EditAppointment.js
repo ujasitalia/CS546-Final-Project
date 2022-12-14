@@ -85,6 +85,7 @@ const EditAppointment = () => {
     let temp = startDate.toISOString().split('T')[0]+'T'+time
     // console.log(updatedSlot);
     const updatedAppointment = {...appointment, startTime:temp}
+    console.log(updatedAppointment._id);
     const udA = await api.appointment.updateAppointment(updatedAppointment)
     if(udA.data === 'select a different date/time than original'){
         setNotUpdated(true);
@@ -97,7 +98,7 @@ const EditAppointment = () => {
 
   const handleCancel = async (e) => {
     e.preventDefault()
-    const cancelRequest = await api.appointment.deleteAppointment(location.state.appointmentId)
+    await api.appointment.deleteAppointment(location.state.appointmentId)
     navigate("/myAppointments", {state : {doctor : doctor} });
   }
 
@@ -116,6 +117,9 @@ const EditAppointment = () => {
             </div>
             <div className="cardText">
               Time : {appointment.startTime.slice(11, 19)}
+            </div>
+            <div className="cardText">
+              Location : {appointment.appointmentLocation}
             </div>
           </div>
           <br />
@@ -147,7 +151,6 @@ const EditAppointment = () => {
                 
             <>
                 <br />
-                {console.log()}
                 {availableSlots.length !== 0 ? (
                     <div>
                         {updatedSlot ? <></> : setUpdatedSlot(availableSlots[0][0])}

@@ -28,6 +28,7 @@ router
       data.clinicAddress = helper.doctor.isValidAddress(data.clinicAddress);
       data.zip = helper.common.isValidZip(data.zip);
       data.password = helper.common.isValidPassword(data.password);
+      data.link = helper.common.isValidLink(data.link)
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json("Internal server error");
@@ -38,7 +39,7 @@ router
 
     try{
       const createDoctor = await doctorData.createDoctor(data.email, data.profilePicture, data.name, data.speciality, 
-        data.clinicAddress, data.zip, data.password);
+        data.clinicAddress, data.zip, data.password, data.link);
       res.json(createDoctor);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
@@ -217,6 +218,21 @@ router
       return;
     }
 
+  })
+
+  router
+  .route('/getLinks/links')
+  .get(async (req, res) => {
+    try {
+      const links = await doctorData.getLinks()
+      res.json(links);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json("Internal server error");
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
   })
 
   router
