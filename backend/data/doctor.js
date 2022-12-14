@@ -161,13 +161,27 @@ const getAllDoctor = async () => {
     documents=commonHelper.isValidFilePath(documents);
     doctorSuggestion=commonHelper.isValidString(doctorSuggestion);
 
-    let patientInDb = await getPatientById(id);
+    let patientInDb = await getPatientById(patientId);
     if(!patientInDb) throw {status: "404", error: `No patient with that ID`};
     
     const patientCollection = await patients();
-    const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId),prescriptionId:ObjectId(prescriptionId)},{$set: {disease: disease,medicine:medicine,documents:documents, doctorSuggestion:doctorSuggestion}});
-
-    if (updatePatient.modifiedCount === 0) throw "No changes made to the prescription";
+    let prescriptionInDb = patientInDb.prescriptions;
+    //let newMedicalHistory = [];
+    for(let i=0;i<prescriptionInDb.length;i++){
+      if(prescriptionInDb[i].prescriptionId==prescriptionId) {
+        prescriptionInDb[i].disease=disease;
+        prescriptionInDb[i].medicine=medicine;
+        prescriptionInDb[i].documents=documents;
+        prescriptionInDb[i].doctorSuggestion=doctorSuggestion;
+      }
+    
+    }
+    patientInDb.prescriptions=prescriptionInDb;
+    const updatedInfo = await patientCollection.updateOne(
+      {_id: ObjectId(patientId)},
+      {$set: {prescriptions:prescriptionInDb}}
+    );
+    if (updatedInfo.modifiedCount === 0) throw "No changes made to the prescription";
 
     const updatedPatient = await getPatientById(patientId);
     return updatedPatient;

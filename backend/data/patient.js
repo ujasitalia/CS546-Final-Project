@@ -227,13 +227,8 @@ const updateTestReport = async (patientId,testReportId,testName, testDate, docum
 const getMedicalHistory = async (id) => {
 
   id = commonHelper.isValidId(id);
-  const patientCollection = await patients();
   const patient = await getPatientById(id);
-  let medicalHistoryList=[];
-  for(let i=0;i<patient.medicalHistory.length;i++){
-    medicalHistoryList.push(patient.medicalHistory[i]);
-  }
-  return medicalHistoryList;
+  return patient.medicalHistory;
 
 };
 
@@ -267,13 +262,8 @@ const addTestReport = async (patientId, testName, testDocument, testDate) => {
 
 const getTestReport = async(id) => {
   id = commonHelper.isValidId(id);
-  const patientCollection = await patients();
   const patient = await getPatientById(id);
-  let testReportList=[];
-  for(let i=0;i<patient.testReports.length;i++){
-    testReportList.push(patient.testReports[i]);
-  }
-  return testReportList;
+ return patient.testReports;
 };
 
 

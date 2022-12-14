@@ -105,12 +105,15 @@ const isValidDoctorData = (data) =>{
 }
 
 const isValidMedicine = (medicine) => {
+    let newMedicine = {}
     for(let m in medicine){
-        if(!common.isValidString(medicine)) return false;
-        if(!Array.isArray(medicine.m)) return false
-        if(!common.isValidString(medicine.m[0]) || typeof medicine.m[1] !== 'number') return false;
-        return true;
+        let key=common.isValidString(m,'Medicine');
+        if(!Array.isArray(medicine[m])) throw {status:'400',error:'Medicine must be an array'};
+        common.isValidString(medicine[m][0],'Dosage') 
+        if( typeof medicine[m][1] !== 'number') throw {status:'400',error:'Medicine frquency must be a number'};
+        newMedicine[key]=medicine[m];
     }
+    return newMedicine;
 }
 
 module.exports = {

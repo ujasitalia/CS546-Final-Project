@@ -257,12 +257,12 @@ router
       doctorId = helper.common.isValidId(req.params.doctorId);
       await patientData.getPatientById(patientId);
 
-      prescriptionData.disease=commonHelper.isValidString(prescriptionData.disease);
-      prescriptionData.medicines=isValidMedicine(prescriptionData.medicines);
-      prescriptionData.documents=commonHelper.isValidFilePath(prescriptionData.documents);
-      prescriptionData.doctorSuggestion=commonHelper.isValidString(prescriptionData.doctorSuggestion);
+      prescriptionData.disease=helper.common.isValidString(prescriptionData.disease);
+      prescriptionData.medicine=isValidMedicine(prescriptionData.medicine);
+      prescriptionData.documents=helper.common.isValidFilePath(prescriptionData.documents);
+      prescriptionData.doctorSuggestion=helper.common.isValidString(prescriptionData.doctorSuggestion);
 
-      let newPrescription = await doctorData.addPrescription(doctorId,patientId,prescriptionData.disease,prescriptionData.medicines,prescriptionData.documents,prescriptionData.doctorSuggestion);
+      let newPrescription = await doctorData.addPrescription(doctorId,patientId,prescriptionData.disease,prescriptionData.medicine,prescriptionData.documents,prescriptionData.doctorSuggestion);
       res.json(newPrescription);
       }catch(e){
       if(e.status)
@@ -285,14 +285,14 @@ router
       let patientId = req.params.patientId;
       const prescriptionData = req.body;
       patientId = helper.common.isValidId(req.params.patientId);
-      if(!await patientData.getPatientById(id)) throw {status:'400',error:'No patient with that Id'};
+      if(!await patientData.getPatientById(patientId)) throw {status:'400',error:'No patient with that Id'};
       
-      prescriptionData.disease=commonHelper.isValidString(prescriptionData.disease);
-      prescriptionData.medicines=isValidMedicine(prescriptionData.medicines);
-      prescriptionData.documents=commonHelper.isValidFilePath(prescriptionData.documents);
-      prescriptionData.doctorSuggestion=commonHelper.isValidString(prescriptionData.doctorSuggestion);
+      prescriptionData.disease=helper.common.isValidString(prescriptionData.disease);
+      prescriptionData.medicine=isValidMedicine(prescriptionData.medicine);
+      prescriptionData.documents=helper.common.isValidFilePath(prescriptionData.documents);
+      prescriptionData.doctorSuggestion=helper.common.isValidString(prescriptionData.doctorSuggestion);
 
-      let updatedPatient = await updatePrescription(patientId,prescriptionId,prescriptionData.disease,prescriptionData.medicines,prescriptionData.documents,prescriptionData.doctorSuggestion);
+      let updatedPatient = await updatePrescription(patientId,prescriptionId,prescriptionData.disease,prescriptionData.medicine,prescriptionData.documents,prescriptionData.doctorSuggestion);
       // let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate);
       res.json(updatedPatient);
       }catch(e){
@@ -311,28 +311,10 @@ router
   .get(async (req, res) => {
 
     //check patient id 
-    let id = req.params.patientId
     try {
+      let id = req.params.patientId
       id = helper.common.isValidId(req.params.patientId);
-    } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
-      return;
-    }
-    //check if the patient with that id is present
-    try {
       await patientData.getPatientById(id);
-    } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
-      return;
-    }
-    //get all medical history of that patient
-    try {
       const patientMedicalHistory = await patientData.getMedicalHistory(id)
       res.json(patientMedicalHistory)
     } catch (e) {
@@ -351,28 +333,10 @@ router
   .get(async (req, res) => {
 
     //check patient id 
-    let id = req.params.patientId
     try {
+      let id = req.params.patientId
       id = helper.common.isValidId(req.params.patientId);
-    } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
-      return;
-    }
-    //check if the patient with that id is present
-    try {
       await patientData.getPatientById(id);
-    } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
-      return;
-    }
-    //get all test reports of that patient
-    try {
       const patientTestReport = await patientData.getTestReport(id)
       res.json(patientTestReport)
     } catch (e) {
