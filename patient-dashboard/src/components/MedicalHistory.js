@@ -35,18 +35,18 @@ export const MedicalHistory = (props) => {
         today = yyyy + '-' + mm + '-' + dd;
         return today;
     }
-    const processDate = (date) => {
-        if(date)
-        {
-        var today = new Date(date);
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        var yyyy = today.getFullYear();
+    // const processDate = (date) => {
+    //     if(date)
+    //     {
+    //     var today = new Date(date);
+    //     var dd = String(today.getDate()).padStart(2, '0');
+    //     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    //     var yyyy = today.getFullYear();
 
-        today = yyyy + '-' + mm + '-' + dd;
-        return today;
-        }
-    }
+    //     today = yyyy + '-' + mm + '-' + dd;
+    //     return today;
+    //     }
+    // }
     const addMedicalHistory = async () => {
 
         setInputMedicalHistory(!inputMedicalHistory);

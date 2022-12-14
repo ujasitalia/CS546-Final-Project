@@ -176,7 +176,7 @@ const updateTestReport = async (patientId,testReportId,testName, testDate, docum
   testReportId = commonHelper.isValidId(testReportId);
   testName = commonHelper.isValidString(testName);
   testDate = commonHelper.isValidPastDate(testDate);
-  
+  document = commonHelper.isValidFilePath(document);
   const patientCollection = await patients();
   let patientInDb = await getPatientById(patientId);
   if(!patientInDb) throw {status: "404", error: `No patient with that ID`};
@@ -214,11 +214,11 @@ const getMedicalHistory = async (id) => {
 
 };
 
-const addTestReport = async (patientId, testName, testDocument, testDate) => {
+const addTestReport = async (patientId, testName, document, testDate) => {
 
   patientId = commonHelper.isValidId(patientId);
   testName = commonHelper.isValidString(testName);
-  testDocument = commonHelper.isValidFilePath(testDocument);
+  document = commonHelper.isValidFilePath(document);
   testDate = commonHelper.isValidPastDate(testDate);
 
   //var today = new Date(testDate);
@@ -232,7 +232,7 @@ const addTestReport = async (patientId, testName, testDocument, testDate) => {
   const patientCollection = await patients();
   let patientInDb = await getPatientById(patientId);
   if(!patientInDb) throw {status: "404", error: `No patient with that ID`};
-  let newTestReports = {testReportId: new ObjectId(), testName,testDocument,testDate};
+  let newTestReports = {testReportId: new ObjectId(), testName,document,testDate};
 
   const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{testReports: newTestReports}});
 

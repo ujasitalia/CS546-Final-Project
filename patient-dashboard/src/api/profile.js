@@ -16,6 +16,9 @@ export const patchMedicalHistory = (patientId,data,medicalHistoryId) => {
 export const addMedicalHistory = (patientId,data) => {
     return axiosAuth.post(`/patient/${patientId}/medicalHistory/`, data)
 }
+export const addTestReports = (patientId,data) => {
+    return axiosAuth.post(`/patient/${patientId}/testReport`, data)
+}
 export const patchTestReports = (patientId,data,testReportId) => {
     return axiosAuth.patch(`/patient/${patientId}/testReport/${testReportId}`, data)
 }

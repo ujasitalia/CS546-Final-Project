@@ -12,6 +12,8 @@ export const TestReports = (props) => {
     const [testReportsId,setTestReportsId] = useState('');
     const [hasError, setHasError] = useState(false);
     const [error, setError] = useState('');
+    const [inputTestReport,setInputTestReport] = useState(false);
+
     const handleInputChange = (e) => {
         let field = e.target.id.split('-');
         let newTestReports = [...testReports]
@@ -24,18 +26,18 @@ export const TestReports = (props) => {
 
         setTestReports(newTestReports);
     }
-    const processDate = (date) => {
-        if(date)
-        {
-        var today = new Date(date);
-        var dd = String(today.getDate()+1).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        var yyyy = today.getFullYear();
+    // const processDate = (date) => {
+    //     if(date)
+    //     {
+    //     var today = new Date(date);
+    //     var dd = String(today.getDate()+1).padStart(2, '0');
+    //     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    //     var yyyy = today.getFullYear();
 
-        today = yyyy + '-' + mm + '-' + dd;
-        return today;
-        }
-    }
+    //     today = yyyy + '-' + mm + '-' + dd;
+    //     return today;
+    //     }
+    // }
     const getTodaysDate = () => {
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
@@ -44,6 +46,24 @@ export const TestReports = (props) => {
 
         today = yyyy + '-' + mm + '-' + dd;
         return today;
+    }
+    const addTestReport = async () => {
+
+        setInputTestReport(!inputTestReport);
+        if(!inputTestReport){
+            let testReportForm = {
+            'testName':'',
+            'document':'',
+            'testDate':''
+            }
+            let newTestReports = [testReportForm,...testReports];
+            setTestReports(newTestReports);
+        }
+        else{
+            let newTestReports = [...testReports];
+            newTestReports.splice(0,1);
+            setTestReports(newTestReports);
+        }
     }
     const validateSignUp = async (e) =>{
         e.preventDefault();
@@ -57,25 +77,46 @@ export const TestReports = (props) => {
             setError(e.message);
             return;
         }
-        
-        try{
+        if(inputTestReport){
+            try{
+                let data=newTestReports[0];
+                
+                const response = await api.profile.addTestReports(props.patientData._id,data);
+                //props.handleChange();
+                // console.log(response);
+                
+                props.handleChange(response.data);
+                setTestReports(response.data.testReports)
+                setHasError(false);
+                setInputTestReport(false);
+            }catch(e){
+                setHasError(true);
+                setError(e.response.data);
+                return;
+            }
+        }
+        else
+        {
+            try{
             let data={};
             for(let m of newTestReports){
                 if(m['testReportId']==e.target.id) data = m;
             }
             const response = await api.profile.patchTestReports(props.patientData._id,data,e.target.id);
             console.log(response);
-        }catch(e){
-            setHasError(true);
-            setError(e.response.data);
-            return;
+            }catch(e){
+                setHasError(true);
+                setError(e.response.data);
+                return;
+            }
         }
     }
   return (
     <div>
         {hasError && <div className="error">{error}</div>}
-        {
-        testReports && testReports.map((test,index) => {
+        {!inputTestReport && <button onClick={addTestReport}>Add Test report</button>}
+        {inputTestReport && <button onClick={addTestReport}>Cancel</button>}
+        {testReports && testReports.map((test,index) => {
             return testReports && 
             <form onSubmit={validateSignUp} id={test.testReportId}>
                 <div>
@@ -89,7 +130,7 @@ export const TestReports = (props) => {
                     </div>
                     <div>
                         <label htmlFor={test.testReportId+'-'+index+'-testDate'}>Test Date</label>
-                        <input placeholder="Test Date" id={test.testReportId+'-'+index+'-testDate'} value={testReports[index]['testDate'] && processDate(testReports[index]['testDate'])} onChange={handleInputChange} type="date" className="testDate" max={getTodaysDate()}/>
+                        <input placeholder="Test Date" id={test.testReportId+'-'+index+'-testDate'} value={testReports[index]['testDate']} onChange={handleInputChange} type="date" className="testDate" max={getTodaysDate()}/>
                     </div>
                     <button type="submit" className="loginButton">
                         <div className="buttonBox">
