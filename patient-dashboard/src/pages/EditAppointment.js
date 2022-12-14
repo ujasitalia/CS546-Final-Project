@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { components } from "../components";
 import { api } from "../api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams} from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import DatePicker from "react-datepicker";
@@ -10,7 +9,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const EditAppointment = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const { appointmentId } = useParams();
   const [appointment, setAppointment] = useState("");
   const [days,setDays] = useState([])
   const [doctor, setDoctor] = useState('')
@@ -25,7 +24,7 @@ const EditAppointment = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await api.appointment.getAppointmentById(
-        location.state.appointmentId
+        appointmentId
       );
       //   console.log(response.data);
       setAppointment(response.data);
@@ -84,8 +83,8 @@ const EditAppointment = () => {
     const time = getTime(updatedSlot);
     let temp = (new Date(startDate - (startDate.getTimezoneOffset() * 60000))).toISOString().split('T')[0]+'T'+time
     // console.log(updatedSlot);
-    const updatedAppointment = {...appointment, startTime:temp}
-    const udA = await api.appointment.updateAppointment(updatedAppointment)
+    const updatedAppointment = {startTime:temp}
+    const udA = await api.appointment.updateAppointment(appointmentId, updatedAppointment)
     if(udA.data === 'select a different date/time than original'){
         setNotUpdated(true);
     }
@@ -97,7 +96,7 @@ const EditAppointment = () => {
 
   const handleCancel = async (e) => {
     e.preventDefault()
-    const cancelRequest = await api.appointment.deleteAppointment(location.state.appointmentId)
+    const cancelRequest = await api.appointment.deleteAppointment(appointmentId)
     navigate("/myAppointments", {state : {doctor : doctor} });
   }
 

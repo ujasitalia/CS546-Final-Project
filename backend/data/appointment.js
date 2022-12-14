@@ -192,7 +192,7 @@ const updateAppointmentById = async (id, data) => {
 
   const newAppointment = await getAppointmentById(id);
 
-  await email.sendAppointmentUpdate({doctor,patient,appointment:newAppointment});
+  email.sendAppointmentUpdate({doctor,patient,appointment:newAppointment});
 
   return newAppointment;
 };

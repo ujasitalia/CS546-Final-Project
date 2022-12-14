@@ -76,8 +76,8 @@ const EditAppointment = () => {
     const time = getTime(updatedSlot);
     let temp = (new Date(startDate - (startDate.getTimezoneOffset() * 60000))).toISOString().split('T')[0]+'T'+time
     // console.log(updatedSlot);
-    const updatedAppointment = {...appointment, startTime:temp}
-    const udA = await api.appointment.updateAppointment(updatedAppointment)
+    const updatedAppointment = {startTime:temp}
+    const udA = await api.appointment.updateAppointment(appointmentId, updatedAppointment)
     if(udA.data === 'select a different date/time than original'){
         setNotUpdated(true);
     }
