@@ -24,7 +24,7 @@ const DoctorAppointment = (props) => {
                     <div className="cardText">Time : {element.startTime.slice(11,19)}</div>
                 </div>
             </Link>
-            ) : <p>"No Upcoming Appointments"</p>}
+            ) : <p>No Upcoming Appointments</p>}
           </div>             
         </div>
        : (

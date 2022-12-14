@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { components } from '../components';
 import { api } from '../api';
 import { Link } from "react-router-dom";
+import Chat from '../components/Chat';
 
 const Dashboard = () => {    
     const [data, setData] = useState('');
@@ -67,6 +68,7 @@ const Dashboard = () => {
                           </div>
             </div> : <div>Loading</div>}
           </div>
+          <Chat/>
         </div>
       )
 }

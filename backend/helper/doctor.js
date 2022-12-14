@@ -96,6 +96,8 @@ const isValidDoctorData = (data) =>{
             case "appointmentDuration":
                 data.appointmentDuration = isValidAppointmentDuration(data.appointmentDuration);
                 break;
+            case "rating":
+                break;
             default:
                 throw {status: '400', error : `Invalid key - ${key}`};
             

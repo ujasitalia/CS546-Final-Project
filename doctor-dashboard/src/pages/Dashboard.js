@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { components } from '../components';
 import { api } from '../api';
+import Chat from '../components/Chat'
 
 const Dashboard = () => {
     const [tab, setTab] = useState('appointmentTab');
@@ -36,6 +37,7 @@ const Dashboard = () => {
             {data && tab === 'appointmentTab' && <components.DoctorAppointment doctorId={data.doctor._id} />}
             {data && tab === 'availabilityTab' && <components.Availability doctorId={data.doctor._id} doctorSchedule={data.doctor.schedule} appointmentDuration={data.doctor.appointmentDuration} handleAvailabilityChange={handleAvailabilityChange}/>}
         </div>
+        <Chat/>
       </div>
       )
 }

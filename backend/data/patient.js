@@ -31,7 +31,7 @@ const createPatient = async (email,age,profilePicture,name,city,state,zip,passwo
     
     let hashedPassword = await bcryptjs.hash(password,saltRounds);
     
-    let newPatient = {email,age,profilePicture,name,city,state,zip,hashedPassword,medicalHistory:[],prescriptions:[],testReports:[]};
+    let newPatient = {email,age,profilePicture,name,city,state,zip,hashedPassword,medicalHistory:[],prescriptions:[],testReports:[],myDoctors:[]};
     const patientCollection = await patients(); 
     const insertInfo = await patientCollection.insertOne(newPatient);
     if (!insertInfo.acknowledged || !insertInfo.insertedId)
@@ -84,40 +84,22 @@ const checkUser = async (email, password) => {
   throw {status:"401",error:'Invalid email or password'};
 };
 
-const getSearchResult = async (data) => {
-  data = commonHelper.validateSearchData(data);
-  data = data.toLowerCase();
-  const doctorCollection = await doctors();
-  const allDoctors = await doctorCollection
-    .find({}, { projection: { hashedPassword: 0 } })
-    .toArray();
-  let res = [];
-  for (i of allDoctors) {
-    if (i.name.toLowerCase().includes(data) || i.specialty.toLowerCase().includes(data)){
-      res.push(i);
-    }
-  }
-  if (!res) throw { status: "404", error: "No match found." };
-  // console.log(res);
-  return res;
-};
+const isPatientsDoctor = async(patientId, doctorId) =>{
+  const patientCollection = await patients();
+  const patientInDb = await patientCollection.findOne({_id:ObjectId(patientId),  myDoctors : { $all: [doctorId] }});
+  return patientInDb;
+}
 
-const getFilterResult = async (data) => {
-  data = commonHelper.isValidString(data);
-  data = data.toLowerCase();
-  const doctorCollection = await doctors();
-  const allDoctors = await doctorCollection
-    .find({}, { projection: { hashedPassword: 0 } })
-    .toArray();
-  let res = [];
-  for (i of allDoctors) {
-    if (i.specialty.toLowerCase() === data ){
-      res.push(i);
-    }
+const addMyDoctor = async(patientId, doctorId) =>{
+  doctorId = commonHelper.isValidId(doctorId);
+  patientId = commonHelper.isValidId(patientId);
+  const patientCollection = await patients();
+  const updatedInfo = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{myDoctors: doctorId}});
+  if (updatedInfo.modifiedCount === 0) {
+    throw {status: '400', error : 'could not update because values are same as previous one'};
   }
-  if (!res) throw { status: "404", error: "No match found." };
-  return res;
-};
+  return await getPatientById(patientId);
+}
 
 const addMedicalHistory = async (patientId,disease, startDate, endDate) => {
   
@@ -288,5 +270,7 @@ module.exports = {
   getTestReport,
   getPatientPrescription,
   addMedicalHistory,
-  addTestReport
+  addTestReport,
+  isPatientsDoctor,
+  addMyDoctor
 };
