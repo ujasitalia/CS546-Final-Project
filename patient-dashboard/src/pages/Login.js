@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { api } from '../api';
 import {helper} from '../helper';
-import Chat from '../chat'
 import "../assets/css/login.css";
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -68,7 +67,6 @@ const Login = () => {
         </div>
         {hasError && <div className="error">{error}</div>}
         </div>
-        <Chat />
     </div>
   )
 }

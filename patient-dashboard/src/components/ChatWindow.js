@@ -1,86 +1,113 @@
 import React, { useEffect , useRef, useState} from "react";
-import "../styles.css";
-import { styles } from "../styles";
-import ExistingChat from '../../components/existingChat/existingChat'
-import ChatEngine from '../../components/chatEngine/chatengine'
-import axios from "axios";
-const ChatWindow = props => {
+import "../assets/css/styles.css";
+import { styles } from "./styles";
+import Message from './Message'
+import Conversation from './Conversation'
+import { api } from '../api';
+import io from "socket.io-client"
+
+const ChatWindow = () => {
     const [conversations , setConversations] = useState([]);
-    const [currentChat , setCurrentChat] = useState(null);
-    const [messages , setMessages] = useState([]);
+    const [currentChat , setCurrentChat] = useState('');
+    const [messages , setMessages] = useState('');
     const [newMessage , setNewMessage] = useState("");
-    const [user , setUser] = useState(null);
-    const [chat , setChat] = useState(null);
+    const socket = io.connect("http://localhost:3000");
     const scrollRef = useRef();
-    let patientId="638e99f2a35941bab37f1434"
-    //const {user} = useContext(authContext);
-    useEffect(() =>{
+    const bottomRef = useRef(null);
+    const userId = JSON.parse(localStorage.getItem('id'));
+    useEffect(()=>{
         const getConversations = async () =>{
             try{
-                const res = await axios.get("http://localhost:3000/chat/"+patientId);
-                console.log(res);
+                const res = await api.chat.getChatConversation(userId);
                 setConversations(res.data)
             }catch(e){
                 console.log(e);
             }
         }
         getConversations();
-    }, [])
+    },[])
+
     useEffect(() =>{
         const getMessages = async () =>{
             try{
-                const res = await axios.get("http://localhost:3000/chat/"+currentChat+"/"+patientId);
+                const res = await api.chat.getMessagesForCurrentChat(currentChat, userId);
                 setMessages(res.data);
+                bottomRef.current?.scrollIntoView({behavior: 'smooth'});
             }catch(e){
                 console.log(e);
             }
         }
-        getMessages();
+        if(currentChat!=='')
+            getMessages();
     }, [currentChat])
+
+    useEffect(() =>{
+        const getMessages = async () =>{
+            try{
+                const res = await api.chat.getMessagesForCurrentChat(currentChat, userId);
+                setMessages(res.data);
+                bottomRef.current?.scrollIntoView({behavior: 'smooth'});
+            }catch(e){
+                console.log(e);
+            }
+        }
+        socket.on("recievedMessage", () => {
+            if(currentChat!=='')
+                getMessages();
+          });
+    }, [socket])
+
     const handleSubmit = async (e) =>{
         e.preventDefault();
         const message = {
-            senderId : "638e99f2a35941bab37f1434",
+            senderId : userId,
             receiverId : currentChat,
             message : newMessage
         };
         try{
-            const res = await axios.post("http://localhost:3000/chat/",message);
+            const res = await api.chat.postMessage(message);
+            socket.emit("newMessage");
             setMessages([...messages,res.data]);
             setNewMessage("")
         }catch(e){
             console.log(e);
         }
     }
-    return (
-        <div 
+
+  return (
+    <div 
             className='transition-5'
             style={{
                 ...styles.supportWindow,
-                ...{ opacity: props.visible ? '1' : '0' }
             }}
         >
         <div className="messenger">
             <div className="chatMenu">
             <div className="chatMenuWrapper">
-                {conversations.map((c) => (
+                {conversations.length!==0 ? conversations.map((c) => (
                 <div ref={scrollRef}>
                     <div onClick={() => setCurrentChat(c)}>
-                    <ExistingChat 
+                    <Conversation 
                         conversation={c}
                     />
                     </div>
                 </div>
-                ))}
+                ))
+                :<p>No Patient to chat with</p>}
             </div>
             </div>
             <div className="chatBox">
                 <div className="chatBoxWrapper">
                     {currentChat ? (<>
                     <div className="chatBoxTop">
-                        {messages.map((m) => ( 
-                        <div ref={scrollRef}>
-                        <ChatEngine message={m} own={m.senderId === patientId} />
+                        {messages && messages.map((m, index) => (
+                         
+                        messages.length-1 === index ? <div ref={bottomRef}>
+                        <Message message={m} own={m.senderId === userId} />
+                        </div>
+                        :
+                        <div>
+                        <Message message={m} own={m.senderId === userId} />
                         </div>
                         ))}
                     </div>
@@ -102,7 +129,7 @@ const ChatWindow = props => {
                 </div>
             </div>
         </div>
-    )
+  )
 }
 
-export default ChatWindow;
+export default ChatWindow

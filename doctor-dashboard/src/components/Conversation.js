@@ -1,8 +1,6 @@
 import React, { useState , useEffect} from "react"
 import axios from 'axios'
-import { styles } from "../../chat/styles"
-import '../../assets/css/chat.css'
-import Chat from '../../chat/chat'
+import '../assets/css/chat.css'
 
 export default function Conversation({conversation,currentUser}){
   const [user, setUser] = useState(null);
@@ -11,7 +9,7 @@ export default function Conversation({conversation,currentUser}){
     const getUser = async()=>{
       const userId = conversation;
       try{
-        const res = await axios("http://localhost:3000/doctor/"+userId);
+        const res = await axios("http://localhost:3000/patient/"+userId);
         setUser(res.data);
       }catch(e){
         console.log(e);
