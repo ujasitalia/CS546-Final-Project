@@ -72,6 +72,8 @@ const BookAppointment = (props) => {
 
   return (
     <div>
+        
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet"></link>
         <br />
         <h3>Book Appointment</h3>
         <br />
@@ -87,7 +89,7 @@ const BookAppointment = (props) => {
         <h4>Pick a date for your appointment</h4>
         <Form onSubmit={handleForm}>
             <DatePicker selected={startDate} onChange={(date:Date) => setStartDate(date)} />
-            <Button variant="primary" type="submit" style={{ width: "70px" }}>
+            <Button variant="primary" type="submit" style={{ width: "100px" }}>
                 Get Slots
             </Button>
         </Form>
@@ -112,7 +114,7 @@ const BookAppointment = (props) => {
                                 return <option value={slot[0]} key={slot[0]}>{slot[0] + " - " + slot[1]}</option>
                             })}
                         </Form.Select>
-                        <Button variant="primary" type="submit" style={{ width: "70px" }}>
+                        <Button variant="primary" type="submit" style={{ width: "100px" }}>
                             Select
                         </Button>
                     </Form>                   

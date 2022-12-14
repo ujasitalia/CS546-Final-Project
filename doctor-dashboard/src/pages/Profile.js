@@ -74,7 +74,7 @@ const Profile = () => {
                                     <div className='d-flex flex-column align-items-center text-center'>
                                         <img></img>
                                         <h4>{fullName}</h4>
-                                        <p className="text-secondary mb-1">{data.doctor.specialty}</p>
+                                        <p className="text-secondary mb-1">{data.doctor.speciality}</p>
                                     </div>
                                 </div>
                             </div>
@@ -87,7 +87,7 @@ const Profile = () => {
                                     </div>
                                     <div class="col-sm-9 text-secondary">
                                         <div className="profileInputField">
-                                            <input placeholder="Patrik Hill" id="profileName" value={fullName} onChange={handleInputChange} type="text" className="profileInput" autoFocus/>
+                                            <input placeholder="Patrik Hill" id="profileName" value={fullName} onChange={handleInputChange} type="text" className="profileInput" autoFocus disabled/>
                                         </div>
                                     </div>
                                 </div>
@@ -98,7 +98,7 @@ const Profile = () => {
                                     </div>
                                     <div class="col-sm-9 text-secondary">
                                         <div className="profileInputField">
-                                            <input placeholder="Patrik Hill" id="profileSpeciality" value={data.doctor.speciality} onChange={handleInputChange} type="text" className="profileSpeciality" autoFocus/>
+                                            <input placeholder="Patrik Hill" id="profileSpeciality" value={data.doctor.speciality} onChange={handleInputChange} type="text" className="profileSpeciality" autoFocus />
                                         </div>
                                     </div>
                                 </div>
@@ -120,7 +120,7 @@ const Profile = () => {
                                     </div>
                                     <div class="col-sm-9 text-secondary">
                                         <div className="profileInputField">
-                                            <input placeholder="Patrik Hill" id="profileCity" value={data.doctor.city} onChange={handleInputChange} type="text" className="profileCity" autoFocus/>
+                                            <input placeholder="Patrik Hill" id="profileCity" value={data.doctor.city} onChange={handleInputChange} type="text" className="profileCity" autoFocus disabled/>
                                         </div>
                                     </div>
                                 </div>
@@ -142,7 +142,7 @@ const Profile = () => {
                                     </div>
                                     <div class="col-sm-9 text-secondary">
                                         <div className="profileInputField">
-                                            <input placeholder="Patrik Hill" id="profileEmail" value={data.doctor.email} onChange={handleInputChange} type="text" className="profileEmail" autoFocus/>
+                                            <input placeholder="Patrik Hill" id="profileEmail" value={data.doctor.email} onChange={handleInputChange} type="text" className="profileEmail" autoFocus disabled/>
                                         </div>
                                     </div>
                                 </div>

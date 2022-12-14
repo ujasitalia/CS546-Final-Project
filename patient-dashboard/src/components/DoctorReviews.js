@@ -15,6 +15,8 @@ export const DoctorReviews = (props) => {
   },[]);
   return (
     <div>
+      
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet"></link>
       <br/>
         {data !== '' 
         ? <div className="doctorsReveiwContainer">
