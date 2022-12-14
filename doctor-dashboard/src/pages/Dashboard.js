@@ -29,7 +29,6 @@ const Dashboard = () => {
       <div>
         {data && <components.Navbar/>}
         <div   className='container'>
-          {console.log(data)}
           <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" 
 integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" 
 crossorigin="anonymous"></link>
@@ -38,7 +37,7 @@ crossorigin="anonymous"></link>
                   <div class="col-sm-12 col-xl-6">
                       <div class="bg-light rounded h-100 p-4">
                         <ul>
-                            <li id="availabilityTab" onClick={handleTabChange}>Appointment</li>  
+                            <li id="appointmentTab" onClick={handleTabChange}>Appointment</li>  
                         </ul>
                       </div>
                   </div>
@@ -49,13 +48,13 @@ crossorigin="anonymous"></link>
                         </ul>
                       </div>
                   </div>
-                  <div class="col-sm-12 col-xl-6">
-                      <div class="bg-light rounded h-100 p-4">
+                  <div >
+                      <div>
                         {data && tab === 'appointmentTab' && <components.DoctorAppointment doctorId={data.doctor._id} />}
                       </div>
                   </div>
-                  <div class="col-sm-12 col-xl-6">
-                      <div class="bg-light rounded h-100 p-4">
+                  <div>
+                      <div>
                         {data && tab === 'availabilityTab' && <components.Availability doctorId={data.doctor._id} doctorSchedule={data.doctor.schedule} appointmentDuration={data.doctor.appointmentDuration} handleAvailabilityChange={handleAvailabilityChange}/>}
                       </div>
                   </div>
