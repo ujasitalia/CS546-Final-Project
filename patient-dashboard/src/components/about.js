@@ -41,7 +41,7 @@ export const About = (props) => {
         }
         
         try{
-            const data = { "age":helper.common.isValidAge(age), "name": fullName, "zip":zip,"profilePicture":"nopic","city":"Hoboken","state":"New Jersey"}
+            const data = { "age":helper.common.isValidAge(age), "name": fullName, "zip":zip,"profilePicture":"nopic"}
             const response = await api.profile.patch(props.patientData._id,data);
             console.log(response);
             props.handleChange(response.data);

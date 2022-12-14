@@ -68,7 +68,7 @@ const updatePatient = async (body,id) => {
     {$set: body}
   );
   if (updatedInfo.modifiedCount === 0) {
-    throw 'could not update patient successfully';
+    throw {status:"400",error:'No changes made due to same data'};
   }
 
   return await getPatientById(id);
@@ -110,9 +110,9 @@ const addMedicalHistory = async (patientId,disease, startDate, endDate) => {
   if(endDate !== null){
     endDate = commonHelper.isValidPastDate(endDate)
     if(endDate < startDate) throw {status:'400', error:'Start date must be before the end date'}
-    endDate = endDate.toISOString().split('Z')[0];
+    //endDate = endDate.toISOString().split('Z')[0];
   }
-  startDate = startDate.toISOString().split('Z')[0];
+  //startDate = startDate.toISOString().split('Z')[0];
 
   //console.log(typeof startDate)
   const patientCollection = await patients();
@@ -139,9 +139,9 @@ const updateMedicalHistory = async (patientId,medicalHistoryId,disease, startDat
   if(endDate !== null){
     endDate = commonHelper.isValidPastDate(endDate)
     if(endDate < startDate) throw {status:'400', error:'Start date must be before the end date'}
-    endDate = endDate.toISOString().split('Z')[0];
+    //endDate = endDate.toISOString().split('Z')[0];
   }
-  startDate = startDate.toISOString().split('Z')[0];
+  //startDate = startDate.toISOString().split('Z')[0];
 
   const patientCollection = await patients();
   let patientInDb = await getPatientById(patientId);
@@ -221,13 +221,13 @@ const addTestReport = async (patientId, testName, testDocument, testDate) => {
   testDocument = commonHelper.isValidFilePath(testDocument);
   testDate = commonHelper.isValidPastDate(testDate);
 
-  var today = new Date(testDate);
+  //var today = new Date(testDate);
   // var dd = String(today.getDate()).padStart(2, '0');
   // var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
   // var yyyy = today.getFullYear();
 
   // today = mm + '/' + dd + '/' + yyyy;
-  testDate = today.toISOString().split('Z')[0];
+  //testDate = today.toISOString().split('Z')[0];
 
   const patientCollection = await patients();
   let patientInDb = await getPatientById(patientId);

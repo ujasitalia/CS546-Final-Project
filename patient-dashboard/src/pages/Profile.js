@@ -10,21 +10,22 @@ import { MedicalHistory } from '../components/MedicalHistory';
 import { TestReports } from '../components/TestReports';
 import { axiosAuth } from '../api/axios';
 
-const Profile = ({patientId}) => {
-
-    const getData = async(patientId) => {
-        try{
-            const res = await api.profile.get(patientId);
-            console.log(res)
-            setPatientData(res.data);
-        }catch(e){
-            setHasError(true);
-            setError(e);
-            return;
-        }
-    }
+const Profile = () => {
     useEffect(() => {
-        if(patientData=='') getData(patientId);
+        const fetchData = async()=>{
+            try{
+                const response = await api.profile.get(JSON.parse(localStorage.getItem('id')));
+                setPatientData(response.data);
+            }catch(e){
+                setHasError(true);
+                setError(e);
+                return;
+            }
+          }
+          if(!patientData)
+          {
+            fetchData();
+          }
     },[])
 
     const [hasError, setHasError] = useState(false);
@@ -71,8 +72,8 @@ const Profile = ({patientId}) => {
     <div>
         <div className="blueContainer">
                     <img src=".dgkjs" className="loginLogo" loading="lazy" alt="logo" />
-                    <div className="loginHeading">Patient Login</div>
-                    <div className="loginText">Sign In</div>
+                    <div className="loginHeading">Patient Profile</div>
+                    <br></br>
         </div>
         
         <ul>
