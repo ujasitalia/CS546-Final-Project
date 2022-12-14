@@ -8,10 +8,7 @@ export const getAppointmentById = (id) => {
     return axiosAuth.get(`/appointment/${id}`)
 }
 
-export const updateAppointment = (data) => {
-    const id = data._id
-    delete data._id
-    // console.log(data);
+export const updateAppointment = (id, data) => {
     return axiosAuth.patch(`/appointment/${id}`, {data:data})
 }
 

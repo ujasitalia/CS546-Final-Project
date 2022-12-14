@@ -19,8 +19,8 @@ const createAppointment = async (
   appointmentLocation = helper.appointment.isValidAddress(appointmentLocation);
 
   //get doctor data to verify the time and day
-  const doctor = await doctorData.getDoctorById(doctorId);
-  const patient = await patientData.getPatientById(patientId);
+  let doctor = await doctorData.getDoctorById(doctorId);
+  let patient = await patientData.getPatientById(patientId);
 
   const slots = await getDoctorSlots(doctorId, new Date(startTime));
 
@@ -53,6 +53,15 @@ const createAppointment = async (
 
   if (!insertInfo.acknowledged || !insertInfo.insertedId)
     return "Could not add appointment"
+
+  doctor = await doctorData.isDoctorsPatient(doctorId,patientId);
+  patient = await patientData.isPatientsDoctor(patientId, doctorId);
+
+  if(!doctor)
+    await doctorData.addMyPatient(doctorId,patientId);
+  
+  if(!patient)
+    await patientData.addMyDoctor(patientId, doctorId);
 
   const newId = insertInfo.insertedId.toString();
   const appointment = await getAppointmentById(newId);
@@ -183,7 +192,7 @@ const updateAppointmentById = async (id, data) => {
 
   const newAppointment = await getAppointmentById(id);
 
-  await email.sendAppointmentUpdate({doctor,patient,appointment:newAppointment});
+  email.sendAppointmentUpdate({doctor,patient,appointment:newAppointment});
 
   return newAppointment;
 };
@@ -295,19 +304,50 @@ const changeAppointmentCompleteStatus = async() =>{
   const appointmentCollection = await apCol();
   const allAppointments = await appointmentCollection.find({isCompleted: false}).toArray();
   const completedIds = []
+  const myPatients = {}
   const curTime = new Date();
   allAppointments.forEach(appointment=>{
     startTime = new Date(appointment.startTime);
     endTime = new Date(startTime.getTime() + 1000 * 60 * appointment.appointmentDuration);
     if(endTime<curTime)
+    {
       completedIds.push(appointment._id);
+      if(!(appointment.doctorId in myPatients))
+        myPatients[appointment.doctorId] = [appointment.patientId];
+      else
+        myPatients[appointment.doctorId].push(appointment.patientId);
+    }
   })
+  for(let doctor in myPatients){
+    await doctorData.changeReviewStatus(doctor,myPatients[doctor],false);
+  }
   await appointmentCollection.updateMany(
     { _id: {$in : completedIds} },
     { $set: {isCompleted : true} }
   );
 }
 
+const checkAppointmentExist = async(role, userId, apointmentId) =>{
+  apointmentId = helper.common.isValidId(apointmentId);
+  userId = helper.common.isValidId(userId);
+  //get all appointments of that doctor
+  const appointmentCollection = await apCol();
+  let appointment;
+  if(role === 'doctor')
+    appointment = await appointmentCollection.findOne(
+      { _id: ObjectId(apointmentId),
+        doctorId : userId
+      }
+    );
+  else if(role === 'patient')   
+    appointment = await appointmentCollection.findOne(
+      { _id: ObjectId(apointmentId),
+        patientId : userId
+      }
+    );
+  if (!appointment)
+    throw { status: "404", error: "No appointment found with that id" };
+}
 module.exports = {
   createAppointment,
   getDoctorAppointments,
@@ -317,5 +357,6 @@ module.exports = {
   updateAppointmentById,
   getDoctorSlots,
   sendAppointmentReminder,
-  changeAppointmentCompleteStatus
+  changeAppointmentCompleteStatus,
+  checkAppointmentExist
 };

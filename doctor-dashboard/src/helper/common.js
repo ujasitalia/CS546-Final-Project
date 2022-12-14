@@ -119,3 +119,9 @@ export const isValidLink = (link) => {
   if(!url.host == 'stevens.zoom.us') throw new Error("Not the correct url")
   return link;
 }
+export const isValidNpi = (npi) => {
+  npi = isValidString(npi, "NPI");
+  if(!npi.match(/^[A-Z]{3}[0-9]{7}$/))
+      throw new Error( 'Invalid NPI');
+  return npi;
+}
