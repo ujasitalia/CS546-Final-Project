@@ -9,6 +9,25 @@ export const isValidString = (string, parameter) => {
   return string;
 };
 
+export const isValidMedicalHistory = (medicalHistory) => {
+  for(let mh of medicalHistory){
+    
+    isValidString(mh.disease,'disease');
+    //isValidId(mh.medicalHistoryId);
+    // isValidDate(mf.startDate);
+    // isValidDate(mf.endDate);
+  }
+}
+
+export const isValidTestReports = (TestReport) => {
+  for(let test in TestReport)
+  {
+    //isValidId(test.testReportId);
+    isValidString(test.testName,'Test Name');
+    isValidString(test.document, 'Document');
+  }
+}
+
 export const isValidEmail = (email) => {
   email = isValidString(email, "Email");
   if (

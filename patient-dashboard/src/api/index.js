@@ -5,6 +5,7 @@ import * as patient from "./patient"
 import * as chat from "./chat";
 import * as signup from "./signup"
 import * as review from "./review"
+import * as profile from "./profile"
 
 const api = {
     login,
@@ -13,6 +14,7 @@ const api = {
     patient,
     chat,
     signup,
-    review
+    review,
+    profile
   }
 export { api }

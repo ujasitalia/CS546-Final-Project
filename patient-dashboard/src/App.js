@@ -18,6 +18,7 @@ function App() {
           <Route path="/profile" element={<pages.Profile/>}/
           <Route path="/healthyHabits" element={<pages.HealthyHabits/>}/>
           <Route path="/signup" element={<pages.SignUp/>} />
+          <Route path="/profile" element={<pages.Profile patientId={'63720db26efe81c88657130f'}/>} />
         </Routes>
       </Router>
     </div>

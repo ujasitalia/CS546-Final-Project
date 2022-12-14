@@ -6,6 +6,7 @@ import EditAppointment from './EditAppointment'
 import Profile from './Profile';
 import HealthyHabits from './HealthyHabits'
 import SignUp from "./SignUp";
+import Profile from "./Profile";
 
 const pages = {
     Login,
