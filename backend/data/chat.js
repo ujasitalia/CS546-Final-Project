@@ -38,7 +38,6 @@ const getAllchat = async (doctorID, patientID) => {
             }
         }
     }
-    if (people.length ==0) throw {status: '404', error : 'Could not get chat history'};
     return people;
   }
 
@@ -46,13 +45,13 @@ const createChat = async (senderId, receiverId, message) => {
     receiverId = helper.common.isValidId(receiverId);
     senderId = helper.common.isValidId(senderId);
     message = helper.chat.checkMessage(message);
-    const timeStamp = Date();
-
+    const timeStamp = new Date();
+    let time = timeStamp.getHours().toString().padStart(2, '0') + ":" + timeStamp.getMinutes().toString().padStart(2, '0') + ":" + timeStamp.getSeconds().toString().padStart(2, '0') + ".000"
     const newMessage = {
         receiverId : ObjectId(receiverId),
         senderId : ObjectId(senderId),
         message,
-        timeStamp
+        timeStamp : timeStamp.toISOString().split('T')[0]+'T'+time
       };
       
     const chatCollection = await chatCol();
