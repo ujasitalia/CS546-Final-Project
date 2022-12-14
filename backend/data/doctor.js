@@ -142,8 +142,7 @@ const getAllDoctor = async () => {
   
 const isDoctorsPatient = async(doctorId, patientId) =>{
   const doctorCollection = await doctorCol();
-  const doctorInDb = await doctorCollection.findOne({_id:ObjectId(doctorId), myPatients : { $all: [patientId] }});
-  if (doctorInDb === null) throw {status:404,error:'doctor not found'};
+  const doctorInDb = await doctorCollection.findOne({_id:ObjectId(doctorId), myPatients: {$elemMatch:{$elemMatch:{$in:[patientId]}}}});
   return doctorInDb;
 }
 

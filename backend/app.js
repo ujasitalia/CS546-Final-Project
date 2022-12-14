@@ -65,7 +65,20 @@ app.use('/chat', (req, res, next) => {
       next();
       return;
     }
-  if(req.url.split('/')[1] !== req.user.userId)
+  next();
+});
+
+app.use('/chat/:id', (req, res, next) => {
+  if(req.url === '/' && req.params.id !== req.user.userId)
+  { 
+    res.status(403).json('Forbidden')
+    return;
+  }
+  next();
+});
+
+app.use('/chat/:doctorId/:patientId', (req, res, next) => {
+  if((req.user.role === 'doctor' && req.params.doctorId !== req.user.userId) || (req.user.role === 'patient' && req.params.patientId !== req.user.userId))
   { 
     res.status(403).json('Forbidden')
     return;

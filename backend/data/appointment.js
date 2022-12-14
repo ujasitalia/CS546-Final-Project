@@ -19,8 +19,8 @@ const createAppointment = async (
   appointmentLocation = helper.appointment.isValidAddress(appointmentLocation);
 
   //get doctor data to verify the time and day
-  const doctor = await doctorData.getDoctorById(doctorId);
-  const patient = await patientData.getPatientById(patientId);
+  let doctor = await doctorData.getDoctorById(doctorId);
+  let patient = await patientData.getPatientById(patientId);
 
   const slots = await getDoctorSlots(doctorId, new Date(startTime));
 
@@ -54,18 +54,15 @@ const createAppointment = async (
   if (!insertInfo.acknowledged || !insertInfo.insertedId)
     return "Could not add appointment"
 
-  let myP = false;
-  for(let i=0;i<doctor.myPatients.length;i++)
-  {
-    if(doctor.myPatients[i][0]===patientId)
-    {
-      myP=true;
-      break;
-    }
-  }
-  if(!myP)
+  doctor = await doctorData.isDoctorsPatient(doctorId,patientId);
+  patient = await patientData.isPatientsDoctor(patientId, doctorId);
+
+  if(!doctor)
     await doctorData.addMyPatient(doctorId,patientId);
-    
+  
+  if(!patient)
+    await patientData.addMyDoctor(patientId, doctorId);
+
   const newId = insertInfo.insertedId.toString();
   const appointment = await getAppointmentById(newId);
 

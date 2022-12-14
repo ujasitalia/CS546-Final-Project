@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {doctor : doctorData, appointment : appointmentData, review : reviewData} = require("../data");
+const {doctor : doctorData, appointment : appointmentData, review : reviewData, patient:patientData} = require("../data");
 const helper = require('../helper');
 const jwt = require("jsonwebtoken");
 
@@ -222,7 +222,17 @@ router
   router
   .route('/:doctorId/patient/:patientId')
   .get(async (req, res) => {
-
+    try{
+      req.params.patientId = helper.common.isValidId(req.params.patientId);
+      const patient = await patientData.getPatientById(req.params.patientId);
+      res.json(patient);
+    }catch(e){
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json("Internal server error");
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
   })
 
   router

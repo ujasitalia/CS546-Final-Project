@@ -7,7 +7,7 @@ import { api } from '../api';
 import io from "socket.io-client"
 
 const ChatWindow = () => {
-    const [conversations , setConversations] = useState([]);
+    const [conversations , setConversations] = useState('');
     const [currentChat , setCurrentChat] = useState('');
     const [messages , setMessages] = useState('');
     const [newMessage , setNewMessage] = useState("");
@@ -16,15 +16,18 @@ const ChatWindow = () => {
     const bottomRef = useRef(null);
     const userId = JSON.parse(localStorage.getItem('id'));
     useEffect(()=>{
-        const getConversations = async () =>{
+        const fetchData = async()=>{
             try{
-                const res = await api.chat.getChatConversation(userId);
-                setConversations(res.data)
+                const response = await api.patient.getPatient(JSON.parse(localStorage.getItem('id')));
+                setConversations(response.data.myDoctors)
             }catch(e){
                 console.log(e);
             }
         }
-        getConversations();
+        if(!conversations)
+        {
+          fetchData();
+        }
     },[])
 
     useEffect(() =>{
@@ -93,7 +96,7 @@ const ChatWindow = () => {
                     </div>
                 </div>
                 ))
-                :<p>No Patient to chat with</p>}
+                :<p>No Doctor to chat with</p>}
             </div>
             </div>
             <div className="chatBox">

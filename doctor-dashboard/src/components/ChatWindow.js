@@ -7,7 +7,7 @@ import { api } from '../api';
 import io from "socket.io-client"
 
 const ChatWindow = () => {
-    const [conversations , setConversations] = useState([]);
+    const [conversations , setConversations] = useState('');
     const [currentChat , setCurrentChat] = useState('');
     const [messages , setMessages] = useState('');
     const [newMessage , setNewMessage] = useState("");
@@ -16,16 +16,18 @@ const ChatWindow = () => {
     const bottomRef = useRef(null);
     const userId = JSON.parse(localStorage.getItem('id'));
     useEffect(()=>{
-        const getConversations = async () =>{
+        const fetchData = async()=>{
             try{
-                const res = await api.chat.getChatConversation(userId);
-
-                setConversations(res.data)
+                const response = await api.doctor.getDoctor(JSON.parse(localStorage.getItem('id')));
+                setConversations(response.data.myPatients)
             }catch(e){
                 console.log(e);
             }
         }
-        getConversations();
+        if(!conversations)
+        {
+          fetchData();
+        }
     },[])
 
     useEffect(() =>{
@@ -87,9 +89,9 @@ const ChatWindow = () => {
             <div className="chatMenuWrapper">
                 {conversations.length !== 0 ? conversations.map((c) => (
                 <div ref={scrollRef}>
-                    <div onClick={() => setCurrentChat(c)}>
+                    <div onClick={() => setCurrentChat(c[0])}>
                     <Conversation 
-                        conversation={c}
+                        conversation={c[0]}
                     />
                     </div>
                 </div>
