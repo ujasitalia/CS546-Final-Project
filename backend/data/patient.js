@@ -262,8 +262,6 @@ module.exports = {
   getPatientById,
   updatePatient,
   checkUser,
-  getSearchResult,
-  getFilterResult,
   updateMedicalHistory,
   getMedicalHistory,
   updateTestReport,

@@ -1,11 +1,9 @@
 import React from 'react';
-import "../styles.css";
-import { components } from '../components';
+import "./styles.css";
 
 const HealthyHabits = () => {
     return(
         <div>
-            <components.Navbar handleSearch={handleSearch}/>
             <div>
             <div className="container">
         <div className="row">

@@ -4,9 +4,8 @@ import DoctorInfo from "./DoctorInfo";
 import MyAppointment from './MyAppointment'; 
 import EditAppointment from './EditAppointment'
 import Profile from './Profile';
-import HealthyHabits from './HealthyHabits'
+import HealthyHabits from './healthyHabits/HealthyHabits'
 import SignUp from "./SignUp";
-import Profile from "./Profile";
 
 const pages = {
     Login,
