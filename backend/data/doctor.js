@@ -1,10 +1,13 @@
 const helper = require('../helper');
 const mongoCollections = require('../config/mongoCollections');
+const patients = mongoCollections.patient;
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 const doctorCol = mongoCollections.doctor;
 const commonHelper = require('../helper/common')
 const {ObjectId} = require('mongodb');
+const { getPatientById } = require('./patient');
+const { isValidMedicine } = require('../helper/doctor');
 
 const isDoctorEmailInDb = async(email) => {
   email=commonHelper.isValidEmail(email).toLowerCase();
@@ -139,6 +142,63 @@ const getAllDoctor = async () => {
     else if(await bcrypt.compare(password,doctorInDb.hashedPassword)) return doctorInDb; 
     throw {status:400,error:'Invalid email or password'};
   };
+
+  const addPrescription = async(doctorId,patientId,disease,medicine,documents,doctorSuggestion) => {
+    patientId = commonHelper.isValidId(patientId);
+    doctorId = commonHelper.isValidId(doctorId);
+    disease=commonHelper.isValidString(disease);
+    medicine=isValidMedicine(medicine);
+    documents=commonHelper.isValidFilePath(documents);
+    doctorSuggestion=commonHelper.isValidString(doctorSuggestion);
+
+    const patientCollection = await patients();
+    const patient = await getPatientById(patientId);
+    if(!patient) throw {status: "404", error: `No patient with that ID`};
+    let newPrescription = {prescriptionId: new ObjectId(),doctorId,disease,medicine,documents,doctorSuggestion};
+
+    const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{prescriptions: newPrescription}});
+
+    if (updatePatient.modifiedCount === 0) throw "Error: Could not add prescription";
+
+    const updatedPatient = await getPatientById(patientId);
+    return updatedPatient;
+  }
+
+  const updatePrescription = async (patientId,prescriptionId,disease,medicine,documents,doctorSuggestion) => {
+    
+    patientId = commonHelper.isValidId(patientId);
+    //doctorId = commonHelper.isValidId(doctorId);
+    prescriptionId = commonHelper.isValidId(prescriptionId);
+    disease=commonHelper.isValidString(disease);
+    medicine=isValidMedicine(medicine);
+    documents=commonHelper.isValidFilePath(documents);
+    doctorSuggestion=commonHelper.isValidString(doctorSuggestion);
+
+    let patientInDb = await getPatientById(patientId);
+    if(!patientInDb) throw {status: "404", error: `No patient with that ID`};
+    
+    const patientCollection = await patients();
+    let prescriptionInDb = patientInDb.prescriptions;
+    //let newMedicalHistory = [];
+    for(let i=0;i<prescriptionInDb.length;i++){
+      if(prescriptionInDb[i].prescriptionId==prescriptionId) {
+        prescriptionInDb[i].disease=disease;
+        prescriptionInDb[i].medicine=medicine;
+        prescriptionInDb[i].documents=documents;
+        prescriptionInDb[i].doctorSuggestion=doctorSuggestion;
+      }
+    
+    }
+    patientInDb.prescriptions=prescriptionInDb;
+    const updatedInfo = await patientCollection.updateOne(
+      {_id: ObjectId(patientId)},
+      {$set: {prescriptions:prescriptionInDb}}
+    );
+    if (updatedInfo.modifiedCount === 0) throw "No changes made to the prescription";
+
+    const updatedPatient = await getPatientById(patientId);
+    return updatedPatient;
+  }
   
 const isDoctorsPatient = async(doctorId, patientId) =>{
   const doctorCollection = await doctorCol();
@@ -164,6 +224,8 @@ module.exports = {
     getDoctorById,
     getAllDoctor,
     updateDoctor,
+    updatePrescription,
+    addPrescription,
     addMyPatient,
     checkDoctor,
     isDoctorsPatient,
