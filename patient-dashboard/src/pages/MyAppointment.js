@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { components } from '../components';
 import { Link } from "react-router-dom";
 import { api } from '../api';
-import Chat from '../chat'
 
 const MyAppointment = () => {
     const [data, setData] = useState('');
@@ -49,7 +48,6 @@ const MyAppointment = () => {
             }) 
             :
             <p>No Upcoming Appointments</p>}
-            <Chat />
           </div>
         ) : (
           <p>You have no upcoming appointments.</p>
