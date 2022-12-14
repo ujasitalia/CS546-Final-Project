@@ -45,10 +45,11 @@ const SignUp = () => {
         }
         
         try{
-            const data = {"email" : email, "password" : password, "age":age, "name":fullName, "zip":zip,"profilePicture":"nopic","city":"Hoboken","state":"New Jersey"}
+            const data = {"email" : email, "password" : password, "age":age, "name":fullName, "zip":zip,"profilePicture":"nopic"}
             const response = await api.signup.post(data);
             console.log(response);
-            localStorage.setItem('token_data', JSON.stringify(response.data.token))
+            localStorage.setItem('token_data', JSON.stringify(response.data.token));
+            localStorage.setItem('id',JSON.stringify(response.data.patientData._id));
             navigate("/dashboard", {patient : response.data.patientData});
         }catch(e){
             setHasError(true);
@@ -83,12 +84,11 @@ const SignUp = () => {
             <div className="emailText">Enter zip</div>
             <input placeholder="07307" id="signUpZip" value={zip} onChange={handleInputChange} type="number" className="loginInput" autoFocus/>
             <br/>
-            <button type="submit" className="loginButton">
-                <div className="buttonBox">
-                    <img src={arrow} className="arrow" loading="lazy" alt="logo" />
-                </div>
-            </button>
+            <button type="submit" className="loginButton">Sign Up</button>
         </form>
+        <div id="login-account-wrap">
+            <p> <a href='http://localhost:3003/login'>Login</a> </p>
+        </div>
         {hasError && <div className="error">{error}</div>}
         </div>
     </div>

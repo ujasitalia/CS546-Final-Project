@@ -136,11 +136,7 @@ export const MedicalHistory = (props) => {
                         <label htmlFor={disease.medicalHistoryId+'-'+index+'-endDate'}>End Date</label>
                         <input placeholder="End Date" id={disease.medicalHistoryId+'-'+index+'-endDate'} value={medicalHistory[index]['endDate'] } onChange={handleInputChange} type="date" className="endDate" min={medicalHistory[index]['startDate']} max={getTodaysDate()}/>
                     </div>
-                    <button type="submit" className="loginButton">
-                        <div className="buttonBox">
-                            <img src={arrow} className="arrow" loading="lazy" alt="logo" />
-                        </div>
-                    </button>
+                    <button type="submit" className="loginButton">Submit</button>
                 </div>
             </form>
        })}

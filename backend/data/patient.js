@@ -18,20 +18,20 @@ const isPatientEmailInDb = async(email) => {
     return true;
 }
   
-const createPatient = async (email,age,profilePicture,name,city,state,zip,password) => {
+const createPatient = async (email,age,profilePicture,name,zip,password) => {
     email=commonHelper.isValidEmail(email).toLowerCase();
     if(await isPatientEmailInDb(email)) throw {Status:"400",error:'An account already exists with this email'};
     age = patientHelper.isValidAge(age);
     profilePicture=commonHelper.isValidFilePath(profilePicture);
     name=commonHelper.isValidName(name);
-    city=commonHelper.isValidCity(city);
-    state=commonHelper.isValidState(state);
+    // city=commonHelper.isValidCity(city);
+    // state=commonHelper.isValidState(state);
     zip=commonHelper.isValidZip(zip);
     password=commonHelper.isValidPassword(password);
     
     let hashedPassword = await bcryptjs.hash(password,saltRounds);
     
-    let newPatient = {email,age,profilePicture,name,city,state,zip,hashedPassword,medicalHistory:[],prescriptions:[],testReports:[],myDoctors:[]};
+    let newPatient = {email,age,profilePicture,name,zip,hashedPassword,medicalHistory:[],prescriptions:[],testReports:[],myDoctors:[]};
     const patientCollection = await patients(); 
     const insertInfo = await patientCollection.insertOne(newPatient);
     if (!insertInfo.acknowledged || !insertInfo.insertedId)

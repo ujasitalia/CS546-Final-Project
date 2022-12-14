@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { api } from '../api';
 import arrow from "../assets/images/arrow.svg";
@@ -9,6 +9,7 @@ import { Prescriptions } from '../components/Prescriptions';
 import { MedicalHistory } from '../components/MedicalHistory';
 import { TestReports } from '../components/TestReports';
 import { axiosAuth } from '../api/axios';
+import { components } from '../components';
 
 const Profile = () => {
     useEffect(() => {
@@ -70,6 +71,8 @@ const Profile = () => {
     }
   return (
     <div>
+        <components.Navbar/>
+        <components.SecondaryNavbar/>
         <div className="blueContainer">
                     <img src=".dgkjs" className="loginLogo" loading="lazy" alt="logo" />
                     <div className="loginHeading">Patient Profile</div>

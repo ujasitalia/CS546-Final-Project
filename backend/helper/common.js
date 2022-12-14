@@ -78,7 +78,7 @@ const isValidTime = (time) => {
 };
 
 const isValidPastDate = (time) => {
-  if (!time) throw { status: "400", error: "No time provided" };
+  if (!time) throw { status: "400", error: "No date provided" };
   //time = new Date(time);
   today = new Date();
   if (time === "Invalid Date" || time > today)

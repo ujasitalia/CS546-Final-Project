@@ -63,7 +63,7 @@ const Login = () => {
             </p>
         </form>
         <div id="create-account-wrap">
-            <p> <a href='http://localhost:3006/signup'>Sign up</a> </p>
+            <p> <a href='http://localhost:3003/signup'>Sign up</a> </p>
         </div>
         {hasError && <div className="error">{error}</div>}
         </div>
