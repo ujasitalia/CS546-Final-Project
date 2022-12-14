@@ -136,29 +136,14 @@ router
   .get(async (req, res) => {
 
     //check patient id 
-    let id = req.params.patientId
-    try {
-      id = helper.common.isValidId(req.params.patientId);
-    } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
-      return;
-    }
-    //check if the patient with that id is present
-    try {
-      await patientData.getPatientById(id);
-    } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
-      return;
-    }
+    
     //get all the prescriptions of that patient
     try {
-      const patientPrescriptions = await prescriptionData.getPatientPrescription(id)
+      
+      let id = helper.common.isValidId(req.params.patientId);
+      //check if the patient with that id is present
+      await patientData.getPatientById(id);
+      const patientPrescriptions = await patientData.getPatientPrescription(id)
       res.json(patientPrescriptions)
     } catch (e) {
       if(typeof e !== 'object' || !('status' in e))
@@ -174,29 +159,12 @@ router
   .route('/:patientId/medicalHistory')
   .get(async (req, res) => {
     //check patient id 
-    let id = req.params.patientId;
-    try {
-      id = helper.common.isValidId(req.params.patientId);
-    } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
-      return;
-    }
+    
     //check if the patient with that id is present
     try {
+      let id = req.params.patientId;
+      id = helper.common.isValidId(req.params.patientId);
       await patientData.getPatientById(id);
-    } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
-      return;
-    }
-
-    //get all medical history of that patient
-    try {
       const patientMedicalHistory = await patientData.getMedicalHistory(id)
       res.json(patientMedicalHistory)
     } catch (e) {
@@ -207,45 +175,63 @@ router
       return;
     }
 
+    //get all medical history of that patient
+
   })
   .post(async (req, res) => {
     try{
-
       let id = req.params.patientId;
-      const diseaseData = req.body;
-      try {
-        id = helper.common.isValidId(req.params.patientId);
-      } catch (e) {
-        if(typeof e !== 'object' || !('status' in e))
-          res.status(500).json(e);
-        else
-          res.status(parseInt(e.status)).json(e.error);
-        return;
-      }
+      let diseaseData = req.body;
+      id = helper.common.isValidId(req.params.patientId); 
       //check if the patient with that id is present
-      try {
-        await patientData.getPatientById(id);
-      } catch (e) {
-        if(typeof e !== 'object' || !('status' in e))
-          res.status(500).json(e);
-        else
-          res.status(parseInt(e.status)).json(e.error);
-        return;
-      }
+      await patientData.getPatientById(id);
 
       diseaseData.disease = commonHelper.isValidString(diseaseData.disease);
-      diseaseData.startDate = commonHelper.isValidTime(diseaseData.startDate);
-      /*
+      diseaseData.startDate = commonHelper.isValidPastDate(diseaseData.startDate);
+      
       if(diseaseData.endDate){
-        diseaseData.endDate=commonHelper.isValidTime(diseaseData.endDate);
+        diseaseData.endDate=commonHelper.isValidPastDate(diseaseData.endDate);
       }
       else{
-        bodyData.endDate == null;
-      }*/
+        diseaseData.endDate = null;
+      }
 
-      //let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate,diseaseData.endDate);
-      let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate);
-      res.json(newMedicalHistory);
+      let updatedPatient = await patientData.addMedicalHistory(id,diseaseData.disease,diseaseData.startDate,diseaseData.endDate);
+      // let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate);
+      res.json(updatedPatient);
+      }catch(e){
+      if(e.status)
+      {
+        res.status(parseInt(e.status)).json(e.error);
+      }
+      else
+        res.status(500).json(e);
+      }
+  })
+
+  router
+  .route('/:patientId/medicalHistory/:medicalHistoryId')
+  .patch(async (req, res) => {
+    // Only start date being considered and patient not given the access to update the medical history once entered
+    try{
+      const diseaseData = req.body;
+      let patientId = helper.common.isValidId(req.params.patientId);
+      let medicalHistoryId = helper.common.isValidId(req.params.medicalHistoryId);
+      await patientData.getPatientById(patientId);
+      
+      diseaseData.disease = commonHelper.isValidString(diseaseData.disease);
+      diseaseData.startDate = commonHelper.isValidPastDate(diseaseData.startDate);
+      
+      if(diseaseData.endDate){
+        diseaseData.endDate=commonHelper.isValidPastDate(diseaseData.endDate);
+      }
+      else{
+        diseaseData.endDate == null;
+      }
+
+      let updatedPatient = await patientData.updateMedicalHistory(patientId,medicalHistoryId,diseaseData.disease,diseaseData.startDate,diseaseData.endDate);
+      // let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate);
+      res.json(updatedPatient);
       }catch(e){
       if(e.status)
       {
@@ -257,37 +243,13 @@ router
   })
 
   router
-  .route('/:patientId/medicalHistory/:medicalHistoryId')
-  .patch(async (req, res) => {
-    // Only start date being considered and patient not given the access to update the medical history once entered
-  })
-
-  router
   .route('/:patientId/testReport')
   .get(async (req, res) => {
     //check patient id 
-    let id = req.params.patientId;
     try {
-      id = helper.common.isValidId(req.params.patientId);
-    } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
-      return;
-    }
-    //check if the patient with that id is present
-    try {
+      let id = helper.common.isValidId(req.params.patientId);
       await patientData.getPatientById(id);
-    } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
-      return;
-    }
-    //get all test reports of that patient
-    try {
+      //get all test reports of that patient
       const patientTestReport = await patientData.getTestReport(id)
       res.json(patientTestReport)
     } catch (e) {
@@ -302,34 +264,17 @@ router
   .post(async (req, res) => {
 
     try{
-
       let id = req.params.patientId;
       const testData = req.body;
-      try {
-        id = helper.common.isValidId(req.params.patientId);
-      } catch (e) {
-        if(typeof e !== 'object' || !('status' in e))
-          res.status(500).json(e);
-        else
-          res.status(parseInt(e.status)).json(e.error);
-        return;
-      }
+      id = helper.common.isValidId(req.params.patientId);
       //check if the patient with that id is present
-      try {
-        await patientData.getPatientById(id);
-      } catch (e) {
-        if(typeof e !== 'object' || !('status' in e))
-          res.status(500).json(e);
-        else
-          res.status(parseInt(e.status)).json(e.error);
-        return;
-      }
+      await patientData.getPatientById(id);
 
       testData.testName=commonHelper.isValidString(testData.testName);
-      testData.testDocument=commonHelper.isValidFilePath(testData.testDocument);
-      
+      testData.document=commonHelper.isValidFilePath(testData.document);
+      testData.testDate=commonHelper.isValidPastDate(testData.testDate);
 
-      let newTestReport = await patientData.updateTestReport(id,testData.testName,testData.testDocument);
+      let newTestReport = await patientData.addTestReport(id,testData.testName,testData.document,testData.testDate);
       res.json(newTestReport);
       }catch(e){
       if(e.status)
@@ -345,6 +290,27 @@ router
   .route('/:patientId/testReport/:testReportId')
   .patch(async (req, res) => {
     //No update of test reports option given to patient 
+    try{
+      const testReportData = req.body;
+      let patientId = helper.common.isValidId(req.params.patientId);
+      let testReportId = helper.common.isValidId(req.params.testReportId);
+      await patientData.getPatientById(patientId);
+
+      testReportData.testName = commonHelper.isValidString(testReportData.testName);
+      testReportData.testDate = commonHelper.isValidPastDate(testReportData.testDate);
+      testReportData.document = commonHelper.isValidString(testReportData.document);
+
+      let updatedPatient = await patientData.updateTestReport(patientId,testReportId,testReportData.testName,testReportData.testDate,testReportData.document);
+      // let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate);
+      res.json(updatedPatient);
+      }catch(e){
+      if(e.status)
+      {
+        res.status(e.status).json(e.error);
+      }
+      else
+        res.status(500).json(e);
+      }
   })
 
 

@@ -3,6 +3,9 @@ const router = express.Router();
 const {doctor : doctorData,patient: patientData, appointment : appointmentData, review : reviewData} = require("../data");
 const helper = require('../helper');
 const jwt = require("jsonwebtoken");
+const { isValidMedicine } = require('../helper/doctor');
+const { updatePrescription } = require('../data/doctor');
+
 
 router
   .route('/')
@@ -228,30 +231,11 @@ router
   router
   .route('/:doctorId/patient/:patientId/prescription')
   .get(async (req, res) => {
-
     //check patient id 
-    let id = req.params.patientId
     try {
+      let id = req.params.patientId
       id = helper.common.isValidId(req.params.patientId);
-    } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
-      return;
-    }
-    //check if the patient with that id is present
-    try {
       await patientData.getPatientById(id);
-    } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
-      else
-        res.status(parseInt(e.status)).json(e.error);
-      return;
-    }
-    //get all the prescriptions of that patient
-    try {
       const patientPrescriptions = await patientData.getPatientPrescription(id)
       res.json(patientPrescriptions)
     } catch (e) {
@@ -266,37 +250,19 @@ router
   .post(async (req, res) => {
 
     try{
-
       let doctorId = req.params.doctorId;
       let patientId = req.params.patientId;
       const prescriptionData = req.body;
-      try {
-        patientId = helper.common.isValidId(req.params.patientId);
-      } catch (e) {
-        if(typeof e !== 'object' || !('status' in e))
-          res.status(500).json(e);
-        else
-          res.status(parseInt(e.status)).json(e.error);
-        return;
-      }
-      //check if the patient with that id is present
-      try {
-        await patientData.getPatientById(patientId);
-      } catch (e) {
-        if(typeof e !== 'object' || !('status' in e))
-          res.status(500).json(e);
-        else
-          res.status(parseInt(e.status)).json(e.error);
-        return;
-      }
+      patientId = helper.common.isValidId(req.params.patientId);
+      doctorId = helper.common.isValidId(req.params.doctorId);
+      await patientData.getPatientById(patientId);
 
       prescriptionData.disease=commonHelper.isValidString(prescriptionData.disease);
-      prescriptionData.medicines=commonHelper.isValidString(prescriptionData.medicines);
+      prescriptionData.medicines=isValidMedicine(prescriptionData.medicines);
       prescriptionData.documents=commonHelper.isValidFilePath(prescriptionData.documents);
       prescriptionData.doctorSuggestion=commonHelper.isValidString(prescriptionData.doctorSuggestion);
-      
 
-      let newPrescription = await doctorData.updatePrescription(doctorId,patientId,prescriptionData.disease,prescriptionData.medicines,prescriptionData.documents,prescriptionData.doctorSuggestion);
+      let newPrescription = await doctorData.addPrescription(doctorId,patientId,prescriptionData.disease,prescriptionData.medicines,prescriptionData.documents,prescriptionData.doctorSuggestion);
       res.json(newPrescription);
       }catch(e){
       if(e.status)
@@ -312,7 +278,31 @@ router
   router
   .route('/:doctorId/patient/:patientId/prescription/:prescriptionId')
   .patch(async (req, res) => {
-    
+    try{
+      let doctorId = req.params.doctorId;
+      let prescriptionId = helper.common.isValidId(req.params.prescriptionId);
+      doctorId = helper.common.isValidId(req.params.doctorId);
+      let patientId = req.params.patientId;
+      const prescriptionData = req.body;
+      patientId = helper.common.isValidId(req.params.patientId);
+      if(!await patientData.getPatientById(id)) throw {status:'400',error:'No patient with that Id'};
+      
+      prescriptionData.disease=commonHelper.isValidString(prescriptionData.disease);
+      prescriptionData.medicines=isValidMedicine(prescriptionData.medicines);
+      prescriptionData.documents=commonHelper.isValidFilePath(prescriptionData.documents);
+      prescriptionData.doctorSuggestion=commonHelper.isValidString(prescriptionData.doctorSuggestion);
+
+      let updatedPatient = await updatePrescription(patientId,prescriptionId,prescriptionData.disease,prescriptionData.medicines,prescriptionData.documents,prescriptionData.doctorSuggestion);
+      // let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate);
+      res.json(updatedPatient);
+      }catch(e){
+      if(e.status)
+      {
+        res.status(e.status).json(e.error);
+      }
+      else
+        res.status(500).json(e);
+      }
   })
 
   

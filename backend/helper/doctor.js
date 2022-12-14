@@ -104,9 +104,19 @@ const isValidDoctorData = (data) =>{
     return data;
 }
 
+const isValidMedicine = (medicine) => {
+    for(let m in medicine){
+        if(!common.isValidString(medicine)) return false;
+        if(!Array.isArray(medicine.m)) return false
+        if(!common.isValidString(medicine.m[0]) || typeof medicine.m[1] !== 'number') return false;
+        return true;
+    }
+}
+
 module.exports = {
     isValidSpeciality,
     isValidAddress,
     isValidSchedule,
-    isValidDoctorData
+    isValidDoctorData,
+    isValidMedicine
 };
