@@ -3,6 +3,7 @@ import { components } from '../components';
 import { api } from '../api';
 import {helper} from '../helper';
 import arrow from "../assets/images/arrow.svg";
+import "../assets/css/profile.css";
 
 const Profile = () => {
     const [data, setData] = useState('');
@@ -83,9 +84,12 @@ const Profile = () => {
         }
     }
   return (
+    <>
     <div>
+        
         {data && <components.Navbar doctorId={data.doctor._id}/>}
-        {data && <div>
+        {data && <div  className='container'>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet"></link>
             <form onSubmit={validateSignUp}>
                 <div className="profileInputField"><label className="profileInputText" htmlFor="profileImage"> Profile Image : </label> <img style={{height: "100px"}} id="profileImage" src={`${data.doctor.profilePicture}`} alt=""/>
                 <a download="myImage.gif" href={`${data.doctor.profilePicture}`}>Download Profile</a>
@@ -106,11 +110,12 @@ const Profile = () => {
                     <div className="buttonBox">
                         <img src={arrow} className="arrow" loading="lazy" alt="logo" />
                     </div>
-                </button>
+                </div>
             </form>
             </div>}
             {hasError && <div className="error">{error}</div>}
     </div>
+    </>
   )
 }
 

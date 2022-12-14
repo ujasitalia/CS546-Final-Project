@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { components } from '../components';
 import { api } from '../api';
 import { useParams } from 'react-router-dom';
-
+import "../components/navbar.css";
 const DoctorInfo = () => {
     const { id } = useParams();
     const [tab, setTab] = useState('detailTab');
@@ -34,13 +34,19 @@ const DoctorInfo = () => {
     <div>
         <components.Navbar/>
         <components.SecondaryNavbar/>
-        <ul>
+    <nav>
+      <div className="nav-center">
+        <div className="links-container">
+          <ul className="links">
             <li id="detailTab" onClick={handleTabChange}>Details</li>
             <li id="doctorAvailabilityTab" onClick={handleTabChange}>Doctor's Availability</li> 
             <li id="reviewTab" onClick={handleTabChange}>Reviews</li>
             <li id="bookAppointment" onClick={handleTabChange}>Book Appointment</li>
             {canGiveReview && <li id="reviewForm" onClick={handleTabChange}>Give Review</li>}
-        </ul>
+          </ul>
+        </div>
+      </div>
+    </nav>
         {data && tab === 'detailTab' && <components.DoctorDetail doctor={data.doctor}/>}
         {data && tab === 'doctorAvailabilityTab' && <components.DoctorAvailability doctorSchedule={data.doctor.schedule} appointmentDuration={data.doctor.appointmentDuration}/>}
         {data && tab === 'reviewTab' && <components.DoctorReviews doctorId={data.doctor._id}/>} 

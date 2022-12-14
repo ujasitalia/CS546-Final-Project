@@ -45,15 +45,18 @@ const Dashboard = () => {
     }
 
     return (
-        <div>
+        <div><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" 
+        integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" 
+        crossorigin="anonymous"></link>
           <components.Navbar handleSearch={handleSearch}/>
           <components.SecondaryNavbar/>
           <div>
           {filteredDoctors !== '' 
             ? <div className="doctorsContainer">
-                          <div>{filteredDoctors.length !== 0 ? filteredDoctors.map((element, index) =>
+                          <div className='row g-4'>{filteredDoctors.length !== 0 ? filteredDoctors.map((element, index) =>
+                            <div class="col-sm-4 col-xm-6 card">
                           <Link to={{ pathname : `/doctor/${element._id}`, state : {appointmentId : element._id}}}>
-                              <div className="card" key={element._id}>
+                              <div key={element._id}>
                                   <div className="cardHeading">Doctor - {index+1}</div>
                                   <div className="cardText">Name : {element.name}</div>
                                   <div className="cardText">Email : {element.email}</div>
@@ -64,6 +67,7 @@ const Dashboard = () => {
                                   <br/>
                               </div>
                             </Link>
+                            </div>
                           ) : <p>Doctor Not Found</p>}
                           </div>
             </div> : <div>Loading</div>}
