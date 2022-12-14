@@ -1,8 +1,6 @@
 import React, { useState , useEffect} from "react"
 import axios from 'axios'
-import { styles } from "../../chat/styles"
-import '../../assets/css/chat.css'
-import Chat from '../../chat/chat'
+import '../assets/css/chat.css'
 
 export default function Conversation({conversation,currentUser}){
   const [user, setUser] = useState(null);
