@@ -12,7 +12,7 @@ router
       res.json(allDoctors);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -26,28 +26,23 @@ router
       data.name = helper.common.isValidName(data.name);
       data.speciality = helper.doctor.isValidSpeciality(data.speciality);
       data.clinicAddress = helper.doctor.isValidAddress(data.clinicAddress);
-      data.city = helper.common.isValidCity(data.city);
-      data.state = helper.common.isValidState(data.state);
       data.zip = helper.common.isValidZip(data.zip);
       data.password = helper.common.isValidPassword(data.password);
-      //data.schedule = helper.doctor.isValidSchedule(data.schedule);
     }catch(e){
-      if(typeof e !== 'object' || !('status' in e) || e.status === '500'){
-        res.status(500).json(e.error);
-      }        
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json("Internal server error");
       else
-        res.status(e.status).json(e.error);
+        res.status(parseInt(e.status)).json(e.error);
       return;
     }
 
     try{
       const createDoctor = await doctorData.createDoctor(data.email, data.profilePicture, data.name, data.speciality, 
-        data.clinicAddress, data.city, data.state, data.zip, data.password)//, data.schedule);
+        data.clinicAddress, data.zip, data.password);
       res.json(createDoctor);
     }catch(e){
-      console.log(e);
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -73,12 +68,11 @@ router
       } else throw {status:401,error:'Invalid email or password'};
       
     }catch(e){
-      if(e.status)
-      {
-        res.status(e.status).json(e.error);
-      }
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json("Internal server error");
       else
-        res.status(500).json('Internal server error');
+        res.status(parseInt(e.status)).json(e.error);
+      return;
     }
   })
 
@@ -90,7 +84,7 @@ router
       doctorId = helper.common.isValidId(req.params.doctorId);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -101,7 +95,7 @@ router
       res.json(doctor);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -116,7 +110,7 @@ router
       data = helper.doctor.isValidDoctorData(data);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -127,7 +121,7 @@ router
       res.json(updatedDoctor);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -140,10 +134,10 @@ router
     //check doctor id 
     let doctorId = req.params.doctorId
     try {
-      id = helper.common.isValidId(req.params.doctorId);
+      doctorId = helper.common.isValidId(req.params.doctorId);
     } catch (e) {
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -153,7 +147,7 @@ router
       await doctorData.getDoctorById(doctorId);
     } catch (e) {
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -164,7 +158,7 @@ router
       res.json(doctorAppointments)
     } catch (e) {
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -182,7 +176,7 @@ router
         req.query.date = new Date();
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -192,7 +186,7 @@ router
       res.json(doctorSlots);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -206,7 +200,7 @@ router
       req.params.doctorId = helper.common.isValidId(req.params.doctorId);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;
@@ -217,7 +211,7 @@ router
       res.json(reviews);
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json(e);
+        res.status(500).json("Internal server error");
       else
         res.status(parseInt(e.status)).json(e.error);
       return;

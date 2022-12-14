@@ -19,6 +19,7 @@ const ChatWindow = () => {
         const getConversations = async () =>{
             try{
                 const res = await api.chat.getChatConversation(userId);
+
                 setConversations(res.data)
             }catch(e){
                 console.log(e);

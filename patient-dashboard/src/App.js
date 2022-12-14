@@ -10,10 +10,14 @@ function App() {
           <Route path="/login" element={<pages.Login/>} />
           <Route path="/" element={<Navigate  to="/login"/>}/>
           <Route path="/dashboard" element={<pages.Dashboard/>}/>
+          <Route path="/myAppointments" element={<pages.MyAppointment/>}/>
+          {/* Edit below Route for healthy habits page */}
+          {/* <Route path="/healthyHabits" element={<pages./>}/> */}
           <Route path="/doctor/:id" element={<pages.DoctorInfo/>}/>
+          <Route path="/myAppointment/:appointmentId" element={<pages.EditAppointment/>}/>
           <Route path="/profile" element={<pages.Profile/>}/>
+          <Route path="/signup" element={<pages.SignUp/>} />
           {/* <Route path="/create-account" element={<CreateAccount/>} /> */}
-          {/* <Route path="/nav" element={<Navbar/>} /> had written this to test */}
         </Routes>
       </Router>
     </div>

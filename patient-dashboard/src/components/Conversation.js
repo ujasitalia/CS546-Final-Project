@@ -7,9 +7,9 @@ export default function Conversation({conversation,currentUser}){
 
   useEffect(() =>{
     const getUser = async()=>{
-      const userID = conversation;
+      const userId = conversation;
       try{
-        const res = await axios("http://localhost:3000/doctor/"+userID);
+        const res = await axios("http://localhost:3000/doctor/"+userId);
         setUser(res.data);
       }catch(e){
         console.log(e);

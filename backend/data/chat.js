@@ -5,34 +5,34 @@ const {ObjectId} = require('mongodb');
 const patient = require('./patient');
 const doctor = require('./doctor');
 
-const getAllchat = async (doctorID, patientID) => {
-    doctorID = helper.common.isValidId(doctorID);
-    patientID = helper.common.isValidId(patientID);
+const getAllchat = async (doctorId, patientId) => {
+    doctorId = helper.common.isValidId(doctorId);
+    patientId = helper.common.isValidId(patientId);
 
-    await doctor.getDoctorById(doctorID);
-    await patient.getPatientById(patientID);
+    await doctor.getDoctorById(doctorId);
+    await patient.getPatientById(patientId);
     const chatCollection = await chatCol();
 
-    const chatHistory = await chatCollection.find( {$or : [{receiverId: ObjectId(doctorID), senderId: ObjectId(patientID)}, {receiverId: ObjectId(patientID),senderId: ObjectId(doctorID)}] }).toArray();
+    const chatHistory = await chatCollection.find( {$or : [{receiverId: doctorId, senderId: patientId}, {receiverId: patientId,senderId: doctorId}] }).toArray();
   
     if (!chatHistory) throw {status: '404', error : 'Could not get chat'};
   
     return chatHistory;
   }
 
-  const getPeople = async (userID) => {
-    userID = helper.common.isValidId(userID);
+  const getPeople = async (userId) => {
+    userId = helper.common.isValidId(userId);
     const chatCollection = await chatCol();
 
-    const chatHistory = await chatCollection.find( {$or : [{receiverId: ObjectId(userID)}, {senderId: ObjectId(userID)}] }).toArray();
+    const chatHistory = await chatCollection.find( {$or : [{receiverId: userId}, {senderId: userId}] }).toArray();
     let people = [];
     for(var message in chatHistory){
-        if(chatHistory[message].senderId.toString() == userID.toString()){
+        if(chatHistory[message].senderId.toString() == userId.toString()){
             if(!people.includes(chatHistory[message].receiverId.toString())){
             people.push(chatHistory[message].receiverId.toString());
             }
         }
-        if(chatHistory[message].receiverId.toString() == userID.toString()){
+        if(chatHistory[message].receiverId.toString() == userId.toString()){
             if(!people.includes(chatHistory[message].senderId.toString())){
             people.push(chatHistory[message].senderId.toString());
             }
@@ -48,8 +48,8 @@ const createChat = async (senderId, receiverId, message) => {
     const timeStamp = new Date();
     let time = timeStamp.getHours().toString().padStart(2, '0') + ":" + timeStamp.getMinutes().toString().padStart(2, '0') + ":" + timeStamp.getSeconds().toString().padStart(2, '0') + ".000"
     const newMessage = {
-        receiverId : ObjectId(receiverId),
-        senderId : ObjectId(senderId),
+        receiverId : receiverId,
+        senderId : senderId,
         message,
         timeStamp : timeStamp.toISOString().split('T')[0]+'T'+time
       };
