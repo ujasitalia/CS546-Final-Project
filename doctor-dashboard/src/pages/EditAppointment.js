@@ -6,7 +6,6 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Chat from '../chat'
 
 const EditAppointment = () => {
   const { appointmentId } = useParams();
