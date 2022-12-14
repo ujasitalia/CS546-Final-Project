@@ -3,21 +3,23 @@ import { components } from '../components';
 import { api } from '../api';
 import {helper} from '../helper';
 import arrow from "../assets/images/arrow.svg";
+import "../assets/css/profile.css";
 
 const Profile = () => {
     const [data, setData] = useState('');
     const [fullName, setName] = useState('');
     const [clinicAddress, setClinicAddress] = useState('');
     const [zip, setZip] = useState('');
+    const [profilePicture, setProfilePicture] = useState('');
     const [hasError, setHasError] = useState(false);
     const [error, setError] = useState('');
-
     useEffect(() => {
         const fetchData = async()=>{
             const response = await api.doctor.getDoctor(JSON.parse(localStorage.getItem('id')));
             setName(response.data.name)
             setZip(response.data.zip)
             setClinicAddress(response.data.clinicAddress)
+            setProfilePicture(response.data.profilePicture)
             setData({doctor : response.data});
         }
         if(!data)
@@ -26,13 +28,33 @@ const Profile = () => {
         }
     },[]);
 
-    const handleInputChange = (e) => {
+    const getBase64 = async(file) => {
+
+          let baseURL = "";
+          let reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => {
+            baseURL = reader.result;
+            setProfilePicture(baseURL);
+          };
+      };
+
+    const handleInputChange = async(e) => {
         if(e.target.id === 'profileName')
             setName(e.target.value);
         else if(e.target.id === 'profileZip')
             setZip(e.target.value);
         else if(e.target.id === 'profileClinicAddress')
             setClinicAddress(e.target.value)
+        else if(e.target.id = 'updatedProfileImage')
+        {
+            if(e.target.files[0].size > 12097152){
+                alert("huge file");
+            }else
+            {
+                getBase64(e.target.files[0]);
+            }
+        }
     }
     const validateSignUp = async (e) =>{
         e.preventDefault();
@@ -48,9 +70,13 @@ const Profile = () => {
         }
         
         try{
-            const doctorData = {"name":fullName, "zip":zip, clinicAddress: clinicAddress}
-            const response = await api.doctor.updateDoctor(data.doctor._id ,doctorData);
-            console.log(response);
+            if(profilePicture!==data.doctor.profileImage || fullName!==data.doctor.name || zip!==data.doctor.zip || clinicAddress!==data.doctor.clinicAddress)
+            {
+                const doctorData = {"name":fullName, "zip":zip, clinicAddress: clinicAddress, profilePicture:profilePicture}
+                const response = await api.doctor.updateDoctor(data.doctor._id ,doctorData);
+                setData({doctor : response.data});
+                setHasError(false);
+            }
         }catch(e){
             setHasError(true);
             setError(e.response.data);
@@ -58,10 +84,20 @@ const Profile = () => {
         }
     }
   return (
+    <>
     <div>
+        
         {data && <components.Navbar doctorId={data.doctor._id}/>}
-        {data && <div>
+        {data && <div  className='container'>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet"></link>
             <form onSubmit={validateSignUp}>
+                <div className="profileInputField">
+                    <label className="profileInputText" htmlFor="profileImage"> Profile Image : </label> 
+                    <img style={{height: "100px"}} id="profileImage" src={`${data.doctor.profilePicture}`} alt=""/>
+                    <a download="myImage.gif" href={`${data.doctor.profilePicture}`}>Download Profile</a>
+                    <input type="file" id='updatedProfileImage' onChange={handleInputChange} />
+                </div>
+                <br/>
                 <div className="profileInputField"><label className="profileInputText" htmlFor="profileEmail"> Email : </label> <span id="profileEmail">{data.doctor.email}</span> </div>
                 <br/>
                 <div className="profileInputField"> <label className="profileInputText" htmlFor="profileSpeciality"> Speciality : </label> <span id="profileSpeciality">{data.doctor.speciality}</span> </div>
@@ -81,6 +117,7 @@ const Profile = () => {
             </div>}
             {hasError && <div className="error">{error}</div>}
     </div>
+    </>
   )
 }
 

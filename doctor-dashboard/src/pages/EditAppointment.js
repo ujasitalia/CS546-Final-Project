@@ -11,7 +11,7 @@ const EditAppointment = () => {
   const { appointmentId } = useParams();
   const navigate = useNavigate();
   const [appointment, setAppointment] = useState("");
-  const [availableSlots, setAvailableSlots] = useState([]);
+  const [availableSlots, setAvailableSlots] = useState('');
   const [days,setDays] = useState([])
   const [doctor, setDoctor] = useState('')
   const [updatedSlot, setUpdatedSlot] = useState('')
@@ -74,10 +74,10 @@ const EditAppointment = () => {
   const updateAppointment = async (e) => {
     e.preventDefault();
     const time = getTime(updatedSlot);
-    let temp = startDate.toISOString().split('T')[0]+'T'+time
+    let temp = (new Date(startDate - (startDate.getTimezoneOffset() * 60000))).toISOString().split('T')[0]+'T'+time
     // console.log(updatedSlot);
-    const updatedAppointment = {...appointment, startTime:temp}
-    const udA = await api.appointment.updateAppointment(updatedAppointment)
+    const updatedAppointment = {startTime:temp}
+    const udA = await api.appointment.updateAppointment(appointmentId, updatedAppointment)
     if(udA.data === 'select a different date/time than original'){
         setNotUpdated(true);
     }
@@ -142,7 +142,7 @@ const EditAppointment = () => {
                     </div>
                 ) : (
                     <>
-                      <p>All appointments are booked. Please try for another day.</p>
+                      {availableSlots  &&  <p>All slots are booked. Please try for another day.</p>}
                     </>
                 )}
             </>

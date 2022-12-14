@@ -26,8 +26,10 @@ const isValidEmail = (email) => {
 }
 
 const isValidFilePath = (filePath) => {
-    filePath = isValidString(filePath, "File path");
-    return filePath
+  const meta = filePath.split(",")[0].split(";");
+    if(meta[1] !== 'base64')
+      throw {status: '400', error : 'Invalid file'}
+    return filePath;
 }
 
 const isValidPassword = (passowrd) => {
@@ -77,6 +79,15 @@ const isValidTime = (time) => {
   return time;
 };
 
+const isValidPastDate = (time) => {
+  if (!time) throw { status: "400", error: "No time provided" };
+  time = new Date(time);
+  today = new Date();
+  if (time === "Invalid Date" || time > today)
+    throw { status: "400", error: "Invalid date" };
+  return time;
+};
+
 module.exports = {
     isValidId,
     isValidString,
@@ -87,5 +98,6 @@ module.exports = {
     isValidState,
     isValidZip,
     isValidName,
-    isValidTime
+    isValidTime,
+    isValidPastDate
 };

@@ -13,9 +13,13 @@
         "bcryptjs": "^2.4.3",
         "cors": "^2.8.5",
         "express": "^4.18.2",
+        "http": "^0.0.1-security",
         "jsonwebtoken": "^8.5.1",
         "mongodb": "^4.10.0",
+        "node-cron": "^3.0.2",
+        "nodemailer": "^6.8.0",
         "nodemon": "^2.0.20",
-        "react-datepicker": "^4.8.0"
+        "react-datepicker": "^4.8.0",
+        "socket.io": "^4.5.4"
     }
 }

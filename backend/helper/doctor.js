@@ -96,6 +96,8 @@ const isValidDoctorData = (data) =>{
             case "appointmentDuration":
                 data.appointmentDuration = isValidAppointmentDuration(data.appointmentDuration);
                 break;
+            case "rating":
+                break;
             default:
                 throw {status: '400', error : `Invalid key - ${key}`};
             
@@ -109,6 +111,17 @@ const isValidNpi = (npi) => {
     if(!npi.match(/^[A-Z]{3}[0-9]{7}$/))
         throw {status: '400', error : 'Invalid NPI'}
     return npi;
+    }
+const isValidMedicine = (medicine) => {
+    let newMedicine = {}
+    for(let m in medicine){
+        let key=common.isValidString(m,'Medicine');
+        if(!Array.isArray(medicine[m])) throw {status:'400',error:'Medicine must be an array'};
+        common.isValidString(medicine[m][0],'Dosage') 
+        if( typeof medicine[m][1] !== 'number') throw {status:'400',error:'Medicine frquency must be a number'};
+        newMedicine[key]=medicine[m];
+    }
+    return newMedicine;
 }
 
 module.exports = {
@@ -116,5 +129,6 @@ module.exports = {
     isValidAddress,
     isValidSchedule,
     isValidDoctorData,
-    isValidNpi
+    isValidNpi,
+    isValidMedicine
 };

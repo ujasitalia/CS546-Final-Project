@@ -9,6 +9,25 @@ export const isValidString = (string, parameter) => {
   return string;
 };
 
+export const isValidMedicalHistory = (medicalHistory) => {
+  for(let mh of medicalHistory){
+    
+    isValidString(mh.disease,'disease');
+    //isValidId(mh.medicalHistoryId);
+    // isValidDate(mf.startDate);
+    // isValidDate(mf.endDate);
+  }
+}
+
+export const isValidTestReports = (TestReport) => {
+  for(let test in TestReport)
+  {
+    //isValidId(test.testReportId);
+    isValidString(test.testName,'Test Name');
+    isValidString(test.document, 'Document');
+  }
+}
+
 export const isValidEmail = (email) => {
   email = isValidString(email, "Email");
   if (
@@ -22,7 +41,7 @@ export const isValidEmail = (email) => {
 
 export const isPasswordSame = (repassword, password) => {
   repassword = isValidPassword(repassword);
-  if(repassword==password) return repassword
+  if(repassword===password) return repassword
   throw new Error('Passwords dont match')
 }
 
@@ -43,7 +62,7 @@ export const isValidZip = (zip) => {
 export const isValidName = (inputName) => {
   inputName = isValidString(inputName,"Name");
   let name=inputName.split(' '); 
-  if(name.length!=2) throw new Error('Invalid name'); 
+  if(name.length!==2) throw new Error('Invalid name'); 
   if(name[0].length<3)
     throw new Error('First name should be atleast 3 character');
   if(name[1].length<3)
@@ -60,7 +79,27 @@ export const isValidName = (inputName) => {
 }
 
 export const isValidAge = (age) => {
-    age = parseInt(age);
-    if(!age || typeof age!='number' || age<1 || age>120 || age%1) throw new Error('Invalid age');
+     if(!age.match(/^\d+$/) || !age || age<1 || age>120 || age%1) throw new Error('Invalid age');
     return age;
 }
+
+export const isValidRating = (rating) => {
+  rating = parseFloat(rating);
+  if(rating<0 || rating>5){
+      throw new Error('rating must between 1 to 5');
+  }
+  if((rating*10)%1 !== 0){
+      throw new Error('invalid input');
+  }
+  return rating;
+};
+export const isValidReviewText = (reviewText) => {
+  reviewText = reviewText.trim();
+  if(reviewText.length <4){
+    throw new Error('Review under character limit');
+  }
+  if(reviewText.length > 500){
+      throw new Error('Review over character limit');
+  }
+  return reviewText;
+};

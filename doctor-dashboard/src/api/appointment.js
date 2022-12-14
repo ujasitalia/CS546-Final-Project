@@ -12,9 +12,10 @@ export const getAvailableSlots = (data) => {
     return axiosAuth.get(`/appointment/slots/${data.doctorId}&${data.day}&${data.date}`)
 }
 
-export const updateAppointment = (data) => {
-    const id = data._id
-    delete data._id
-    console.log(data);
+export const updateAppointment = (id, data) => {
     return axiosAuth.patch(`/appointment/${id}`, {data:data})
+}
+
+export const deleteAppointment = (id) => {
+    return axiosAuth.delete(`/appointment/${id}`)
 }

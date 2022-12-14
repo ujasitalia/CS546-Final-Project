@@ -10,7 +10,7 @@ const BookAppointment = (props) => {
     const navigate = useNavigate();
     const [startDate, setStartDate] = useState(new Date());
     const [hasError, setHasError] = useState(false);
-    const [availableSlots, setAvailableSlots] = useState([]);
+    const [availableSlots, setAvailableSlots] = useState('');
     const [slot, setSlot] = useState('')
     const [notUpdated, setNotUpdated] = useState(false)
     
@@ -55,7 +55,7 @@ const BookAppointment = (props) => {
     const createAppointment = async (e) => {
     e.preventDefault();
     const time = getTime(slot);
-    let temp = startDate.toISOString().split('T')[0]+'T'+time
+    let temp = (new Date(startDate - (startDate.getTimezoneOffset() * 60000))).toISOString().split('T')[0]+'T'+time
     // console.log(slot);
     const newAppointment = {doctorId: props.doctor._id, patientId: JSON.parse(localStorage.getItem('id')),  startTime: temp, appointmentLocation: props.doctor.clinicAddress}
     const udA = await api.appointment.createAppointment(newAppointment)
@@ -72,6 +72,8 @@ const BookAppointment = (props) => {
 
   return (
     <div>
+        
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet"></link>
         <br />
         <h3>Book Appointment</h3>
         <br />
@@ -81,11 +83,13 @@ const BookAppointment = (props) => {
                 return <li key={day}>{day}</li>
             })}
         </ul>
+        <br/>
+        <p>Appointment Duration : {props.doctor.appointmentDuration}</p>
         <br />
         <h4>Pick a date for your appointment</h4>
         <Form onSubmit={handleForm}>
             <DatePicker selected={startDate} onChange={(date:Date) => setStartDate(date)} />
-            <Button variant="primary" type="submit" style={{ width: "70px" }}>
+            <Button variant="primary" type="submit" style={{ width: "100px" }}>
                 Get Slots
             </Button>
         </Form>
@@ -110,14 +114,14 @@ const BookAppointment = (props) => {
                                 return <option value={slot[0]} key={slot[0]}>{slot[0] + " - " + slot[1]}</option>
                             })}
                         </Form.Select>
-                        <Button variant="primary" type="submit" style={{ width: "70px" }}>
+                        <Button variant="primary" type="submit" style={{ width: "100px" }}>
                             Select
                         </Button>
                     </Form>                   
                     </div>
                 ) : (
                     <>
-                        <p>All appointments are booked. Please try for another day.</p>
+                       {availableSlots  &&  <p>All slots are booked. Please try for another day.</p>}
                     </>
                 )}
             </>

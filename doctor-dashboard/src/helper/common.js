@@ -45,7 +45,7 @@ export const isValidZip = (zip) => {
 export const isValidName = (inputName) => {
   inputName = isValidString(inputName,"Name");
   let name=inputName.split(' '); 
-  if(name.length!=2) throw new Error('Invalid name'); 
+  if(name.length!==2) throw new Error('Invalid name'); 
   if(name[0].length<3)
     throw new Error('First name should be atleast 3 character');
   if(name[1].length<3)
@@ -59,6 +59,13 @@ export const isValidName = (inputName) => {
   if(!name[1].match(/^[a-z.'-]+$/i))
     throw new Error('Invalid last name');
     return inputName;
+}
+
+export const isValidAppointmentDuration = (appointmentDuration) =>{
+    appointmentDuration = parseInt(appointmentDuration);
+    if(appointmentDuration%15!==0 || appointmentDuration>90)
+        throw new Error('Invalid Appointment Duration');
+    return appointmentDuration;
 }
 
 export const isValidSchedule = (schedule) =>{
