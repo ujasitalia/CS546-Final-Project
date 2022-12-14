@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { api } from '../api';
-import arrow from "../assets/images/arrow.svg";
 import {helper} from '../helper';
-
+import "../assets/css/login.css";
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -32,7 +31,8 @@ const Login = () => {
             const data = {"email" : email, "password" : password}
             const response = await api.login.post(data);
             console.log(response);
-            localStorage.setItem('token_data', JSON.stringify(response.data.token))
+            localStorage.setItem('token_data', JSON.stringify(response.data.token));
+            localStorage.setItem('id',JSON.stringify(response.data.patientData._id));
             navigate("/dashboard", {patient : response.data.patientData});
         }catch(e){
             setHasError(true);
@@ -44,23 +44,27 @@ const Login = () => {
     <div>
         <div className="blueContainer">
                     <img src=".dgkjs" className="loginLogo" loading="lazy" alt="logo" />
-                    <div className="loginHeading">Patient Login</div>
+                    <div className="loginHeading">Welcome</div>
                     <div className="loginText">Sign In</div>
         </div>
-        <div className="loginCard">
-        <form onSubmit={validateLogin}>
-            <div className="emailText">Enter Email</div>
-            <input placeholder="username@example.com" name="email" value={email} onChange={handleInputChange} type="email" className="loginInput" autoFocus/>
-            <br/>
-            <div className="emailText">Enter Password</div>
-            <input placeholder="********" name="password" value={password} onChange={handleInputChange} type="password" className="loginInput" autoFocus/>
-            <br/>
-            <button type="submit" className="loginButton">
-                <div className="buttonBox">
-                    <img src={arrow} className="arrow" loading="lazy" alt="logo" />
-                </div>
-            </button>
+        <div className="loginCard" id="login-form-wrap">    
+        <h2>Login</h2>
+        <form onSubmit={validateLogin} id="login-form">
+            <p>
+                <input placeholder="Enter Email" name="email" value={email} onChange={handleInputChange} type="email"  className="loginInput" autoFocus/>
+                <br/>                
+            </p>
+            <p>
+                <input placeholder="Enter Password" name="password" value={password} onChange={handleInputChange} type="password" className="loginInput" autoFocus/>
+                <br/>
+            </p>
+            <p>
+                <input type="submit" id="login" value="Login" className="loginButton"/>
+            </p>
         </form>
+        <div id="create-account-wrap">
+            <p> <a href='http://localhost:3006/signup'>Sign up</a> </p>
+        </div>
         {hasError && <div className="error">{error}</div>}
         </div>
     </div>

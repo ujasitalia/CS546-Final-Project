@@ -1,9 +1,13 @@
 const helper = require('../helper');
 const mongoCollections = require('../config/mongoCollections');
+const patients = mongoCollections.patient;
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 const doctorCol = mongoCollections.doctor;
+const commonHelper = require('../helper/common')
 const {ObjectId} = require('mongodb');
+const { getPatientById } = require('./patient');
+const { isValidMedicine } = require('../helper/doctor');
 
 const isDoctorEmailInDb = async(email) => {
   email=commonHelper.isValidEmail(email).toLowerCase();
@@ -17,25 +21,19 @@ const createDoctor = async(
     email,
     profilePicture,
     name,
-    specialty,
+    speciality,
     clinicAddress,
-    city,
-    state,
     zip,
-    password,
-    schedule
+    password
 ) => {
     email = helper.common.isValidEmail(email);
-    if(isDoctorEmailInDb(email)) throw {Status:400,error:'An account already exists with this email'};
+    if(await isDoctorEmailInDb(email)) throw {status:400,error:'An account already exists with this email'};
     profilePicture = helper.common.isValidFilePath(profilePicture);
     name = helper.common.isValidName(name);
-    specialty = helper.doctor.isValidSpecialty(specialty);
+    speciality = helper.doctor.isValidSpeciality(speciality);
     clinicAddress = helper.doctor.isValidAddress(clinicAddress);
-    city = helper.common.isValidCity(city);
-    state = helper.common.isValidState(state);
     zip = helper.common.isValidZip(zip);
     password = helper.common.isValidPassword(password);
-    schedule = helper.doctor.isValidSchedule(schedule);
 
     const doctorCollection = await doctorCol();
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -43,14 +41,14 @@ const createDoctor = async(
         email,
         profilePicture,
         name,
-        specialty,
+        speciality,
         clinicAddress,
-        city,
-        state,
         zip,
         hashedPassword,
-        schedule,
-        rating : 0
+        schedule:{},
+        appointmentDuration : 30,
+        rating : 0,
+        myPatients : []
       };
   
     const insertInfo = await doctorCollection.insertOne(newDoctor);
@@ -110,18 +108,30 @@ const getAllDoctor = async () => {
       delete data.password;
     }
 
-    const updatedInfo = await doctorCollection.updateOne(
+    const updatedInfo = await doctorCollection.updateMany(
       {_id: ObjectId(doctorId)},
       {$set: data}
     );
       
     if (updatedInfo.modifiedCount === 0) {
-      throw {status: '400', error : 'could not update doctor successfully'};
+      throw {status: '400', error : 'could not update because values are same as previous one'};
     }
   
     const doctor = await getDoctorById(doctorId);
     return doctor;
   };
+
+  const addMyPatient = async(doctorId, patientId) =>{
+    doctorId = helper.common.isValidId(doctorId);
+    patientId = helper.common.isValidId(patientId);
+    const doctorCollection = await doctorCol();
+    const updatedInfo = await doctorCollection.updateOne({_id: ObjectId(doctorId)},{$push:{myPatients: [patientId, true]}});
+    if (updatedInfo.modifiedCount === 0) {
+      throw {status: '400', error : 'could not update because values are same as previous one'};
+    }
+    const doctor = await getDoctorById(doctorId);
+    return doctor;
+  }
 
   const checkDoctor = async (email, password) => { 
     email=helper.common.isValidEmail(email).toLowerCase();
@@ -132,12 +142,92 @@ const getAllDoctor = async () => {
     else if(await bcrypt.compare(password,doctorInDb.hashedPassword)) return doctorInDb; 
     throw {status:400,error:'Invalid email or password'};
   };
+
+  const addPrescription = async(doctorId,patientId,disease,medicine,documents,doctorSuggestion) => {
+    patientId = commonHelper.isValidId(patientId);
+    doctorId = commonHelper.isValidId(doctorId);
+    disease=commonHelper.isValidString(disease);
+    medicine=isValidMedicine(medicine);
+    documents=commonHelper.isValidFilePath(documents);
+    doctorSuggestion=commonHelper.isValidString(doctorSuggestion);
+
+    const patientCollection = await patients();
+    const patient = await getPatientById(patientId);
+    if(!patient) throw {status: "404", error: `No patient with that ID`};
+    let newPrescription = {prescriptionId: new ObjectId(),doctorId,disease,medicine,documents,doctorSuggestion};
+
+    const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{prescriptions: newPrescription}});
+
+    if (updatePatient.modifiedCount === 0) throw "Error: Could not add prescription";
+
+    const updatedPatient = await getPatientById(patientId);
+    return updatedPatient;
+  }
+
+  const updatePrescription = async (patientId,prescriptionId,disease,medicine,documents,doctorSuggestion) => {
+    
+    patientId = commonHelper.isValidId(patientId);
+    //doctorId = commonHelper.isValidId(doctorId);
+    prescriptionId = commonHelper.isValidId(prescriptionId);
+    disease=commonHelper.isValidString(disease);
+    medicine=isValidMedicine(medicine);
+    documents=commonHelper.isValidFilePath(documents);
+    doctorSuggestion=commonHelper.isValidString(doctorSuggestion);
+
+    let patientInDb = await getPatientById(patientId);
+    if(!patientInDb) throw {status: "404", error: `No patient with that ID`};
+    
+    const patientCollection = await patients();
+    let prescriptionInDb = patientInDb.prescriptions;
+    //let newMedicalHistory = [];
+    for(let i=0;i<prescriptionInDb.length;i++){
+      if(prescriptionInDb[i].prescriptionId==prescriptionId) {
+        prescriptionInDb[i].disease=disease;
+        prescriptionInDb[i].medicine=medicine;
+        prescriptionInDb[i].documents=documents;
+        prescriptionInDb[i].doctorSuggestion=doctorSuggestion;
+      }
+    
+    }
+    patientInDb.prescriptions=prescriptionInDb;
+    const updatedInfo = await patientCollection.updateOne(
+      {_id: ObjectId(patientId)},
+      {$set: {prescriptions:prescriptionInDb}}
+    );
+    if (updatedInfo.modifiedCount === 0) throw "No changes made to the prescription";
+
+    const updatedPatient = await getPatientById(patientId);
+    return updatedPatient;
+  }
   
+const isDoctorsPatient = async(doctorId, patientId) =>{
+  const doctorCollection = await doctorCol();
+  const doctorInDb = await doctorCollection.findOne({_id:ObjectId(doctorId), myPatients: {$elemMatch:{$elemMatch:{$in:[patientId]}}}});
+  return doctorInDb;
+}
+
+const changeReviewStatus = async(doctorId, patientIds, flag) =>{
+  const doctorCollection = await doctorCol();
+  const doctorInDb = await doctorCollection.findOne({_id:ObjectId(doctorId)});
+  const myPatients = []
+  doctorInDb.myPatients.forEach( element => {
+    if(patientIds.includes(element[0]))
+    myPatients.push([element[0], flag])
+    else return myPatients.push([element[0], element[1]]);
+  })
+  const updatedInfo = await doctorCollection.updateMany({_id:ObjectId(doctorId)}, {$set: {myPatients : myPatients}});
+  return updatedInfo;
+}
 
 module.exports = {
     createDoctor,
     getDoctorById,
     getAllDoctor,
     updateDoctor,
-    checkDoctor
+    updatePrescription,
+    addPrescription,
+    addMyPatient,
+    checkDoctor,
+    isDoctorsPatient,
+    changeReviewStatus
 };

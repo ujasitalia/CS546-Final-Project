@@ -1,20 +1,13 @@
-import { TestReports } from "../components/TestReports";
-// const {ObjectId} = require('mongodb');
-
-export const isValidString = (string, parameter) =>{
-    if (!string) throw new Error(`You must provide a ${parameter} `);
-    if (typeof string !== 'string') throw new Error(`${parameter} must be a string`);
-    string = string.trim()
-    if (string.length === 0)
-      throw new Error(`${parameter} cannot be an empty string or just spaces`);
-    return string;
-}
-
-// export const isValidId = (id) => {
-//   id = isValidString(id, "ID");
-//   if (!ObjectId.isValid(id)) throw {status: '400', error : 'Invalid object ID'};
-//   return id;
-// }
+export const isValidString = (string, parameter) => {
+  if (!string)
+    throw new Error(`You must provide an ${parameter} to search for`);
+  if (typeof string !== "string")
+    throw new Error(`${parameter} must be a string`);
+  string = string.trim();
+  if (string.length === 0)
+    throw new Error(`${parameter} cannot be an empty string or just spaces`);
+  return string;
+};
 
 export const isValidMedicalHistory = (medicalHistory) => {
   for(let mh of medicalHistory){
@@ -36,25 +29,29 @@ export const isValidTestReports = (TestReport) => {
 }
 
 export const isValidEmail = (email) => {
-    email = isValidString(email, "Email");
-    if(!email.match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      ))
-      throw new Error('Invalid Email');
-    return email.toLowerCase();
-}
+  email = isValidString(email, "Email");
+  if (
+    !email.match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    )
+  )
+    throw new Error("Invalid Email");
+  return email.toLowerCase();
+};
 
 export const isPasswordSame = (repassword, password) => {
   repassword = isValidPassword(repassword);
-  if(repassword==password) return repassword
+  if(repassword===password) return repassword
   throw new Error('Passwords dont match')
 }
 
 export const isValidPassword = (passowrd) => {
-    if(!passowrd.match(/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,12}$/))
-        throw new Error('Invalid Password');
-    return passowrd
-}
+  if (
+    !passowrd.match(/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,12}$/)
+  )
+    throw new Error("Invalid Password");
+  return passowrd;
+};
 
 export const isValidZip = (zip) => {
     
@@ -65,7 +62,7 @@ export const isValidZip = (zip) => {
 export const isValidName = (inputName) => {
   inputName = isValidString(inputName,"Name");
   let name=inputName.split(' '); 
-  if(name.length!=2) throw new Error('Invalid name'); 
+  if(name.length!==2) throw new Error('Invalid name'); 
   if(name[0].length<3)
     throw new Error('First name should be atleast 3 character');
   if(name[1].length<3)
@@ -82,7 +79,27 @@ export const isValidName = (inputName) => {
 }
 
 export const isValidAge = (age) => {
-    age = parseInt(age);
-    if(!age || typeof age!='number' || age<1 || age>120 || age%1) throw new Error('Invalid age');
+     if(!age.match(/^\d+$/) || !age || age<1 || age>120 || age%1) throw new Error('Invalid age');
     return age;
 }
+
+export const isValidRating = (rating) => {
+  rating = parseFloat(rating);
+  if(rating<0 || rating>5){
+      throw new Error('rating must between 1 to 5');
+  }
+  if((rating*10)%1 !== 0){
+      throw new Error('invalid input');
+  }
+  return rating;
+};
+export const isValidReviewText = (reviewText) => {
+  reviewText = reviewText.trim();
+  if(reviewText.length <4){
+    throw new Error('Review under character limit');
+  }
+  if(reviewText.length > 500){
+      throw new Error('Review over character limit');
+  }
+  return reviewText;
+};
