@@ -4,7 +4,7 @@ import { api } from '../api';
 import arrow from "../assets/images/arrow.svg";
 import {helper} from '../helper';
 import {specialities} from '../helper/constants'
-import Chat from '../chat'
+
 const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -109,7 +109,6 @@ const SignUp = () => {
         </form>
         {hasError && <div className="error">{error}</div>}
         </div>
-        <Chat />
     </div>
   )
 }
