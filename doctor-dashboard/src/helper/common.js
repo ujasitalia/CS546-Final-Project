@@ -111,3 +111,10 @@ export const isValidSpeciality = (speciality) =>{
           return specialities[i];
   throw new Error( "Invalid Speciality");
 }
+
+export const isValidNpi = (npi) => {
+  npi = isValidString(npi, "NPI");
+  if(!npi.match(/^[A-Z]{3}[0-9]{7}$/))
+      throw new Error( 'Invalid NPI');
+  return npi;
+}

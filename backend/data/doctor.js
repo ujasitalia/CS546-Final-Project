@@ -14,10 +14,20 @@ const isDoctorEmailInDb = async(email) => {
   const doctorCollection = await doctorCol();
   const doctorInDb = await doctorCollection.findOne({email:email});
   if (doctorInDb === null) return false;
-  return true;
+  return true;  
 }
 
+const isDoctorNpiInDb = async(npi) => {
+  npi=helper.doctor.isValidNpi(npi);
+  const doctorCollection = await doctorCol();
+  const doctorInDb = await doctorCollection.findOne({npi:npi});
+  if (doctorInDb === null) return false;
+  return true;  
+}
+
+
 const createDoctor = async(
+    npi,
     email,
     profilePicture,
     name,
@@ -28,6 +38,8 @@ const createDoctor = async(
 ) => {
     email = helper.common.isValidEmail(email);
     if(await isDoctorEmailInDb(email)) throw {status:400,error:'An account already exists with this email'};
+    npi=helper.doctor.isValidNpi(npi);
+    if(await isDoctorNpiInDb(npi)) throw {status:400,error:'An account already exists with this NPI'};
     profilePicture = helper.common.isValidFilePath(profilePicture);
     name = helper.common.isValidName(name);
     speciality = helper.doctor.isValidSpeciality(speciality);
@@ -38,6 +50,7 @@ const createDoctor = async(
     const doctorCollection = await doctorCol();
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const newDoctor = {
+        npi,
         email,
         profilePicture,
         name,

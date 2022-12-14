@@ -24,6 +24,7 @@ router
   .post(async (req, res) => {
     const data = req.body;
     try{
+      data.npi = helper.doctor.isValidNpi(data.npi);
       data.email = helper.common.isValidEmail(data.email);
       data.profilePicture = helper.common.isValidFilePath(data.profilePicture);
       data.name = helper.common.isValidName(data.name);
@@ -40,7 +41,7 @@ router
     }
 
     try{
-      const createDoctor = await doctorData.createDoctor(data.email, data.profilePicture, data.name, data.speciality, 
+      const createDoctor = await doctorData.createDoctor(data.npi,data.email, data.profilePicture, data.name, data.speciality, 
         data.clinicAddress, data.zip, data.password);
       res.json(createDoctor);
     }catch(e){
