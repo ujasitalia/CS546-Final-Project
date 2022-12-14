@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const {doctor : doctorData, appointment : appointmentData, review : reviewData} = require("../data");
+const {doctor : doctorData,patient: patientData, appointment : appointmentData, review : reviewData} = require("../data");
 const helper = require('../helper');
 const jwt = require("jsonwebtoken");
+const { isValidMedicine } = require('../helper/doctor');
+const { updatePrescription } = require('../data/doctor');
+
 
 router
   .route('/')
@@ -222,21 +225,137 @@ router
   router
   .route('/:doctorId/patient/:patientId')
   .get(async (req, res) => {
-
+    try{
+      req.params.patientId = helper.common.isValidId(req.params.patientId);
+      const patient = await patientData.getPatientById(req.params.patientId);
+      res.json(patient);
+    }catch(e){
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json("Internal server error");
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
   })
 
   router
   .route('/:doctorId/patient/:patientId/prescription')
   .get(async (req, res) => {
+    //check patient id 
+    try {
+      let id = req.params.patientId
+      id = helper.common.isValidId(req.params.patientId);
+      await patientData.getPatientById(id);
+      const patientPrescriptions = await patientData.getPatientPrescription(id)
+      res.json(patientPrescriptions)
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
 
   })
   .post(async (req, res) => {
+
+    try{
+      let doctorId = req.params.doctorId;
+      let patientId = req.params.patientId;
+      const prescriptionData = req.body;
+      patientId = helper.common.isValidId(req.params.patientId);
+      doctorId = helper.common.isValidId(req.params.doctorId);
+      await patientData.getPatientById(patientId);
+
+      prescriptionData.disease=helper.common.isValidString(prescriptionData.disease);
+      prescriptionData.medicine=isValidMedicine(prescriptionData.medicine);
+      prescriptionData.documents=helper.common.isValidFilePath(prescriptionData.documents);
+      prescriptionData.doctorSuggestion=helper.common.isValidString(prescriptionData.doctorSuggestion);
+
+      let newPrescription = await doctorData.addPrescription(doctorId,patientId,prescriptionData.disease,prescriptionData.medicine,prescriptionData.documents,prescriptionData.doctorSuggestion);
+      res.json(newPrescription);
+      }catch(e){
+      if(e.status)
+      {
+        res.status(e.status).json(e.error);
+      }
+      else
+        res.status(500).json(e);
+      }
 
   })
 
   router
   .route('/:doctorId/patient/:patientId/prescription/:prescriptionId')
   .patch(async (req, res) => {
+    try{
+      let doctorId = req.params.doctorId;
+      let prescriptionId = helper.common.isValidId(req.params.prescriptionId);
+      doctorId = helper.common.isValidId(req.params.doctorId);
+      let patientId = req.params.patientId;
+      const prescriptionData = req.body;
+      patientId = helper.common.isValidId(req.params.patientId);
+      if(!await patientData.getPatientById(patientId)) throw {status:'400',error:'No patient with that Id'};
+      
+      prescriptionData.disease=helper.common.isValidString(prescriptionData.disease);
+      prescriptionData.medicine=isValidMedicine(prescriptionData.medicine);
+      prescriptionData.documents=helper.common.isValidFilePath(prescriptionData.documents);
+      prescriptionData.doctorSuggestion=helper.common.isValidString(prescriptionData.doctorSuggestion);
+
+      let updatedPatient = await updatePrescription(patientId,prescriptionId,prescriptionData.disease,prescriptionData.medicine,prescriptionData.documents,prescriptionData.doctorSuggestion);
+      // let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate);
+      res.json(updatedPatient);
+      }catch(e){
+      if(e.status)
+      {
+        res.status(e.status).json(e.error);
+      }
+      else
+        res.status(500).json(e);
+      }
+  })
+
+  
+  router
+  .route('/:doctorId/patient/:patientId/medicalHistory')
+  .get(async (req, res) => {
+
+    //check patient id 
+    try {
+      let id = req.params.patientId
+      id = helper.common.isValidId(req.params.patientId);
+      await patientData.getPatientById(id);
+      const patientMedicalHistory = await patientData.getMedicalHistory(id)
+      res.json(patientMedicalHistory)
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
+
+  })
+
+  
+  router
+  .route('/:doctorId/patient/:patientId/testReport')
+  .get(async (req, res) => {
+
+    //check patient id 
+    try {
+      let id = req.params.patientId
+      id = helper.common.isValidId(req.params.patientId);
+      await patientData.getPatientById(id);
+      const patientTestReport = await patientData.getTestReport(id)
+      res.json(patientTestReport)
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json(e);
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
 
   })
   

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { components } from '../components';
 import { api } from '../api';
+import Chat from '../components/Chat'
+
 const Dashboard = () => {
     const [tab, setTab] = useState('appointmentTab');
     const [data, setData] = useState('');
@@ -60,6 +62,7 @@ crossorigin="anonymous"></link>
               </div>
             </div>
         </div>
+        <Chat/>
       </div>
       )
 }

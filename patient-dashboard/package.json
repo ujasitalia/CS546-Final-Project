@@ -15,10 +15,13 @@
     "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4",
     "axios": "^0.26.1",
-    "timeago-react": "^3.0.5"
+    "socket.io-client": "^4.5.4"
   },
+"devDependencies": {
+  "nodemon": "^2.0.20"
+},
   "scripts": {
-    "start": "set PORT=3003 & react-scripts start",
+    "start": "PORT=3003 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

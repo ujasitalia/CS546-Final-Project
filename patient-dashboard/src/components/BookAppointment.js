@@ -55,7 +55,7 @@ const BookAppointment = (props) => {
     const createAppointment = async (e) => {
     e.preventDefault();
     const time = getTime(slot);
-    let temp = startDate.toISOString().split('T')[0]+'T'+time
+    let temp = (new Date(startDate - (startDate.getTimezoneOffset() * 60000))).toISOString().split('T')[0]+'T'+time
     // console.log(slot);
     const newAppointment = {doctorId: props.doctor._id, patientId: JSON.parse(localStorage.getItem('id')),  startTime: temp, appointmentLocation: props.doctor.clinicAddress}
     const udA = await api.appointment.createAppointment(newAppointment)

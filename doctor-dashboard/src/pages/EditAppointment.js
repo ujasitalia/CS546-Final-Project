@@ -74,7 +74,7 @@ const EditAppointment = () => {
   const updateAppointment = async (e) => {
     e.preventDefault();
     const time = getTime(updatedSlot);
-    let temp = startDate.toISOString().split('T')[0]+'T'+time
+    let temp = (new Date(startDate - (startDate.getTimezoneOffset() * 60000))).toISOString().split('T')[0]+'T'+time
     // console.log(updatedSlot);
     const updatedAppointment = {...appointment, startTime:temp}
     const udA = await api.appointment.updateAppointment(updatedAppointment)
