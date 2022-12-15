@@ -9,14 +9,26 @@ const PatientInfo = () => {
     const [tab, setTab] = useState('detailTab');
     const [data, setData] = useState('');
     const navigate = useNavigate();
+    const [hasError, setHasError] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
       const fetchData = async()=>{
         try{
           const response = await api.patient.getPatient(id);
           setData({patient : response.data});
+          setHasError(false);
         }catch(e){
-          navigate("/error");
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 || e.response.status===403)
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
+            setHasError(true);
+            setError(e.response.data);
+          }
         }
       }
       if(!JSON.parse(localStorage.getItem('token_data')))
@@ -47,6 +59,7 @@ const PatientInfo = () => {
         </div>
       </div>
     </nav>
+    {hasError && <div className="error">{error}</div>}
         {data && tab === 'detailTab' && <components.PatientDetail doctor={data.patient}/>}
         {data && tab === 'prescriptions' && <components.Prescriptions prescriptions={data.patient.prescriptions}/>}
         {data && tab === 'medicalHistory' && <components.MedicalHistory medicalHistory={data.patient.medicalHistory}/>} 

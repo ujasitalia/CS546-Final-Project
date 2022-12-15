@@ -5,6 +5,7 @@ import Message from './Message'
 import Conversation from './Conversation'
 import { api } from '../api';
 import io from "socket.io-client"
+import { useNavigate } from "react-router-dom";
 
 const ChatWindow = () => {
     const [conversations , setConversations] = useState('');
@@ -15,13 +16,27 @@ const ChatWindow = () => {
     const scrollRef = useRef();
     const bottomRef = useRef(null);
     const userId = JSON.parse(localStorage.getItem('id'));
+    const [hasError, setHasError] = useState(false);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+    
     useEffect(()=>{
         const fetchData = async()=>{
             try{
                 const response = await api.doctor.getDoctor(JSON.parse(localStorage.getItem('id')));
                 setConversations(response.data.myPatients)
+                setHasError(false);
             }catch(e){
-                console.log(e);
+                if(e.response.status===500)
+                    navigate("/error");
+                else if(e.response.status===401 || e.response.status===403)
+                {
+                    localStorage.clear();
+                    navigate("/login");
+                }else{
+                    setHasError(true);
+                    setError(e.response.data);
+                }
             }
         }
         if(!conversations)
@@ -36,8 +51,18 @@ const ChatWindow = () => {
                 const res = await api.chat.getMessagesForCurrentChat(userId,currentChat);
                 setMessages(res.data);
                 bottomRef.current?.scrollIntoView({behavior: 'smooth'});
+                setHasError(false);
             }catch(e){
-                console.log(e);
+            if(e.response.status===500)
+                navigate("/error");
+            else if(e.response.status===401 || e.response.status===403)
+            {
+                localStorage.clear();
+                navigate("/login");
+            }else{
+                setHasError(true);
+                setError(e.response.data);
+            }
             }
         }
         if(currentChat!=='')
@@ -50,8 +75,18 @@ const ChatWindow = () => {
                 const res = await api.chat.getMessagesForCurrentChat(userId,currentChat);
                 setMessages(res.data);
                 bottomRef.current?.scrollIntoView({behavior: 'smooth'});
+                setHasError(false);
             }catch(e){
-                console.log(e);
+            if(e.response.status===500)
+                navigate("/error");
+            else if(e.response.status===401 || e.response.status===403)
+            {
+                localStorage.clear();
+                navigate("/login");
+            }else{
+                setHasError(true);
+                setError(e.response.data);
+            }
             }
         }
         socket.on("recievedMessage", () => {
@@ -72,8 +107,18 @@ const ChatWindow = () => {
             socket.emit("newMessage");
             setMessages([...messages,res.data]);
             setNewMessage("")
+            setHasError(false);
         }catch(e){
-            console.log(e);
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 || e.response.status===403)
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
+            setHasError(true);
+            setError(e.response.data);
+          }
         }
     }
 
@@ -84,6 +129,7 @@ const ChatWindow = () => {
                 ...styles.supportWindow,
             }}
         >
+            {hasError && <div className="error">{error}</div>}
         <div className="messenger">
             <div className="chatMenu">
             <div className="chatMenuWrapper">

@@ -39,9 +39,16 @@ const validateReview = async (e) =>{
         window.location.reload(false);
         navigate("/doctor/"+props.doctorId);
     }catch(e){
+      if(e.response.status===500)
+        navigate("/error");
+      else if(e.response.status===401 || e.response.status===403)
+      {
+        localStorage.clear();
+        navigate("/login");
+      }else{
         setHasError(true);
         setError(e.response.data);
-        return;
+      }
     }
 }
 

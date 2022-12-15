@@ -58,10 +58,10 @@ const createAppointment = async (
   patient = await patientData.isPatientsDoctor(patientId, doctorId);
 
   if(!doctor)
-    await doctorData.addMyPatient(doctorId,patientId);
+    doctor = await doctorData.addMyPatient(doctorId,patientId);
   
   if(!patient)
-    await patientData.addMyDoctor(patientId, doctorId);
+    patient = await patientData.addMyDoctor(patientId, doctorId);
 
   const newId = insertInfo.insertedId.toString();
   const appointment = await getAppointmentById(newId);

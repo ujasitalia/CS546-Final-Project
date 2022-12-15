@@ -1,8 +1,7 @@
 import { api } from '../api';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {helper} from '../helper';
-
+import { useNavigate } from "react-router-dom";
 
 import arrow from "../assets/images/arrow.svg";
 import { isValidMedicalHistory } from '../helper/common';
@@ -12,6 +11,8 @@ export const MedicalHistory = (props) => {
     const [medicalHistoryId,setMedicalHistoryId] = useState('');
     const [hasError, setHasError] = useState(false);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
+    
     const handleInputChange = (e) => {
         let field = e.target.id.split('-');
         let newMedicalHistory = [...medicalHistory]
@@ -60,16 +61,23 @@ export const MedicalHistory = (props) => {
             const data = { 'medicalHistory':medicalHistory }
             const response = await api.profile.patchMedicalHistory(props.patientData._id,data,e.target.id);
             //props.handleChange();
-            console.log(response);
+            setHasError(false);
         }catch(e){
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 || e.response.status===403)
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
             setHasError(true);
             setError(e.response.data);
-            return;
+          }
         }
     }
   return (
     <div>
-        
+        {hasError && <div className="error">{error}</div>}
         {
         props.patientData.medicalHistory.map((disease,index) => {
             return medicalHistory && 
@@ -95,7 +103,6 @@ export const MedicalHistory = (props) => {
                 </div>
             </form>
        })}
-        {hasError && <div className="error">{error}</div>}
     </div>
   )
 }

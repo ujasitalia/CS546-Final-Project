@@ -1,19 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api";
+import { useNavigate } from "react-router-dom";
 
 const DoctorAppointment = (props) => {
   const [appointments, setAppointments] = useState("");
+  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
   const fetchData = async () => {
-    const response = await api.appointment.getDoctorAppointment(props.doctorId);
-    setAppointments(response.data);
-    // console.log(response.data);
+    try{
+      const response = await api.appointment.getDoctorAppointment(props.doctorId);
+      setAppointments(response.data);
+      setHasError(false);
+    }catch(e){
+      if(e.response.status===500)
+        navigate("/error");
+      else if(e.response.status===401 || e.response.status===403)
+      {
+        localStorage.clear();
+        navigate("/login");
+      }else{
+        setHasError(true);
+        setError(e.response.data);
+      }
+    }
   };
   useEffect(() => {
     if (appointments === "") fetchData();
   }, []);
   return (
     <div>
+      {hasError && <div className="error">{error}</div>}
       {appointments !== '' 
       ? <div className="appointmentContainer">
           <div>{appointments.length !== 0 ? appointments.map((element, index) =>

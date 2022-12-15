@@ -1,14 +1,10 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { api } from '../api';
-import arrow from "../assets/images/arrow.svg";
-import {helper} from '../helper';
 import { About } from '../components/About';
 import { Prescriptions } from '../components/Prescriptions';
 import { MedicalHistory } from '../components/MedicalHistory';
 import { TestReports } from '../components/TestReports';
-import { axiosAuth } from '../api/axios';
 
 const Profile = ({patientId}) => {
 
@@ -17,8 +13,18 @@ const Profile = ({patientId}) => {
             const res = await api.profile.get(patientId);
             console.log(res)
             setPatientData(res.data);
+            setHasError(false);
         }catch(e){
+          if(e.response.status===500)
             navigate("/error");
+          else if(e.response.status===401 || e.response.status===403)
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
+            setHasError(true);
+            setError(e.response.data);
+          }
         }
     }
     useEffect(() => {
@@ -26,7 +32,7 @@ const Profile = ({patientId}) => {
         {
           navigate("/login");
         }
-        if(patientData=='') getData(patientId);
+        if(patientData==='') getData(patientId);
     },[])
 
     const [hasError, setHasError] = useState(false);
@@ -71,6 +77,7 @@ const Profile = ({patientId}) => {
     }
   return (
     <div>
+        {hasError && <div className="error">{error}</div>}
         <div className="blueContainer">
                     <img src=".dgkjs" className="loginLogo" loading="lazy" alt="logo" />
                     <div className="loginHeading">Patient Login</div>
@@ -88,7 +95,6 @@ const Profile = ({patientId}) => {
         <div> {patientData && prescriptionsTab && <Prescriptions patientData={patientData} handleChange={handlePatientData}/> }</div>
         <div> {patientData && medicalHistoryTab && <MedicalHistory patientData={patientData} handleChange={handlePatientData}/> }</div>
         <div> {patientData && testReportsTab && <TestReports patientData={patientData} handleChange={handlePatientData}/> }</div>        
-        {hasError && <div className="error">{error}</div>}
     </div>
   )
 }

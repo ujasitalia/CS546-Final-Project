@@ -1,8 +1,7 @@
 import { api } from '../api';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {helper} from '../helper';
-
+import { useNavigate } from "react-router-dom";
 import arrow from "../assets/images/arrow.svg";
 
 export const About = (props) => {
@@ -11,6 +10,8 @@ export const About = (props) => {
     const [zip, setZip] = useState('');
     const [hasError, setHasError] = useState(false);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
+    
     const handleInputChange = (e) => {
         if(e.target.id === 'aboutAge')
             setAge(e.target.value);
@@ -47,9 +48,16 @@ export const About = (props) => {
             props.handleChange(response.data);
             setHasError(false);
         }catch(e){
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 || e.response.status===403)
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
             setHasError(true);
             setError(e.response.data);
-            return;
+          }
         }
     }
   return (

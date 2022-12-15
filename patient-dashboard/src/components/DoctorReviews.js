@@ -1,12 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api';
+import { useNavigate } from "react-router-dom";
 
 export const DoctorReviews = (props) => {
   const [data, setData] = useState('');
+  const navigate = useNavigate();
+  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState('');
+
   useEffect(() => {
     const fetchData = async()=>{
-      const response = await api.doctor.getAllDoctorReview(props.doctorId);
-      setData({reviews : response.data});
+      try{
+        const response = await api.doctor.getAllDoctorReview(props.doctorId);
+        setData({reviews : response.data});
+        setHasError(false);
+      }catch(e){
+        if(e.response.status===500)
+          navigate("/error");
+        else if(e.response.status===401 || e.response.status===403)
+        {
+          localStorage.clear();
+          navigate("/login");
+        }else{
+          setHasError(true);
+          setError(e.response.data);
+        }
+      }
     }
     if(!data)
     {
@@ -15,7 +34,7 @@ export const DoctorReviews = (props) => {
   },[]);
   return (
     <div>
-      
+      {hasError && <div className="error">{error}</div>}
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet"></link>
       <br/>
         {data !== '' 

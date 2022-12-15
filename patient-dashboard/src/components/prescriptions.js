@@ -1,12 +1,10 @@
 import { api } from '../api';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {helper} from '../helper';
-
-import arrow from "../assets/images/arrow.svg";
-
+import { useNavigate } from "react-router-dom";
 
 export const Prescriptions = (props) => {
+  const navigate = useNavigate();
     useEffect(() => {
         if(Object.keys(doctors).length===0) getDoctors(props.patientData.prescriptions);
     },[])
@@ -20,10 +18,18 @@ export const Prescriptions = (props) => {
                 x[doctor.data._id] = doctor.data.name
                 setDoctors({...doctors, ...x})
             })
+            setHasError(false);
         }catch(e){
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 || e.response.status===403)
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
             setHasError(true);
-            setError(e);
-            return;
+            setError(e.response.data);
+          }
         }
     }
    

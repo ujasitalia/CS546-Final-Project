@@ -25,8 +25,18 @@ const Profile = () => {
                 setClinicAddress(response.data.clinicAddress)
                 setProfilePicture(response.data.profilePicture)
                 setData({doctor : response.data});
+                setHasError(false);
             }catch(e){
+            if(e.response.status===500)
                 navigate("/error");
+            else if(e.response.status===401 || e.response.status===403)
+            {
+                localStorage.clear();
+                navigate("/login");
+            }else{
+                setHasError(true);
+                setError(e.response.data);
+            }
             }
         }
         if(!JSON.parse(localStorage.getItem('token_data')))
@@ -89,9 +99,16 @@ const Profile = () => {
                 setHasError(false);
             }
         }catch(e){
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 || e.response.status===403)
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
             setHasError(true);
             setError(e.response.data);
-            return;
+          }
         }
     }
   return (
@@ -99,6 +116,7 @@ const Profile = () => {
     <div>
         
         {data && <components.Navbar doctorId={data.doctor._id}/>}
+        {hasError && <div className="error">{error}</div>}
         {data && <div  className='container'>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet"></link>
             <form onSubmit={validateSignUp}>
@@ -126,7 +144,6 @@ const Profile = () => {
                 </button>
             </form>
             </div>}
-            {hasError && <div className="error">{error}</div>}
     </div>
     </>
   )
