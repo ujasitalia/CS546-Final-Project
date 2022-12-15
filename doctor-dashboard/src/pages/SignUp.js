@@ -67,10 +67,14 @@ const SignUp = () => {
     }
   return (
     <div>
+        
         <div className="blueContainer">
                     <img src=".dgkjs" className="loginLogo" loading="lazy" alt="logo" />
                     <div className="loginHeading">Doctor SignUp</div>
                     <br></br>
+        </div>
+        <div id="create-account-wrap">
+            <p> <a href='http://localhost:3006/login'>Login</a> </p>
         </div>
         <div className="loginCard">
             {hasError && <div className="error">{error}</div>}
@@ -105,11 +109,7 @@ const SignUp = () => {
                 <div className="emailText">Enter Clinic Address</div>
                 <input placeholder="1 Castle point" id="signUpClinicAddress" value={clinicAddress} onChange={handleInputChange} type="text" className="loginInput" autoFocus/>
                 <br/>
-                <button type="submit" className="loginButton">
-                    <div className="buttonBox">
-                        <img src={arrow} className="arrow" loading="lazy" alt="logo" />
-                    </div>
-                </button>
+                <button type="submit" className="loginButton">Sign Up</button>
             </form>
         
         </div>
