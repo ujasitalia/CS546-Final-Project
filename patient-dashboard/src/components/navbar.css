@@ -87,6 +87,14 @@ nav {
     padding: 1rem;
 }
 
+.float-left input,.float-left button{
+    float:left;
+ }
+ .navbarInput input{
+    width: 200px;
+    margin-right: 5px;
+    height: 50px;
+ }
 .links a {
     color: var(--clr-grey-3);
     font-size: 1rem;
