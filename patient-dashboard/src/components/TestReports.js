@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import arrow from "../assets/images/arrow.svg";
 import { isValidTestReports } from '../helper/common';
 
-export const TestReports = (props) => {
+const TestReports = (props) => {
     const [testReports, setTestReports] = useState(props.patientData.testReports);
     const [testReportsId,setTestReportsId] = useState('');
     const [hasError, setHasError] = useState(false);
@@ -119,6 +119,7 @@ export const TestReports = (props) => {
                 setError(e.response.data);
               }
             }
+        }
     }
   return (
     <div>
@@ -148,3 +149,5 @@ export const TestReports = (props) => {
     </div>
   )
 }
+
+export default TestReports

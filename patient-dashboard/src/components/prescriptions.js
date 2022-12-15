@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import {helper} from '../helper';
 import { useNavigate } from "react-router-dom";
 
-export const Prescriptions = (props) => {
+const Prescriptions = (props) => {
   const navigate = useNavigate();
     useEffect(() => {
         if(Object.keys(doctors).length===0) getDoctors(props.patientData.prescriptions);
@@ -68,3 +68,5 @@ export const Prescriptions = (props) => {
     </div>
   )
 }
+
+export default Prescriptions

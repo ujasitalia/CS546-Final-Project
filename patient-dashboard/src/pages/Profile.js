@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { api } from '../api';
-import { About } from '../components/About';
-import { Prescriptions } from '../components/Prescriptions';
-import { MedicalHistory } from '../components/MedicalHistory';
-import { TestReports } from '../components/TestReports';
-import { axiosAuth } from '../api/axios';
 import { components } from '../components';
 
 const Profile = () => {
@@ -96,10 +91,10 @@ const Profile = () => {
             <li onClick={testReportsTabClick}>Test Reports</li>
         </ul>
         
-        <div> {patientData && aboutTab && <About patientData={patientData} handleChange={handlePatientData}/> }</div>
-        <div> {patientData && prescriptionsTab && <Prescriptions patientData={patientData} handleChange={handlePatientData}/> }</div>
-        <div> {patientData && medicalHistoryTab && <MedicalHistory patientData={patientData} handleChange={handlePatientData}/> }</div>
-        <div> {patientData && testReportsTab && <TestReports patientData={patientData} handleChange={handlePatientData}/> }</div>        
+        <div> {patientData && aboutTab && <components.About patientData={patientData} handleChange={handlePatientData}/> }</div>
+        <div> {patientData && prescriptionsTab && <components.Prescriptions patientData={patientData} handleChange={handlePatientData}/> }</div>
+        <div> {patientData && medicalHistoryTab && <components.MedicalHistory patientData={patientData} handleChange={handlePatientData}/> }</div>
+        <div> {patientData && testReportsTab && <components.TestReports patientData={patientData} handleChange={handlePatientData}/> }</div>        
     </div>
   )
 }

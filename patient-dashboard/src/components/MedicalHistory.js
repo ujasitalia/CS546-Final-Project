@@ -1,12 +1,9 @@
 import { api } from '../api';
-import React, { useEffect, useState } from 'react';
-import {helper} from '../helper';
+import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-
-import arrow from "../assets/images/arrow.svg";
 import { isValidMedicalHistory } from '../helper/common';
 
-export const MedicalHistory = (props) => {
+const MedicalHistory = (props) => {
     const [medicalHistory, setMedicalHistory] = useState(props.patientData.medicalHistory);
     const [medicalHistoryId,setMedicalHistoryId] = useState('');
     const [hasError, setHasError] = useState(false);
@@ -110,16 +107,17 @@ export const MedicalHistory = (props) => {
                 setHasError(false);
                 setInputMedicalHistory(false);
            }catch(e){
-            if(e.response.status===500)
-              navigate("/error");
-          else if(e.response.status===401 )
-          {
-            localStorage.clear();
-            navigate("/login");
-          }else{
-            setHasError(true);
-            setError(e.response.data);
-          }
+                if(e.response.status===500)
+                navigate("/error");
+                else if(e.response.status===401 )
+                {
+                    localStorage.clear();
+                    navigate("/login");
+                }else{
+                    setHasError(true);
+                    setError(e.response.data);
+                }
+            }
         }
     }
   return (
@@ -149,3 +147,5 @@ export const MedicalHistory = (props) => {
     </div>
   )
 }
+
+export default MedicalHistory;
