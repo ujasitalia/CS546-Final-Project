@@ -110,9 +110,9 @@ const addMedicalHistory = async (patientId,disease, startDate, endDate) => {
   if(endDate !== null){
     endDate = commonHelper.isValidPastDate(endDate)
     if(endDate < startDate) throw {status:'400', error:'Start date must be before the end date'}
-    //endDate = endDate.toISOString().split('Z')[0];
+    endDate = endDate.toISOString().split('T')[0];
   }
-  //startDate = startDate.toISOString().split('Z')[0];
+  startDate = startDate.toISOString().split('T')[0];
 
   //console.log(typeof startDate)
   const patientCollection = await patients();
@@ -139,9 +139,9 @@ const updateMedicalHistory = async (patientId,medicalHistoryId,disease, startDat
   if(endDate !== null){
     endDate = commonHelper.isValidPastDate(endDate)
     if(endDate < startDate) throw {status:'400', error:'Start date must be before the end date'}
-    //endDate = endDate.toISOString().split('Z')[0];
+    endDate = endDate.toISOString().split('T')[0];
   }
-  //startDate = startDate.toISOString().split('Z')[0];
+  startDate = startDate.toISOString().split('T')[0];
 
   const patientCollection = await patients();
   let patientInDb = await getPatientById(patientId);
@@ -227,7 +227,7 @@ const addTestReport = async (patientId, testName, document, testDate) => {
   // var yyyy = today.getFullYear();
 
   // today = mm + '/' + dd + '/' + yyyy;
-  //testDate = today.toISOString().split('Z')[0];
+  testDate = testDate.toISOString().split('T')[0];
 
   const patientCollection = await patients();
   let patientInDb = await getPatientById(patientId);
