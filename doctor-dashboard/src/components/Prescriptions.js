@@ -1,9 +1,22 @@
-import React from 'react'
+import React, { useState , useEffect} from "react"
 
 const Prescriptions = (props) => {
+  const [prescriptions, setPrescriptions] = useState('');
+  useEffect(() =>{
+    const setState = ()=>{
+      let pres = [];
+      props.prescriptions.forEach(element => {
+        if(element.doctorId === JSON.parse(localStorage.getItem('id')))
+          pres.push(element);
+      });
+      setPrescriptions(pres);
+    };
+    if(prescriptions==='')
+      setState();
+  },[]);
   return (
     <div>
-        {props.prescriptions.length!==0 ? props.prescriptions.map((prescription, index)=>{
+        {prescriptions.length!==0 ? prescriptions.map((prescription, index)=>{
             return <div>
                 <span>Disease : </span> <span>{prescription.disease}</span>
                 <span>Medicine : </span> <span>{prescription.medicine}</span>
