@@ -66,7 +66,7 @@ const createAppointment = async (
   const newId = insertInfo.insertedId.toString();
   const appointment = await getAppointmentById(newId);
 
-  email.sendAppointmentConfirmation({doctor,patient,appointment});
+  email.sendAppointmentConfirmation(appointment);
   return appointment;
 };
 
@@ -152,6 +152,7 @@ const deleteAppointmentById = async (id) => {
   const deletedAppointment = await appointmentCollection.deleteOne({
     _id: ObjectId(id),
   });
+  email.sendAppointmentCancel(appointment);
   if (deletedAppointment.deletedCount === 1)
     return `Successfully deleted ${id}`;
   else throw { status: "500", error: "Could not delete appointment" };
@@ -192,7 +193,7 @@ const updateAppointmentById = async (id, data) => {
 
   const newAppointment = await getAppointmentById(id);
 
-  email.sendAppointmentUpdate({doctor,patient,appointment:newAppointment});
+  email.sendAppointmentUpdate(newAppointment);
 
   return newAppointment;
 };

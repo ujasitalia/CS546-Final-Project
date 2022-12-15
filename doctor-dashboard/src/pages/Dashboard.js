@@ -20,7 +20,7 @@ const Dashboard = () => {
         }catch(e){
           if(e.response.status===500)
             navigate("/error");
-          else if(e.response.status===401 || e.response.status===403)
+          else if(e.response.status===401 )
           {
             localStorage.clear();
             navigate("/login");

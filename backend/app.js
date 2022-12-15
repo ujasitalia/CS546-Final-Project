@@ -18,7 +18,7 @@ app.use('/', (req, res, next) => {
       let token  = req.headers.authorization;
       token = token.split(" ")[1];
       if (!token) {
-        res.status(403).json('Forbidden');
+        res.status(401).json('Unauthorized');
         return;
       } else {
         const decoded = jwt.verify(token, "pd");
@@ -27,7 +27,7 @@ app.use('/', (req, res, next) => {
         return;
       }
     }catch(e){
-      res.status(403).json('Forbidden')
+      res.status(401).json('Unauthorized');
       return;
     }
   }
@@ -138,7 +138,7 @@ app.use('/doctor/:doctorId/review', (req, res, next) => {
 app.use('/doctor/:doctorId/patient/:patientId', async(req, res, next) => {
   try{
     const doctor = await data.doctor.isDoctorsPatient(req.params.doctorId, req.params.patientId)
-    if(req.params.doctorId !== req.user.userId && !doctor)
+    if(req.params.doctorId !== req.user.userId || !doctor)
     {
       res.status(403).json('Forbidden')
       return;
@@ -150,9 +150,16 @@ app.use('/doctor/:doctorId/patient/:patientId', async(req, res, next) => {
   next();
 });
 
-app.use('/review', (req, res, next) => {
-  if(req.url === '/' && req.method === 'POST' && req.user.role !== 'patient' && req.user.userId !== req.body.patientId)
-  { 
+app.use('/review', async(req, res, next) => {
+  try{
+    const doctor = await data.doctor.canPatientGiveReview(req.body.doctorId, req.user.userId)
+    if(req.url === '/' && req.method === 'POST' && (req.user.role !== 'patient' || !doctor || req.user.userId !== req.body.patientId))
+    { 
+      res.status(403).json('Forbidden')
+      return;
+    }
+  }
+  catch(e){
     res.status(403).json('Forbidden')
     return;
   }

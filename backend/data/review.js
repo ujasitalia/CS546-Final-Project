@@ -2,8 +2,8 @@ const helper = require('../helper');
 const mongoCollections = require('../config/mongoCollections');
 const reviewCol = mongoCollections.review;
 const {ObjectId} = require('mongodb');
-const patient = require('./patient');
-const doctor = require('./doctor');
+const patientData = require('./patient');
+const doctorData = require('./doctor');
 
 const createReview = async(
 doctorId,
@@ -15,8 +15,8 @@ reviewText = null
     patientId = helper.common.isValidId(patientId);
     rating = helper.review.checkRating(rating);
 
-    await doctor.getDoctorById(doctorId);
-    await patient.getPatientById(patientId);
+    const doctor = await doctorData.getDoctorById(doctorId);
+    await patientData.getPatientById(patientId);
 
     const reviewCollection = await reviewCol();
 
@@ -42,10 +42,12 @@ reviewText = null
     reviewsArray.forEach(element => {
         totalRating += element.rating;
     });
-    await doctor.updateDoctor(doctorId, {rating:totalRating/reviewsArray.length});
+    const finalRating = totalRating/reviewsArray.length;
+    if(doctor.rating != finalRating)
+        await doctorData.updateDoctor(doctorId, {rating:finalRating});
     const review = await getReviewById(newId);
   
-    await doctor.changeReviewStatus(doctorId,[patientId], true);
+    await doctorData.changeReviewStatus(doctorId,[patientId], true);
     review._id = review._id.toString();
     return review;
 }
@@ -68,7 +70,7 @@ const getReviewById = async(reviewId) =>{
 
 const getAllReviewByDoctorId = async (doctorId) => {
     doctorId = helper.common.isValidId(doctorId);
-    await doctor.getDoctorById(doctorId);
+    await doctorData.getDoctorById(doctorId);
     const reviewCollection = await reviewCol();
     const reviewsArray = await reviewCollection.find({doctorId: doctorId}).toArray();
   

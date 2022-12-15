@@ -235,6 +235,12 @@ const isDoctorsPatient = async(doctorId, patientId) =>{
   return doctorInDb;
 }
 
+const canPatientGiveReview = async(doctorId, patientId) =>{
+  const doctorCollection = await doctorCol();
+  const doctorInDb = await doctorCollection.findOne({_id:ObjectId(doctorId), myPatients: {$all:[[patientId, false]]}});
+  return doctorInDb;
+}
+
 const changeReviewStatus = async(doctorId, patientIds, flag) =>{
   const doctorCollection = await doctorCol();
   const doctorInDb = await doctorCollection.findOne({_id:ObjectId(doctorId)});
@@ -260,5 +266,6 @@ module.exports = {
     addMyPatient,
     checkDoctor,
     isDoctorsPatient,
-    changeReviewStatus
+    changeReviewStatus,
+    canPatientGiveReview
 };

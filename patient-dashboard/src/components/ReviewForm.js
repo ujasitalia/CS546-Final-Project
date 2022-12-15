@@ -23,9 +23,9 @@ const validateReview = async (e) =>{
     try
     {
         data["reviewText"] = helper.common.isValidReviewText(reviewText);
-        setReviewText(data[reviewText]);
+        setReviewText(helper.common.isValidReviewText(reviewText));
         data["rating"] = helper.common.isValidRating(rating);
-        setRating(data[rating]);
+        setRating(helper.common.isValidRating(rating));
     }catch(e){
         setHasError(true);
         setError(e.message);
@@ -41,7 +41,7 @@ const validateReview = async (e) =>{
     }catch(e){
       if(e.response.status===500)
         navigate("/error");
-      else if(e.response.status===401 || e.response.status===403)
+      else if(e.response.status===401 )
       {
         localStorage.clear();
         navigate("/login");
