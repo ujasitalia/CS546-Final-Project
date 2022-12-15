@@ -6,7 +6,7 @@ const Navbar = () => {
     let links = helper.links;
     const handleLogout = (e) =>{
       console.log(e.target.id);
-      if(e.target.id == 3)
+      if(e.target.id == 4)
         localStorage.clear();
     }
   return (

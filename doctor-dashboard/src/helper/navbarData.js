@@ -13,7 +13,12 @@ export const links = [
   },
   {
     id: 3,
+    url: '/patient',
+    text: 'My Patients',
+  },
+  {
+    id: 4,
     url: '/login',
     text: 'logout',
-  },
+  }
 ];

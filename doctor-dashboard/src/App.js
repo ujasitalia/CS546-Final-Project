@@ -12,6 +12,8 @@ function App() {
           <Route path="/dashboard/appointment/:appointmentId" element={<pages.EditAppointment/>}/>
           <Route path="/profile" element={<pages.Profile/>}/>
           <Route path="/signup" element={<pages.SignUp/>} />
+          <Route path="/patient" element={<pages.MyPatients/>}/>
+          <Route path="/patient/:id" element={<pages.PatientInfo/>}/>
           {/* <Route path="/create-account" element={<CreateAccount/>} /> */}
         </Routes>
       </Router>
