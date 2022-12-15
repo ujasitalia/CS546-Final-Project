@@ -5,34 +5,37 @@ import { About } from '../components/About';
 import { Prescriptions } from '../components/Prescriptions';
 import { MedicalHistory } from '../components/MedicalHistory';
 import { TestReports } from '../components/TestReports';
+import { axiosAuth } from '../api/axios';
+import { components } from '../components';
 
-const Profile = ({patientId}) => {
-
-    const getData = async(patientId) => {
-        try{
-            const res = await api.profile.get(patientId);
-            console.log(res)
-            setPatientData(res.data);
-            setHasError(false);
-        }catch(e){
-          if(e.response.status===500)
-            navigate("/error");
-          else if(e.response.status===401 )
-          {
-            localStorage.clear();
-            navigate("/login");
-          }else{
-            setHasError(true);
-            setError(e.response.data);
-          }
-        }
-    }
+const Profile = () => {
     useEffect(() => {
-        if(!JSON.parse(localStorage.getItem('token_data')))
-        {
-          navigate("/login");
-        }
-        if(patientData==='') getData(patientId);
+        const fetchData = async()=>{
+            try{
+                const response = await api.profile.get(JSON.parse(localStorage.getItem('id')));
+                setPatientData(response.data);
+                setHasError(false);
+            }catch(e){
+              if(e.response.status===500)
+                navigate("/error");
+              else if(e.response.status===401 )
+              {
+                localStorage.clear();
+                navigate("/login");
+              }else{
+                setHasError(true);
+                setError(e.response.data);
+              }
+            }
+          }
+          if(!JSON.parse(localStorage.getItem('token_data')))
+          {
+            navigate("/login");
+          }
+          if(!patientData)
+          {
+            fetchData();
+          }
     },[])
 
     const [hasError, setHasError] = useState(false);
@@ -77,11 +80,13 @@ const Profile = ({patientId}) => {
     }
   return (
     <div>
+        <components.Navbar/>
+        <components.SecondaryNavbar/>
         {hasError && <div className="error">{error}</div>}
         <div className="blueContainer">
                     <img src=".dgkjs" className="loginLogo" loading="lazy" alt="logo" />
-                    <div className="loginHeading">Patient Login</div>
-                    <div className="loginText">Sign In</div>
+                    <div className="loginHeading">Patient Profile</div>
+                    <br></br>
         </div>
         
         <ul>

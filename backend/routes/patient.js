@@ -23,7 +23,16 @@ router
       bodyData.password=commonHelper.isValidPassword(bodyData.password);
       
       let newPatient = await patientData.createPatient(bodyData.email,bodyData.age,bodyData.profilePicture,bodyData.name,bodyData.zip,bodyData.password);
-      res.json(newPatient);
+      if(newPatient){
+        const token = jwt.sign(
+          { role: "patient", email:newPatient.email , userId : newPatient._id},
+          "pd",
+          {
+            expiresIn: "1h",
+          }
+        );
+        res.json({patientData : newPatient, token});
+      } else throw {status:401,error:'Could not create patient'};
 
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))

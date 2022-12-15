@@ -44,7 +44,16 @@ router
     try{
       const createDoctor = await doctorData.createDoctor(data.npi,data.email, data.profilePicture, data.name, data.speciality, 
         data.clinicAddress, data.zip, data.password, data.link);
-      res.json(createDoctor);
+      if(createDoctor){
+        const token = jwt.sign(
+          { role: "doctor", email:createDoctor.email , userId : createDoctor._id},
+          "pd",
+          {
+            expiresIn: "1h",
+          }
+        );
+        res.json({doctorData : createDoctor, token});
+      } else throw {status:401,error:'Could not create doctor'};
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json("Internal server error");

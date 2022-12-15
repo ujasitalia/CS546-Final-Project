@@ -42,7 +42,7 @@ export const About = (props) => {
         }
         
         try{
-            const data = { "age":helper.common.isValidAge(age), "name": fullName, "zip":zip,"profilePicture":"nopic","city":"Hoboken","state":"New Jersey"}
+            const data = { "age":helper.common.isValidAge(age), "name": fullName, "zip":zip,"profilePicture":"nopic"}
             const response = await api.profile.patch(props.patientData._id,data);
             console.log(response);
             props.handleChange(response.data);
@@ -79,11 +79,7 @@ export const About = (props) => {
                 <input placeholder="07307" id="aboutZip" value={zip} onChange={handleInputChange} type="number" className="loginInput" />
             </div>
             <br/>
-            <button type="submit" className="loginButton">
-                <div className="buttonBox">
-                    <img src={arrow} className="arrow" loading="lazy" alt="logo" />
-                </div>
-            </button>
+            <button type="submit" className="loginButton">Submit</button>
             {hasError && <div className="error">{error}</div>}
         </form>
     </div>

@@ -5,7 +5,7 @@ export const axiosNoAuth = axios.create({
 });
 
 export const axiosAuth = axios.create({
-    baseURL: 'http://localhost:3000/'
+    baseURL: 'http://localhost:3000'
 });
 
 axiosAuth.interceptors.request.use((config) => {
