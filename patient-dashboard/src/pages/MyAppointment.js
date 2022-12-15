@@ -1,22 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { components } from '../components';
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import { api } from '../api';
 
 const MyAppointment = () => {
     const [data, setData] = useState('');
     const [idName, setIdName] = useState({});
+    const [hasError, setHasError] = useState(false);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+
     useEffect(() => {
       const fetchData = async()=>{
-        const patientId = JSON.parse(localStorage.getItem('id'));        
-        const response = await api.patient.getPatientAppointments(patientId);
-        setData({appointments : response.data});
-        const resDoctors = await api.doctor.getAllDoctor();
-        let temp = {}
-        resDoctors.data.map(doctor => {
-          temp[doctor._id] = doctor.name
-        })
-        setIdName(temp);
+        try{
+          const patientId = JSON.parse(localStorage.getItem('id'));        
+          const response = await api.patient.getPatientAppointments(patientId);
+          setData({appointments : response.data});
+          const resDoctors = await api.doctor.getAllDoctor();
+          let temp = {}
+          resDoctors.data.map(doctor => {
+            temp[doctor._id] = doctor.name
+          })
+          setIdName(temp);
+          setHasError(false);
+        }catch(e){
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 )
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
+            setHasError(true);
+            setError(e.response.data);
+          }
+        }
+      }
+      if(!JSON.parse(localStorage.getItem('token_data')))
+      {
+        navigate("/login");
       }
       if(!data)
       {
@@ -31,7 +53,7 @@ const MyAppointment = () => {
         <br />
         <h3>Your Appointments</h3>
         <br />
-        
+        {hasError && <div className="error">{error}</div>}
         {data ? (
           <div>
             {data.appointments.length !== 0 ?data.appointments.map(ap => {

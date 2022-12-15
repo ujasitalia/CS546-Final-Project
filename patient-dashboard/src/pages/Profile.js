@@ -1,9 +1,6 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { api } from '../api';
-import arrow from "../assets/images/arrow.svg";
-import {helper} from '../helper';
 import { About } from '../components/About';
 import { Prescriptions } from '../components/Prescriptions';
 import { MedicalHistory } from '../components/MedicalHistory';
@@ -17,11 +14,23 @@ const Profile = () => {
             try{
                 const response = await api.profile.get(JSON.parse(localStorage.getItem('id')));
                 setPatientData(response.data);
+                setHasError(false);
             }catch(e){
+              if(e.response.status===500)
+                navigate("/error");
+              else if(e.response.status===401 )
+              {
+                localStorage.clear();
+                navigate("/login");
+              }else{
                 setHasError(true);
-                setError(e);
-                return;
+                setError(e.response.data);
+              }
             }
+          }
+          if(!JSON.parse(localStorage.getItem('token_data')))
+          {
+            navigate("/login");
           }
           if(!patientData)
           {
@@ -73,6 +82,7 @@ const Profile = () => {
     <div>
         <components.Navbar/>
         <components.SecondaryNavbar/>
+        {hasError && <div className="error">{error}</div>}
         <div className="blueContainer">
                     <img src=".dgkjs" className="loginLogo" loading="lazy" alt="logo" />
                     <div className="loginHeading">Patient Profile</div>
@@ -90,7 +100,6 @@ const Profile = () => {
         <div> {patientData && prescriptionsTab && <Prescriptions patientData={patientData} handleChange={handlePatientData}/> }</div>
         <div> {patientData && medicalHistoryTab && <MedicalHistory patientData={patientData} handleChange={handlePatientData}/> }</div>
         <div> {patientData && testReportsTab && <TestReports patientData={patientData} handleChange={handlePatientData}/> }</div>        
-        {hasError && <div className="error">{error}</div>}
     </div>
   )
 }

@@ -20,7 +20,7 @@ export const isValidEmail = (email) => {
 
 export const isPasswordSame = (repassword, password) => {
   repassword = isValidPassword(repassword);
-  if(repassword==password) return repassword
+  if(repassword === password) return repassword
   throw new Error('Passwords dont match')
 }
 
@@ -58,7 +58,7 @@ export const isValidName = (inputName) => {
     throw new Error('Invalid first name');
   if(!name[1].match(/^[a-z.'-]+$/i))
     throw new Error('Invalid last name');
-    return inputName;
+  return inputName;
 }
 
 export const isValidAppointmentDuration = (appointmentDuration) =>{
@@ -110,4 +110,18 @@ export const isValidSpeciality = (speciality) =>{
       if(speciality.toLowerCase() === specialities[i].toLowerCase())
           return specialities[i];
   throw new Error( "Invalid Speciality");
+}
+
+export const isValidLink = (link) => {
+  if (link.length < 1) throw new Error("No link found.")
+  const url = new URL(link);
+  if (!Boolean(url)) throw new Error("Not a valid url")
+  if(!url.host == 'stevens.zoom.us') throw new Error("Not the correct url")
+  return link;
+}
+export const isValidNpi = (npi) => {
+  npi = isValidString(npi, "NPI");
+  if(!npi.match(/^[A-Z]{3}[0-9]{7}$/))
+      throw new Error( 'Invalid NPI');
+  return npi;
 }

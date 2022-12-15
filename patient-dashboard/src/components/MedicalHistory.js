@@ -1,8 +1,7 @@
 import { api } from '../api';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {helper} from '../helper';
-
+import { useNavigate } from "react-router-dom";
 
 import arrow from "../assets/images/arrow.svg";
 import { isValidMedicalHistory } from '../helper/common';
@@ -13,7 +12,8 @@ export const MedicalHistory = (props) => {
     const [hasError, setHasError] = useState(false);
     const [error, setError] = useState('');
     const [inputMedicalHistory,setInputMedicalHistory] = useState(false);
-
+    const navigate = useNavigate();
+    
     const handleInputChange = (e) => {
         let field = e.target.id.split('-');
         let newMedicalHistory = [...medicalHistory]
@@ -109,11 +109,17 @@ export const MedicalHistory = (props) => {
                 // props.handleChange(response.data);
                 setHasError(false);
                 setInputMedicalHistory(false);
-            }catch(e){
-                setHasError(true);
-                setError(e.response.data);
-                return;
-            }
+           }catch(e){
+            if(e.response.status===500)
+              navigate("/error");
+          else if(e.response.status===401 )
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
+            setHasError(true);
+            setError(e.response.data);
+          }
         }
     }
   return (

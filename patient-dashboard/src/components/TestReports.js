@@ -1,8 +1,7 @@
 import { api } from '../api';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {helper} from '../helper';
-
+import { useNavigate } from "react-router-dom";
 
 import arrow from "../assets/images/arrow.svg";
 import { isValidTestReports } from '../helper/common';
@@ -13,6 +12,7 @@ export const TestReports = (props) => {
     const [hasError, setHasError] = useState(false);
     const [error, setError] = useState('');
     const [inputTestReport,setInputTestReport] = useState(false);
+    const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         let field = e.target.id.split('-');
@@ -106,14 +106,19 @@ export const TestReports = (props) => {
             //console.log(response);
             props.handleChange(response.data);
             setTestReports(response.data.testReports)
-            setHasError(false);
-            //setInputTestReport(false);
+                setHasError(false);
             }catch(e){
+              if(e.response.status===500)
+                navigate("/error");
+              else if(e.response.status===401 )
+              {
+                localStorage.clear();
+                navigate("/login");
+              }else{
                 setHasError(true);
                 setError(e.response.data);
-                return;
+              }
             }
-        }
     }
   return (
     <div>
@@ -140,7 +145,6 @@ export const TestReports = (props) => {
                 </div>
             </form>
        })}
-        
     </div>
   )
 }

@@ -2,8 +2,10 @@ const common = require("./common");
 
 const isValidAddress = (address) => {
   address = common.isValidString(address, "Address");
-  if (!address.match(/^[a-zA-Z0-9 \s,.'-]{3,}$/))
-    throw { status: "400", error: "Invalid Address" };
+  if(address.split('//')[0] !== 'https:' && address.split('//')[0] !== 'http:'){
+    if (!address.match(/^[a-zA-Z0-9 \s,.'-]{3,}$/))
+      throw { status: "400", error: "Invalid Address" };
+  }
   return address;
 };
 
@@ -34,6 +36,27 @@ const validateData = (data) => {
       case "patientId":
         data.patientId = common.isValidId(data.patientId)
         break
+      case "doctorEmail":
+        data.doctorEmail = common.isValidEmail(data.doctorEmail)
+      break
+      case "patientEmail":
+        data.patientEmail = common.isValidEmail(data.patientEmail)
+      break
+      case "doctorName":
+        data.doctorName = common.isValidName(data.doctorName)
+      break
+      case "patientName":
+        data.patientName = common.isValidName(data.patientName)
+      break
+      case "appointmentDuration":
+        data.appointmentDuration = common.isValidDuration(data.appointmentDuration)
+      break
+      case "isReminded":
+        data.isReminded = common.isBoolean(data.isReminded)
+      break
+      case "isCompleted":
+        data.isCompleted = common.isBoolean(data.isCompleted)
+      break
       default:
         throw { status: "400", error: `Invalid key - ${key}` };
     }

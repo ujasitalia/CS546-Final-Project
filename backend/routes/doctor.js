@@ -24,6 +24,7 @@ router
   .post(async (req, res) => {
     const data = req.body;
     try{
+      data.npi = helper.doctor.isValidNpi(data.npi);
       data.email = helper.common.isValidEmail(data.email);
       data.profilePicture = helper.common.isValidFilePath(data.profilePicture);
       data.name = helper.common.isValidName(data.name);
@@ -31,6 +32,7 @@ router
       data.clinicAddress = helper.doctor.isValidAddress(data.clinicAddress);
       data.zip = helper.common.isValidZip(data.zip);
       data.password = helper.common.isValidPassword(data.password);
+      data.link = helper.common.isValidLink(data.link)
     }catch(e){
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json("Internal server error");
@@ -40,9 +42,8 @@ router
     }
 
     try{
-      const createDoctor = await doctorData.createDoctor(data.email, data.profilePicture, data.name, data.speciality, 
-        data.clinicAddress, data.zip, data.password);
-      //res.json(createDoctor);
+      const createDoctor = await doctorData.createDoctor(data.npi,data.email, data.profilePicture, data.name, data.speciality, 
+        data.clinicAddress, data.zip, data.password, data.link);
       if(createDoctor){
         const token = jwt.sign(
           { role: "doctor", email:createDoctor.email , userId : createDoctor._id},
@@ -230,6 +231,21 @@ router
       return;
     }
 
+  })
+
+  router
+  .route('/getLinks/links')
+  .get(async (req, res) => {
+    try {
+      const links = await doctorData.getLinks()
+      res.json(links);
+    } catch (e) {
+      if(typeof e !== 'object' || !('status' in e))
+        res.status(500).json("Internal server error");
+      else
+        res.status(parseInt(e.status)).json(e.error);
+      return;
+    }
   })
 
   router

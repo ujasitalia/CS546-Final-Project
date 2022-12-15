@@ -1,11 +1,8 @@
 import React from 'react';
-import "../styles.css";
-import { components } from '../components';
 
 const Liver = () => {
     return(
         <div>
-            <components.Navbar handleSearch={handleSearch}/>
             <div>
             <header>
         <div className="header-content">

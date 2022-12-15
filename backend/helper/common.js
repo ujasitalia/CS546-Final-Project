@@ -26,8 +26,10 @@ const isValidEmail = (email) => {
 }
 
 const isValidFilePath = (filePath) => {
-    filePath = isValidString(filePath, "File path");
-    return filePath
+  const meta = filePath.split(",")[0].split(";");
+    if(meta[1] !== 'base64')
+      throw {status: '400', error : 'Invalid file'}
+    return filePath;
 }
 
 const isValidPassword = (passowrd) => {
@@ -77,6 +79,25 @@ const isValidTime = (time) => {
   return time;
 };
 
+const isValidDuration = (n) => {
+  if (!n) throw { status: "400", error: "No duration provided" };
+  if(typeof n !== 'number') throw {status: "400", error: "duration invalid"};
+  return n;
+}
+
+const isBoolean = (val) => {
+  // if (!val) throw {status: "400", error: "No value provided"};
+  if(typeof val !== "boolean") throw {status: "400", error: "value invalid"};
+  return val
+}
+
+const isValidLink = (link) => {
+  if (link.length < 1) throw {status: "400", error: "No link found."}
+  const url = new URL(link);
+  if (!Boolean(url)) throw {status: "400", error: "Not a valid url"}
+  if(!url.host == 'stevens.zoom.us') throw {status: "400", error: "Not the correct url"}
+  return link;
+}
 const isValidPastDate = (time) => {
   if (!time) throw { status: "400", error: "No date provided" };
   time = new Date(time);
@@ -97,5 +118,8 @@ module.exports = {
     isValidZip,
     isValidName,
     isValidTime,
+    isValidDuration,
+    isBoolean,
+    isValidLink,
     isValidPastDate
 };

@@ -8,7 +8,6 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<pages.Login/>} />
-          <Route path="/" element={<Navigate  to="/login"/>}/>
           <Route path="/dashboard" element={<pages.Dashboard/>}/>
           <Route path="/myAppointments" element={<pages.MyAppointment/>}/>
           <Route path="/doctor/:id" element={<pages.DoctorInfo/>}/>
@@ -16,6 +15,8 @@ function App() {
           <Route path="/profile" element={<pages.Profile/>}/>
           <Route path="/healthyHabits" element={<pages.HealthyHabits/>}/>
           <Route path="/signup" element={<pages.SignUp/>} />
+          <Route path="/error" element={<pages.Error/>} />
+          <Route path="*" element={<Navigate  to="/dashboard"/>}/>
         </Routes>
       </Router>
     </div>

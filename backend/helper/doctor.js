@@ -106,6 +106,12 @@ const isValidDoctorData = (data) =>{
     return data;
 }
 
+const isValidNpi = (npi) => {
+    npi = common.isValidString(npi, "NPI");
+    if(!npi.match(/^[A-Z]{3}[0-9]{7}$/))
+        throw {status: '400', error : 'Invalid NPI'}
+    return npi;
+    }
 const isValidMedicine = (medicine) => {
     let newMedicine = {}
     for(let m in medicine){
@@ -123,5 +129,6 @@ module.exports = {
     isValidAddress,
     isValidSchedule,
     isValidDoctorData,
+    isValidNpi,
     isValidMedicine
 };

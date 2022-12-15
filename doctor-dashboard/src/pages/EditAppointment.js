@@ -16,18 +16,38 @@ const EditAppointment = () => {
   const [doctor, setDoctor] = useState('')
   const [updatedSlot, setUpdatedSlot] = useState('')
   const [startDate, setStartDate] = useState(new Date());
-  const [hasError, setHasError] = useState(false);
+  const [notAvailable, setNotAvailable] = useState(false);
   const [notUpdated, setNotUpdated] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.appointment.getAppointmentById(appointmentId);
-      setAppointment(response.data);
-      const doctor = await api.doctor.getDoctor(response.data.doctorId)
-      setDoctor(doctor.data)
-      const schedule = Object.keys(doctor.data.schedule)
-      setDays(schedule)
+      try{
+        const response = await api.appointment.getAppointmentById(appointmentId);
+        setAppointment(response.data);
+        const doctor = await api.doctor.getDoctor(response.data.doctorId)
+        setDoctor(doctor.data)
+        const schedule = Object.keys(doctor.data.schedule)
+        setDays(schedule)
+        setHasError(false);
+      }catch(e){
+        if(e.response.status===500)
+          navigate("/error");
+        else if(e.response.status===401 )
+        {
+          localStorage.clear();
+          navigate("/login");
+        }else{
+          setHasError(true);
+          setError(e.response.data);
+        }
+      }
     };
+    if(!JSON.parse(localStorage.getItem('token_data')))
+    {
+      navigate("/login");
+    }
     if (!appointment) {
       fetchData();
     }
@@ -36,17 +56,17 @@ const EditAppointment = () => {
   const checkDate = (startDate) => {    
     const currDate = new Date();
     if(startDate.getDate() < currDate.getDate()){
-        setHasError(true)
+        setNotAvailable(true)
         return false
     }
     const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const d = weekdays[startDate.getDay()].toLowerCase()
     if(!days.includes(d)){
-        setHasError(true)
+        setNotAvailable(true)
         return false
     }
     else{
-        setHasError(false)
+        setNotAvailable(false)
         return true
     }    
   }
@@ -55,14 +75,28 @@ const EditAppointment = () => {
     e.preventDefault();
     if(!checkDate(startDate))
       return;
-    const response = await api.doctor.getDoctorSlot(appointment.doctorId, startDate.toLocaleDateString());
-    const slots = response.data.filter(element =>{
-      let time = element[0].split(":")
-      let curTime = new Date();
-      if((startDate.getDate() !== curTime.getDate()) || (parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes())))
-        return element;
-      })
-    setAvailableSlots(slots);
+    try{
+      const response = await api.doctor.getDoctorSlot(appointment.doctorId, startDate.toLocaleDateString());
+      const slots = response.data.filter(element =>{
+        let time = element[0].split(":")
+        let curTime = new Date();
+        if((startDate.getDate() !== curTime.getDate()) || (parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes())))
+          return element;
+        })
+      setAvailableSlots(slots);
+      setHasError(false);
+    }catch(e){
+      if(e.response.status===500)
+        navigate("/error");
+      else if(e.response.status===401 )
+      {
+        localStorage.clear();
+        navigate("/login");
+      }else{
+        setHasError(true);
+        setError(e.response.data);
+      }
+    }
   };
 
   const getTime = (slot) => {
@@ -76,14 +110,28 @@ const EditAppointment = () => {
     const time = getTime(updatedSlot);
     let temp = (new Date(startDate - (startDate.getTimezoneOffset() * 60000))).toISOString().split('T')[0]+'T'+time
     // console.log(updatedSlot);
-    const updatedAppointment = {...appointment, startTime:temp}
-    const udA = await api.appointment.updateAppointment(updatedAppointment)
-    if(udA.data === 'select a different date/time than original'){
-        setNotUpdated(true);
-    }
-    else{
-        setNotUpdated(false)
-        navigate("/dashboard", {state : {doctor : doctor} });
+    const updatedAppointment = {startTime:temp}
+    try{
+      const udA = await api.appointment.updateAppointment(appointmentId, updatedAppointment)
+      if(udA.data === 'select a different date/time than original'){
+          setNotUpdated(true);
+      }
+      else{
+          setNotUpdated(false)
+          navigate("/dashboard", {state : {doctor : doctor} });
+      }
+      setHasError(false);
+    }catch(e){
+      if(e.response.status===500)
+        navigate("/error");
+      else if(e.response.status===401 )
+      {
+        localStorage.clear();
+        navigate("/login");
+      }else{
+        setHasError(true);
+        setError(e.response.data);
+      }
     }
   }
 
@@ -91,6 +139,7 @@ const EditAppointment = () => {
     <>
       <components.Navbar />
       <br />
+      {hasError && <div className="error">{error}</div>}
       {appointment ? (
         <>
             <h2 style={{position:"center"}}>Edit Appointment</h2>
@@ -114,7 +163,7 @@ const EditAppointment = () => {
             </Button>
           </Form>
           <br />
-          {hasError ? (
+          {notAvailable ? (
             <p>You don't work on that day doctor!</p>
              ):(
                 

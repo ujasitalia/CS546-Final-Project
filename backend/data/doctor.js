@@ -4,6 +4,7 @@ const patients = mongoCollections.patient;
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 const doctorCol = mongoCollections.doctor;
+const linksCol = mongoCollections.links;
 const commonHelper = require('../helper/common')
 const {ObjectId} = require('mongodb');
 const { getPatientById } = require('./patient');
@@ -14,30 +15,45 @@ const isDoctorEmailInDb = async(email) => {
   const doctorCollection = await doctorCol();
   const doctorInDb = await doctorCollection.findOne({email:email});
   if (doctorInDb === null) return false;
-  return true;
+  return true;  
 }
 
+const isDoctorNpiInDb = async(npi) => {
+  npi=helper.doctor.isValidNpi(npi);
+  const doctorCollection = await doctorCol();
+  const doctorInDb = await doctorCollection.findOne({npi:npi});
+  if (doctorInDb === null) return false;
+  return true;  
+}
+
+
 const createDoctor = async(
+    npi,
     email,
     profilePicture,
     name,
     speciality,
     clinicAddress,
     zip,
-    password
+    password,
+    link,
 ) => {
     email = helper.common.isValidEmail(email);
     if(await isDoctorEmailInDb(email)) throw {status:400,error:'An account already exists with this email'};
+    npi=helper.doctor.isValidNpi(npi);
+    if(await isDoctorNpiInDb(npi)) throw {status:400,error:'An account already exists with this NPI'};
     profilePicture = helper.common.isValidFilePath(profilePicture);
     name = helper.common.isValidName(name);
     speciality = helper.doctor.isValidSpeciality(speciality);
     clinicAddress = helper.doctor.isValidAddress(clinicAddress);
     zip = helper.common.isValidZip(zip);
     password = helper.common.isValidPassword(password);
+    link = helper.common.isValidLink(link);
 
     const doctorCollection = await doctorCol();
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const newDoctor = {
+        npi,
         email,
         profilePicture,
         name,
@@ -48,6 +64,7 @@ const createDoctor = async(
         schedule:{},
         appointmentDuration : 30,
         rating : 0,
+        link,
         myPatients : []
       };
   
@@ -143,6 +160,18 @@ const getAllDoctor = async () => {
     throw {status:400,error:'Invalid email or password'};
   };
 
+  const getLinks = async() => {
+    const linksCollection = await linksCol();
+    const links = await linksCollection.find({used: false}).toArray()
+    const temp = links[0].li
+    const data = {used: true}
+    await linksCollection.updateMany(
+      {_id: links[0]._id},
+      {$set: data}
+    );
+    return temp;
+  }
+  
   const addPrescription = async(doctorId,patientId,disease,medicine,documents,doctorSuggestion) => {
     patientId = commonHelper.isValidId(patientId);
     doctorId = commonHelper.isValidId(doctorId);
@@ -206,6 +235,12 @@ const isDoctorsPatient = async(doctorId, patientId) =>{
   return doctorInDb;
 }
 
+const canPatientGiveReview = async(doctorId, patientId) =>{
+  const doctorCollection = await doctorCol();
+  const doctorInDb = await doctorCollection.findOne({_id:ObjectId(doctorId), myPatients: {$all:[[patientId, false]]}});
+  return doctorInDb;
+}
+
 const changeReviewStatus = async(doctorId, patientIds, flag) =>{
   const doctorCollection = await doctorCol();
   const doctorInDb = await doctorCollection.findOne({_id:ObjectId(doctorId)});
@@ -224,10 +259,13 @@ module.exports = {
     getDoctorById,
     getAllDoctor,
     updateDoctor,
+    checkDoctor,
+    getLinks,
     updatePrescription,
     addPrescription,
     addMyPatient,
     checkDoctor,
     isDoctorsPatient,
-    changeReviewStatus
+    changeReviewStatus,
+    canPatientGiveReview
 };

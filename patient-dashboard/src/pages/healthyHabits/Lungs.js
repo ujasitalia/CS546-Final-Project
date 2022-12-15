@@ -1,11 +1,8 @@
 import React from 'react';
-import "../styles.css";
-import { components } from '../components';
 
 const Lungs = () => {
     return(
         <div>
-            <components.Navbar handleSearch={handleSearch}/>
             <div>
             <header>
         <div className="header-content">

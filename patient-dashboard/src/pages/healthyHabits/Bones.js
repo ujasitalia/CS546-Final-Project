@@ -1,23 +1,20 @@
 import React from 'react';
-import "../styles.css";
-import { components } from '../components';
 
 const Bones = () => {
     return(
         <div>
-            <components.Navbar handleSearch={handleSearch}/>
             <div>
                 <header>
-        <div className="header-content">
+        <div class="header-content">
             <h1>Bones</h1>
-            <div className="line"></div>
+            <div class="line"></div>
             <h2>Our bones support us and allow us to move. They protect our brain, heart, and other organs from injury.</h2>
         </div>
     </header>
 
-    <div className="disease">
+    <div class="disease">
 
-        <div className="food-choices">
+        <div class="food-choices">
             <h1>Healthy Food Choices</h1>
             <ul>Dairy Can Be an Excellent Source of Bone-Building Calcium.</ul>
             <ul>Nuts Provide Magnesium and Phosphorus to Help Strengthen Bones.</ul> 
@@ -27,7 +24,7 @@ const Bones = () => {
         </div>
     
     
-        <div className="exercise">
+        <div class="exercise">
             <h1>Exercise</h1>
             <ul>Running</ul>
             <ul>Tennis</ul>

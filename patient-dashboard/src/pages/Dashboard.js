@@ -3,16 +3,37 @@ import { components } from '../components';
 import { api } from '../api';
 import { Link } from "react-router-dom";
 import Chat from '../components/Chat';
-
+import { useNavigate } from "react-router-dom";
 const Dashboard = () => {    
     const [data, setData] = useState('');
     const [filteredDoctors, setFilteredDoctors] = useState('');
+    const [hasError, setHasError] = useState(false);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
     
     useEffect(() => {
       const fetchData = async()=>{
-        const response = await api.doctor.getAllDoctor();
-        setData({doctors : response.data});
-        setFilteredDoctors(response.data);
+        try{
+          const response = await api.doctor.getAllDoctor();
+          setData({doctors : response.data});
+          setFilteredDoctors(response.data);
+          setHasError(false);
+        }catch(e){
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 )
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
+            setHasError(true);
+            setError(e.response.data);
+          }
+        }
+      }
+      if(!JSON.parse(localStorage.getItem('token_data')))
+      {
+        navigate("/login");
       }
       if(!data)
       {
@@ -46,14 +67,19 @@ const Dashboard = () => {
 
     return (
         <div>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" 
+        integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" 
+        crossorigin="anonymous"></link>
           <components.Navbar handleSearch={handleSearch}/>
           <components.SecondaryNavbar/>
           <div>
+          {hasError && <div className="error">{error}</div>}
           {filteredDoctors !== '' 
             ? <div className="doctorsContainer">
-                          <div>{filteredDoctors.length !== 0 ? filteredDoctors.map((element, index) =>
+                          <div className='row g-4'>{filteredDoctors.length !== 0 ? filteredDoctors.map((element, index) =>
+                            <div class="col-sm-4 col-xm-6 card">
                           <Link to={{ pathname : `/doctor/${element._id}`, state : {appointmentId : element._id}}}>
-                              <div className="card" key={element._id}>
+                              <div key={element._id}>
                                   <div className="cardHeading">Doctor - {index+1}</div>
                                   <div className="cardText">Name : {element.name}</div>
                                   <div className="cardText">Email : {element.email}</div>
@@ -64,6 +90,7 @@ const Dashboard = () => {
                                   <br/>
                               </div>
                             </Link>
+                            </div>
                           ) : <p>Doctor Not Found</p>}
                           </div>
             </div> : <div>Loading</div>}

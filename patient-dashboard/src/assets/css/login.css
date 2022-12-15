@@ -1,11 +1,11 @@
-body {
+.loginPage body {
     background-color: #9f9da7;
     font-size: 1.6rem;
     font-family: "Open Sans", sans-serif;
     color: #2b3e51;
   }
   
-  h2 {
+  .loginPage   h2 {
     font-weight: 300;
     text-align: center;
     display: block;
@@ -16,10 +16,10 @@ body {
     margin-inline-end: 0px;
     font-weight: bold;
 }
-div {
+.loginPage div {
     display: block;
 }
-  p {
+.loginPage p {
     position: relative;
     display: block;
     margin-block-start: 1em;
@@ -27,27 +27,27 @@ div {
     margin-inline-start: 0px;
     margin-inline-end: 0px;
   }
-  a,
-  a:link,
-  a:visited,
-  a:active {
+  .loginPage a,
+  .loginPage a:link,
+  .loginPage a:visited,
+  .loginPage a:active {
     color: #3ca9e2;
     -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
   }
-  a:focus, a:hover,
-  a:link:focus,
-  a:link:hover,
-  a:visited:focus,
-  a:visited:hover,
-  a:active:focus,
+  .loginPage a:focus, a:hover,
+  .loginPage a:link:focus,
+  .loginPage a:link:hover,
+  .loginPage a:visited:focus,
+  .loginPage a:visited:hover,
+  .loginPage a:active:focus,
   a:active:hover {
     color: #329dd5;
     -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
   }
   
-  #login-form-wrap {
+  .loginPage #login-form-wrap {
     background-color: #fff;
     width: 35%;
     margin: 30px auto;
@@ -57,7 +57,7 @@ div {
     box-shadow: 0px 30px 50px 0px rgba(0, 0, 0, 0.2);
   }
   
-  #login-form {
+  .loginPage #login-form {
     padding: 0 60px;
   }
   
@@ -71,6 +71,21 @@ div {
     border-radius: 4px;
   }
   
+.doctorDetail input{
+    width: 100%;
+    padding: 0 0 0 10px;
+    margin: 0;
+    color: #8a8b8e;
+    border:  0px solid #c2c0ca;
+    font-style: normal;
+    font-size: 16px;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+    position: relative;
+    display: inline-block;
+    background: none;
+}
   input {
     width: 100%;
     padding: 0 0 0 10px;
@@ -120,14 +135,6 @@ div {
     overflow: visible
 }
 
-audio,canvas,progress,video {
-    display: inline-block
-}
-
-progress,sub,sup {
-    vertical-align: baseline
-}
-
 html {
     font-family: sans-serif;
     line-height: 1.15;
@@ -166,12 +173,12 @@ code,kbd,pre,samp {
     font-size: 1em
 }
 
-a {
+.loginPage a {
     background-color: transparent;
     -webkit-text-decoration-skip: objects
 }
 
-a:active,a:hover {
+.loginPage a:active,a:hover {
     outline-width: 0
 }
 
