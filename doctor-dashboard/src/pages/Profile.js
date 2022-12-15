@@ -18,12 +18,16 @@ const Profile = () => {
 
     useEffect(() => {
         const fetchData = async()=>{
-            const response = await api.doctor.getDoctor(JSON.parse(localStorage.getItem('id')));
-            setName(response.data.name)
-            setZip(response.data.zip)
-            setClinicAddress(response.data.clinicAddress)
-            setProfilePicture(response.data.profilePicture)
-            setData({doctor : response.data});
+            try{
+                const response = await api.doctor.getDoctor(JSON.parse(localStorage.getItem('id')));
+                setName(response.data.name)
+                setZip(response.data.zip)
+                setClinicAddress(response.data.clinicAddress)
+                setProfilePicture(response.data.profilePicture)
+                setData({doctor : response.data});
+            }catch(e){
+                navigate("/error");
+            }
         }
         if(!JSON.parse(localStorage.getItem('token_data')))
         {

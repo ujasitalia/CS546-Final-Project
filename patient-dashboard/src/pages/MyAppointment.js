@@ -10,15 +10,19 @@ const MyAppointment = () => {
 
     useEffect(() => {
       const fetchData = async()=>{
-        const patientId = JSON.parse(localStorage.getItem('id'));        
-        const response = await api.patient.getPatientAppointments(patientId);
-        setData({appointments : response.data});
-        const resDoctors = await api.doctor.getAllDoctor();
-        let temp = {}
-        resDoctors.data.map(doctor => {
-          temp[doctor._id] = doctor.name
-        })
-        setIdName(temp);
+        try{
+          const patientId = JSON.parse(localStorage.getItem('id'));        
+          const response = await api.patient.getPatientAppointments(patientId);
+          setData({appointments : response.data});
+          const resDoctors = await api.doctor.getAllDoctor();
+          let temp = {}
+          resDoctors.data.map(doctor => {
+            temp[doctor._id] = doctor.name
+          })
+          setIdName(temp);
+        }catch(e){
+          navigate("/error");
+        }
       }
       if(!JSON.parse(localStorage.getItem('token_data')))
       {

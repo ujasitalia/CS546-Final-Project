@@ -18,9 +18,7 @@ const Profile = ({patientId}) => {
             console.log(res)
             setPatientData(res.data);
         }catch(e){
-            setHasError(true);
-            setError(e);
-            return;
+            navigate("/error");
         }
     }
     useEffect(() => {

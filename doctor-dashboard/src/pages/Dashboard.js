@@ -10,8 +10,12 @@ const Dashboard = () => {
     const navigate = useNavigate();
     useEffect(() => {
       const fetchData = async()=>{
-        const response = await api.doctor.getDoctor(JSON.parse(localStorage.getItem('id')));
-        setData({doctor : response.data});
+        try{
+          const response = await api.doctor.getDoctor(JSON.parse(localStorage.getItem('id')));
+          setData({doctor : response.data});
+        }catch(e){
+          navigate("/error");
+        }
       }
       if(!JSON.parse(localStorage.getItem('token_data')))
       {

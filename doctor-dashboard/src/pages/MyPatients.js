@@ -9,13 +9,17 @@ const MyPatients = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async()=>{
-      const response = await api.doctor.getDoctor(JSON.parse(localStorage.getItem('id')));
-      let data = []
-      for(let i=0;i<response.data.myPatients.length;i++){
-        const res = await api.patient.getPatient(response.data.myPatients[i][0]);
-        data.push(res.data)
+      try{
+        const response = await api.doctor.getDoctor(JSON.parse(localStorage.getItem('id')));
+        let data = []
+        for(let i=0;i<response.data.myPatients.length;i++){
+          const res = await api.patient.getPatient(response.data.myPatients[i][0]);
+          data.push(res.data)
+        }
+        setData({patients : data});
+      }catch(e){
+        navigate("/error");
       }
-      setData({patients : data});
     }
     if(!JSON.parse(localStorage.getItem('token_data')))
     {

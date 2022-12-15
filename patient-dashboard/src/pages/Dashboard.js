@@ -11,9 +11,13 @@ const Dashboard = () => {
     
     useEffect(() => {
       const fetchData = async()=>{
-        const response = await api.doctor.getAllDoctor();
-        setData({doctors : response.data});
-        setFilteredDoctors(response.data);
+        try{
+          const response = await api.doctor.getAllDoctor();
+          setData({doctors : response.data});
+          setFilteredDoctors(response.data);
+        }catch(e){
+          navigate("/error");
+        }
       }
       if(!JSON.parse(localStorage.getItem('token_data')))
       {

@@ -5,6 +5,7 @@ import Profile from "./Profile";
 import SignUp from "./SignUp";
 import MyPatients from "./MyPatients";
 import PatientInfo from "./PatientInfo";
+import Error from "./Error";
 
 const pages = {
   Login,
@@ -13,6 +14,7 @@ const pages = {
   Profile,
   SignUp,
   MyPatients,
-  PatientInfo
+  PatientInfo,
+  Error
 };
 export { pages };

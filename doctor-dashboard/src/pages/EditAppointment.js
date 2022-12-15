@@ -21,12 +21,16 @@ const EditAppointment = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.appointment.getAppointmentById(appointmentId);
-      setAppointment(response.data);
-      const doctor = await api.doctor.getDoctor(response.data.doctorId)
-      setDoctor(doctor.data)
-      const schedule = Object.keys(doctor.data.schedule)
-      setDays(schedule)
+      try{
+        const response = await api.appointment.getAppointmentById(appointmentId);
+        setAppointment(response.data);
+        const doctor = await api.doctor.getDoctor(response.data.doctorId)
+        setDoctor(doctor.data)
+        const schedule = Object.keys(doctor.data.schedule)
+        setDays(schedule)
+      }catch(e){
+        navigate("/error");
+      }
     };
     if(!JSON.parse(localStorage.getItem('token_data')))
     {

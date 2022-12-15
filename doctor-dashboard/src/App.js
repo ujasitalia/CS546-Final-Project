@@ -7,14 +7,14 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<pages.Login/>} />
-          <Route path="/" element={<Navigate  to="/login"/>}/>
           <Route path="/dashboard" element={<pages.Dashboard/>}/>
           <Route path="/dashboard/appointment/:appointmentId" element={<pages.EditAppointment/>}/>
           <Route path="/profile" element={<pages.Profile/>}/>
           <Route path="/signup" element={<pages.SignUp/>} />
           <Route path="/patient" element={<pages.MyPatients/>}/>
           <Route path="/patient/:id" element={<pages.PatientInfo/>}/>
-          {/* <Route path="/create-account" element={<CreateAccount/>} /> */}
+          <Route path="/error" element={<pages.Error/>} />
+          <Route path="*" element={<Navigate  to="/dashboard"/>}/>
         </Routes>
       </Router>
     </div>

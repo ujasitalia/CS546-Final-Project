@@ -11,16 +11,20 @@ const DoctorInfo = () => {
     const navigate = useNavigate();
     useEffect(() => {
       const fetchData = async()=>{
-        const response = await api.doctor.getDoctor(id);
-        setData({doctor : response.data});
-        for(let element of response.data.myPatients)
-        {
-          if(element[0] === JSON.parse(localStorage.getItem('id')))
+        try{
+          const response = await api.doctor.getDoctor(id);
+          setData({doctor : response.data});
+          for(let element of response.data.myPatients)
           {
-            setCanGiveReview(!element[1]);
-            break;
-          }
-        };
+            if(element[0] === JSON.parse(localStorage.getItem('id')))
+            {
+              setCanGiveReview(!element[1]);
+              break;
+            }
+          };
+        }catch(e){
+          navigate("/error");
+        }
       }
       if(!JSON.parse(localStorage.getItem('token_data')))
       {

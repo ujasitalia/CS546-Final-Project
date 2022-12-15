@@ -12,8 +12,12 @@ const PatientInfo = () => {
 
     useEffect(() => {
       const fetchData = async()=>{
-        const response = await api.patient.getPatient(id);
-        setData({patient : response.data});
+        try{
+          const response = await api.patient.getPatient(id);
+          setData({patient : response.data});
+        }catch(e){
+          navigate("/error");
+        }
       }
       if(!JSON.parse(localStorage.getItem('token_data')))
       {
