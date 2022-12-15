@@ -43,6 +43,7 @@ const SignUp = () => {
             setName(helper.common.isValidName(fullName));
             setZip(helper.common.isValidZip(zip));
             setClinicAddress(helper.common.isValidAddress(clinicAddress));
+            setHasError(false);
         }catch(e){
             setHasError(true);
             setError(e.message);
@@ -50,11 +51,13 @@ const SignUp = () => {
         }
         
         try{
-            const data = {"email" : email, "password" : password, "speciality":speciality, "name":fullName, "zip":zip,"profilePicture":"nopic","city":"Hoboken","state":"New Jersey","clinicAddress":clinicAddress}
+            const data = {"email" : email, "password" : password, "speciality":speciality, "name":fullName, "zip":zip,"profilePicture":"nopic","clinicAddress":clinicAddress}
             const response = await api.signup.post(data);
             console.log(response);
             localStorage.setItem('token_data', JSON.stringify(response.data.token))
+            localStorage.setItem('id',JSON.stringify(response.data.doctorData._id));
             navigate("/dashboard", {doctor : response.data.doctorData});
+            setHasError(false);
         }catch(e){
             setHasError(true);
             if(!e.response) setError("Error");
@@ -67,47 +70,48 @@ const SignUp = () => {
         <div className="blueContainer">
                     <img src=".dgkjs" className="loginLogo" loading="lazy" alt="logo" />
                     <div className="loginHeading">Doctor SignUp</div>
-                    <div className="loginText">Sign Up</div>
+                    <br></br>
         </div>
         <div className="loginCard">
-        <form onSubmit={validateSignUp}>
-            <div className="emailText">Enter Email</div>
-            <input placeholder="username@example.com" id="signUpEmail" value={email} onChange={handleInputChange} type="email" className="loginInput" autoFocus/>
-            <br/>
-            <div className="emailText">Enter Password</div>
-            <input placeholder="********" id="signUpPassword" value={password} onChange={handleInputChange} type="password" className="loginInput" autoFocus/>
-            <br/>
-            <div className="emailText">Re-Enter Password</div>
-            <input placeholder="********" id="signUpRepassword" value={repassword} onChange={handleInputChange} type="password" className="loginInput" autoFocus/>
-            <br/>
-            <div className="emailText">Enter Speciality</div>
-            {/* <input placeholder="Cardiologist" id="signUpSpeciality" value={speciality} onChange={handleInputChange} type="text" className="loginInput" autoFocus/> */}
-            <select id="signUpSpeciality" value={speciality} onChange={handleInputChange}>
-                <option value="">--Choose a Speciality--</option>
-                {
-                    specialities.map(spec => {
-                        return <option value={spec}>{spec}</option>;
-                    //   return spec===speciality ? <option value={spec} selected>{spec}</option> : <option value={spec}>{spec}</option>
-                    })
-                }
-            </select>
-            <br/>
-            <div className="emailText">Enter name</div>
-            <input placeholder="Patrik Hill" id="signUpName" value={fullName} onChange={handleInputChange} type="text" className="loginInput" autoFocus/>
-            <br/>
-            <div className="emailText">Enter zip</div>
-            <input placeholder="07307" id="signUpZip" value={zip} onChange={handleInputChange} type="number" className="loginInput" autoFocus/>
-            <br/>
-            <div className="emailText">Enter Clinic Address</div>
-            <input placeholder="1 Castle point" id="signUpClinicAddress" value={clinicAddress} onChange={handleInputChange} type="text" className="loginInput" autoFocus/>
-            <br/>
-            <button type="submit" className="loginButton">
-                <div className="buttonBox">
-                    <img src={arrow} className="arrow" loading="lazy" alt="logo" />
-                </div>
-            </button>
-        </form>
-        {hasError && <div className="error">{error}</div>}
+            {hasError && <div className="error">{error}</div>}
+            <form onSubmit={validateSignUp}>
+                <div className="emailText">Enter Email</div>
+                <input placeholder="username@example.com" id="signUpEmail" value={email} onChange={handleInputChange} type="email" className="loginInput" autoFocus/>
+                <br/>
+                <div className="emailText">Enter Password</div>
+                <input placeholder="********" id="signUpPassword" value={password} onChange={handleInputChange} type="password" className="loginInput" autoFocus/>
+                <br/>
+                <div className="emailText">Re-Enter Password</div>
+                <input placeholder="********" id="signUpRepassword" value={repassword} onChange={handleInputChange} type="password" className="loginInput" autoFocus/>
+                <br/>
+                <div className="emailText">Enter Speciality</div>
+                {/* <input placeholder="Cardiologist" id="signUpSpeciality" value={speciality} onChange={handleInputChange} type="text" className="loginInput" autoFocus/> */}
+                <select id="signUpSpeciality" value={speciality} onChange={handleInputChange}>
+                    <option value="">--Choose a Speciality--</option>
+                    {
+                        specialities.map(spec => {
+                            return <option value={spec}>{spec}</option>;
+                        //   return spec===speciality ? <option value={spec} selected>{spec}</option> : <option value={spec}>{spec}</option>
+                        })
+                    }
+                </select>
+                <br/>
+                <div className="emailText">Enter name</div>
+                <input placeholder="Patrik Hill" id="signUpName" value={fullName} onChange={handleInputChange} type="text" className="loginInput" autoFocus/>
+                <br/>
+                <div className="emailText">Enter zip</div>
+                <input placeholder="07307" id="signUpZip" value={zip} onChange={handleInputChange} type="number" className="loginInput" autoFocus/>
+                <br/>
+                <div className="emailText">Enter Clinic Address</div>
+                <input placeholder="1 Castle point" id="signUpClinicAddress" value={clinicAddress} onChange={handleInputChange} type="text" className="loginInput" autoFocus/>
+                <br/>
+                <button type="submit" className="loginButton">
+                    <div className="buttonBox">
+                        <img src={arrow} className="arrow" loading="lazy" alt="logo" />
+                    </div>
+                </button>
+            </form>
+        
         </div>
     </div>
   )

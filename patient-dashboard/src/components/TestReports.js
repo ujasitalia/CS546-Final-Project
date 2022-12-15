@@ -103,7 +103,11 @@ export const TestReports = (props) => {
                 if(m['testReportId']==e.target.id) data = m;
             }
             const response = await api.profile.patchTestReports(props.patientData._id,data,e.target.id);
-            console.log(response);
+            //console.log(response);
+            props.handleChange(response.data);
+            setTestReports(response.data.testReports)
+            setHasError(false);
+            //setInputTestReport(false);
             }catch(e){
                 setHasError(true);
                 setError(e.response.data);
