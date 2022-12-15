@@ -34,6 +34,10 @@ const EditAppointment = () => {
       setDays(schedule)
     //   console.log(schedule);        
     };
+    if(!JSON.parse(localStorage.getItem('token_data')))
+    {
+      navigate("/login");
+    }
     if (!appointment) {
       fetchData();
     }

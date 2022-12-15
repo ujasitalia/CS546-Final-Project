@@ -1,10 +1,8 @@
 import React from 'react';
-import { components } from '../../components';
 
 const Bones = () => {
     return(
         <div>
-            <components.Navbar handleSearch={handleSearch}/>
             <div>
                 <header>
         <div class="header-content">

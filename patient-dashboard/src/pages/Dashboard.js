@@ -3,16 +3,21 @@ import { components } from '../components';
 import { api } from '../api';
 import { Link } from "react-router-dom";
 import Chat from '../components/Chat';
-
+import { useNavigate } from "react-router-dom";
 const Dashboard = () => {    
     const [data, setData] = useState('');
     const [filteredDoctors, setFilteredDoctors] = useState('');
+    const navigate = useNavigate();
     
     useEffect(() => {
       const fetchData = async()=>{
         const response = await api.doctor.getAllDoctor();
         setData({doctors : response.data});
         setFilteredDoctors(response.data);
+      }
+      if(!JSON.parse(localStorage.getItem('token_data')))
+      {
+        navigate("/login");
       }
       if(!data)
       {

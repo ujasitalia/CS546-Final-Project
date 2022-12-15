@@ -2,14 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { components } from '../components';
 import { api } from '../api';
 import Chat from '../components/Chat'
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
     const [tab, setTab] = useState('appointmentTab');
     const [data, setData] = useState('');
+    const navigate = useNavigate();
     useEffect(() => {
       const fetchData = async()=>{
         const response = await api.doctor.getDoctor(JSON.parse(localStorage.getItem('id')));
         setData({doctor : response.data});
+      }
+      if(!JSON.parse(localStorage.getItem('token_data')))
+      {
+        navigate("/login");
       }
       if(!data)
       {

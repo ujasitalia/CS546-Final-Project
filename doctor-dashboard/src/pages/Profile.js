@@ -4,6 +4,7 @@ import { api } from '../api';
 import {helper} from '../helper';
 import arrow from "../assets/images/arrow.svg";
 import "../assets/css/profile.css";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
     const [data, setData] = useState('');
@@ -13,6 +14,8 @@ const Profile = () => {
     const [profilePicture, setProfilePicture] = useState('');
     const [hasError, setHasError] = useState(false);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
+
     useEffect(() => {
         const fetchData = async()=>{
             const response = await api.doctor.getDoctor(JSON.parse(localStorage.getItem('id')));
@@ -21,6 +24,10 @@ const Profile = () => {
             setClinicAddress(response.data.clinicAddress)
             setProfilePicture(response.data.profilePicture)
             setData({doctor : response.data});
+        }
+        if(!JSON.parse(localStorage.getItem('token_data')))
+        {
+          navigate("/login");
         }
         if(!data)
         {

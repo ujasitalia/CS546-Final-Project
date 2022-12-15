@@ -24,6 +24,10 @@ const Profile = ({patientId}) => {
         }
     }
     useEffect(() => {
+        if(!JSON.parse(localStorage.getItem('token_data')))
+        {
+          navigate("/login");
+        }
         if(patientData=='') getData(patientId);
     },[])
 

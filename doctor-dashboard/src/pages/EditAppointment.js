@@ -28,6 +28,10 @@ const EditAppointment = () => {
       const schedule = Object.keys(doctor.data.schedule)
       setDays(schedule)
     };
+    if(!JSON.parse(localStorage.getItem('token_data')))
+    {
+      navigate("/login");
+    }
     if (!appointment) {
       fetchData();
     }

@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { api } from '../api';
 import { components } from '../components';
+import { useNavigate } from "react-router-dom";
 
 const MyPatients = () => {
   const [data, setData] = useState('');
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async()=>{
       const response = await api.doctor.getDoctor(JSON.parse(localStorage.getItem('id')));
@@ -14,6 +16,10 @@ const MyPatients = () => {
         data.push(res.data)
       }
       setData({patients : data});
+    }
+    if(!JSON.parse(localStorage.getItem('token_data')))
+    {
+      navigate("/login");
     }
     if(!data)
     {

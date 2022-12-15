@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { components } from '../components';
 import { api } from '../api';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate} from 'react-router-dom';
 import "../components/navbar.css";
 const DoctorInfo = () => {
     const { id } = useParams();
     const [tab, setTab] = useState('detailTab');
     const [data, setData] = useState('');
     const [canGiveReview, setCanGiveReview] = useState(false);
+    const navigate = useNavigate();
     useEffect(() => {
       const fetchData = async()=>{
         const response = await api.doctor.getDoctor(id);
@@ -20,6 +21,10 @@ const DoctorInfo = () => {
             break;
           }
         };
+      }
+      if(!JSON.parse(localStorage.getItem('token_data')))
+      {
+        navigate("/login");
       }
       if(!data)
       {

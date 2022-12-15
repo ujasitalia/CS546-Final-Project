@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { components } from '../components';
 import { api } from '../api';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import "../components/navbar.css";
 
 const PatientInfo = () => {
     const { id } = useParams();
     const [tab, setTab] = useState('detailTab');
     const [data, setData] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
       const fetchData = async()=>{
         const response = await api.patient.getPatient(id);
         setData({patient : response.data});
+      }
+      if(!JSON.parse(localStorage.getItem('token_data')))
+      {
+        navigate("/login");
       }
       if(!data)
       {
