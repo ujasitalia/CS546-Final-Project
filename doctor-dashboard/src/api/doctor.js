@@ -1,4 +1,4 @@
-import {axiosAuth} from './axios'
+import {axiosAuth, axiosNoAuth} from './axios'
 
 export const updateDoctor = (id, data) => {
     return axiosAuth.patch(`/doctor/${id}`, data);

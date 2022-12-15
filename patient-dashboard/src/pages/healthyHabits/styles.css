@@ -27,12 +27,12 @@ h1{
     color: #fff;
     font-size: 60px;
 }
-p{
+.healthyContainer p{
     color: #fff;
     font-size: 14px;
     line-height: 30px;
 }
-.card{
+.healthyContainer .card{
     width: 150px;
     height: 180px;
     display: inline-block;

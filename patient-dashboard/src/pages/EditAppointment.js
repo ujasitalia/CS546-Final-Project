@@ -96,7 +96,7 @@ const EditAppointment = () => {
 
   const handleCancel = async (e) => {
     e.preventDefault()
-    const cancelRequest = await api.appointment.deleteAppointment(appointmentId)
+    await api.appointment.deleteAppointment(appointmentId)
     navigate("/myAppointments", {state : {doctor : doctor} });
   }
 
@@ -115,6 +115,9 @@ const EditAppointment = () => {
             </div>
             <div className="cardText">
               Time : {appointment.startTime.slice(11, 19)}
+            </div>
+            <div className="cardText">
+              Location : {appointment.appointmentLocation}
             </div>
           </div>
           <br />
@@ -146,7 +149,6 @@ const EditAppointment = () => {
                 
             <>
                 <br />
-                {console.log()}
                 {availableSlots.length !== 0 ? (
                     <div>
                         {updatedSlot ? <></> : setUpdatedSlot(availableSlots[0][0])}

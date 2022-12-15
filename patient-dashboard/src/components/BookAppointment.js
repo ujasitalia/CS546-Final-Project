@@ -5,6 +5,8 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 
 const BookAppointment = (props) => {
     const navigate = useNavigate();
@@ -13,6 +15,7 @@ const BookAppointment = (props) => {
     const [availableSlots, setAvailableSlots] = useState('');
     const [slot, setSlot] = useState('')
     const [notUpdated, setNotUpdated] = useState(false)
+    const [onlineAppointment, setOnlineAppointment] = useState(false);
     
     const checkDate = (startDate) => {  
     const currDate = new Date();  
@@ -57,7 +60,14 @@ const BookAppointment = (props) => {
     const time = getTime(slot);
     let temp = (new Date(startDate - (startDate.getTimezoneOffset() * 60000))).toISOString().split('T')[0]+'T'+time
     // console.log(slot);
-    const newAppointment = {doctorId: props.doctor._id, patientId: JSON.parse(localStorage.getItem('id')),  startTime: temp, appointmentLocation: props.doctor.clinicAddress}
+    let loc;
+    if(onlineAppointment == 'true'){
+        loc = props.doctor.link
+    }
+    else{
+        loc = props.doctor.clinicAddress
+    }
+    const newAppointment = {doctorId: props.doctor._id, patientId: JSON.parse(localStorage.getItem('id')),  startTime: temp, appointmentLocation: loc}
     const udA = await api.appointment.createAppointment(newAppointment)
     // console.log(udA.data);
     if(udA.data === 'Could not add appointment'){
@@ -104,17 +114,29 @@ const BookAppointment = (props) => {
                         {slot ? <></> : setSlot(availableSlots[0][0])}
                         <h3>Select slot</h3>
                     <Form onSubmit={createAppointment}>
-                        <Form.Select
-                            aria-label="day"
-                            // value={updatedSlot}
-                            onChange={(e) => setSlot(e.target.value)}
-                            style={{ marginRight: "3px" }}
-                            >
-                            {availableSlots.map(slot => {
-                                return <option value={slot[0]} key={slot[0]}>{slot[0] + " - " + slot[1]}</option>
-                            })}
-                        </Form.Select>
-                        <Button variant="primary" type="submit" style={{ width: "100px" }}>
+                        <Row>
+                            <Col>
+                                <Form.Select
+                                    aria-label="day"
+                                    // value={updatedSlot}
+                                    onChange={(e) => setSlot(e.target.value)}
+                                    style={{ marginRight: "3px" }}
+                                >
+                                    {availableSlots.map(slot => {
+                                        return <option value={slot[0]} key={slot[0]}>{slot[0] + " - " + slot[1]}</option>
+                                    })}
+                                </Form.Select>
+                            </Col>
+                            <Col>
+                                <h3>Online Appointment ?</h3>   
+                                <Form.Select onChange={e => setOnlineAppointment(e.target.value)}     style={{ marginRight: "3px" }} value={onlineAppointment}>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </Form.Select> 
+                            </Col>
+                        </Row>  
+                        <br />                      
+                        <Button variant="primary" type="submit" style={{ width: "70px" }}>
                             Select
                         </Button>
                     </Form>                   

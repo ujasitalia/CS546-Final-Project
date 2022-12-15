@@ -38,7 +38,7 @@ const createAppointment = async (
   const newAppointment = {
     doctorId,
     doctorEmail:doctor.email,
-    doctotName:doctor.name,
+    doctorName:doctor.name,
     patientId,
     patientEmail:patient.email,
     patientName:patient.name,
@@ -46,7 +46,7 @@ const createAppointment = async (
     appointmentDuration: doctor.appointmentDuration,
     appointmentLocation,
     isReminded : false,
-    isCompleted : false
+    isCompleted : false,
   };
 
   const insertInfo = await appointmentCollection.insertOne(newAppointment);
@@ -245,10 +245,8 @@ const getDoctorSlots = async (doctorId, date = new Date()) => {
     startTime[1] = parseInt(startTime[1]);
     endTime[0] = parseInt(endTime[0]);
     endTime[1] = parseInt(endTime[1]);
-    
     while(1)
     {
-      // console.log(schedule[i], startTime, endTime);
       if((startTime[1] + slotSize < 60 && startTime[0]==endTime[0] && startTime[1] + slotSize > endTime[1]) || (startTime[1] + slotSize > 59 && (startTime[0]==endTime[0] || (startTime[0]+parseInt((startTime[1] + slotSize)/60) > endTime[0]) || (startTime[0]+parseInt((startTime[1] + slotSize)/60) == endTime[0] && (startTime[1] + slotSize > 60) && (startTime[1] + slotSize)%60 >= endTime[1])))){
         break;
       }
@@ -277,7 +275,6 @@ const getDoctorSlots = async (doctorId, date = new Date()) => {
           startTime[1] = result.startMinute;
         } 
       }
-      
     }
   }
   return slot;
