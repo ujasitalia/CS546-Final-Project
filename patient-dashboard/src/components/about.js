@@ -2,7 +2,6 @@ import { api } from '../api';
 import React, { useEffect, useState } from 'react';
 import {helper} from '../helper';
 import { useNavigate } from "react-router-dom";
-import arrow from "../assets/images/arrow.svg";
 
 const About = (props) => {
     const [fullName, setName] = useState('');

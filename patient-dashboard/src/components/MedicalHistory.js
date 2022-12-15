@@ -87,9 +87,16 @@ const MedicalHistory = (props) => {
                 setHasError(false);
                 setInputMedicalHistory(false);
             }catch(e){
+              if(e.response.status===500)
+                navigate("/error");
+              else if(e.response.status===401 )
+              {
+                localStorage.clear();
+                navigate("/login");
+              }else{
                 setHasError(true);
                 setError(e.response.data);
-                return;
+              }
             }
         }
         else{

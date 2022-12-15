@@ -43,7 +43,6 @@ const Navbar = (props) => {
             <li>
               <a href="/dashboard">dashboard</a>
             </li>
-            {window.location.pathname==="/healthyHabits" && <li><a href="/healthyHabits">Healthy Habits</a></li>}
 
           {(window.location.pathname==="/dashboard" || window.location.pathname==="/dashboard/") && <li>
               <Form onSubmit={handleInputChange}>

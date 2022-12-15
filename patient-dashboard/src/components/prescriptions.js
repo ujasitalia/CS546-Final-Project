@@ -47,6 +47,7 @@ const Prescriptions = (props) => {
 
   return (
     <div>
+      {hasError && <div className="error">{error}</div>}
         {props.patientData.prescriptions && <p>No prescriptions</p>}
         {props.patientData.prescriptions.map(prescription => {
            return doctors && <div>
@@ -64,7 +65,6 @@ const Prescriptions = (props) => {
             </div> 
             
         })}
-        {hasError && <div className="error">{error}</div>}
     </div>
   )
 }

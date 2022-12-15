@@ -87,12 +87,19 @@ const TestReports = (props) => {
                 
                 props.handleChange(response.data);
                 setTestReports(response.data.testReports)
-                setHasError(false);
                 setInputTestReport(false);
+                setHasError(false);
             }catch(e){
+              if(e.response.status===500)
+                navigate("/error");
+              else if(e.response.status===401 )
+              {
+                localStorage.clear();
+                navigate("/login");
+              }else{
                 setHasError(true);
                 setError(e.response.data);
-                return;
+              }
             }
         }
         else

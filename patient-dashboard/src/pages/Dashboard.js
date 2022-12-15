@@ -58,7 +58,7 @@ const Dashboard = () => {
         filtered = filtered.filter(element => {
           if(element.name.toLowerCase().includes(keyword.toLowerCase()))
             return element;
-          else if(element.zip.includes(keyword))
+          else if(element.zip.indexOf(keyword) === 0)
             return element;
         })
       }
