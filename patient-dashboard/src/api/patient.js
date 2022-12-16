@@ -7,3 +7,7 @@ export const getPatientAppointments = (id) => {
 export const getPatient = (id) =>{
     return axiosAuth.get(`/patient/${id}`);
 }
+
+export const getPatientPrescriptions = (patientId) =>{
+    return axiosAuth.get(`/patient/${patientId}/prescription`)
+}

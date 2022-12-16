@@ -12,6 +12,10 @@ export const getDoctorSlot = (id, date) => {
     return axiosAuth.get(`/doctor/${id}/slot?date=`+date);
 }
 
+export const getPatientPrescriptions = (doctorId, patientId) =>{
+    return axiosAuth.get(`/doctor/${doctorId}/patient/${patientId}/prescription`)
+}
+
 export const addPrescription = (doctorId,patientId, data) => {
     return axiosAuth.post(`/doctor/${doctorId}/patient/${patientId}/prescription`,data);
 }

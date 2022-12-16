@@ -279,10 +279,10 @@ router
       await patientData.getPatientById(id);
 
       testData.testName=commonHelper.isValidString(testData.testName);
-      testData.document=commonHelper.isValidFilePath(testData.document);
+      testData.testDocument=commonHelper.isValidFilePath(testData.testDocument);
       testData.testDate=commonHelper.isValidPastDate(testData.testDate);
 
-      let newTestReport = await patientData.addTestReport(id,testData.testName,testData.document,testData.testDate);
+      let newTestReport = await patientData.addTestReport(id,testData.testName,testData.testDocument,testData.testDate);
       res.json(newTestReport);
       }catch(e){
       if(e.status)
@@ -306,9 +306,9 @@ router
 
       testReportData.testName = commonHelper.isValidString(testReportData.testName);
       testReportData.testDate = commonHelper.isValidPastDate(testReportData.testDate);
-      testReportData.document = commonHelper.isValidString(testReportData.document);
+      testReportData.testDocument = commonHelper.isValidString(testReportData.testDocument);
 
-      let updatedPatient = await patientData.updateTestReport(patientId,testReportId,testReportData.testName,testReportData.testDate,testReportData.document);
+      let updatedPatient = await patientData.updateTestReport(patientId,testReportId,testReportData.testName,testReportData.testDate,testReportData.testDocument);
       // let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate);
       res.json(updatedPatient);
       }catch(e){

@@ -5,6 +5,7 @@ import '../assets/css/profile.css'
 
 const Prescriptions = (props) => {
   const [prescriptions, setPrescriptions] = useState('');
+  const [oldPrescriptions, setOldPrescriptions] = useState('');
   const [hasError, setHasError] = useState(false);
   const [hasSuccess, setHasSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -34,6 +35,15 @@ const Prescriptions = (props) => {
     }
   }
 
+  const getBase64 = async(newPrescription, field, file) => {
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+        newPrescription[field[1]]['prescriptionDocument'] = reader.result;
+        setPrescriptions(newPrescription);
+    };
+};
+
   const handleInputChange = (e) => {
     let field = e.target.id.split('-');
     let newPrescription = [...prescriptions]
@@ -55,7 +65,13 @@ const Prescriptions = (props) => {
     }
     else if(field[2] === 'prescriptionDocument')
     {
-      newPrescription[field[1]]['prescriptionDocument']=e.target.value;
+      if(e.target.files[0].size > 12097152){
+        alert("huge file");
+      }else
+      {
+          getBase64(newPrescription,field,e.target.files[0]);
+      }
+      return;
     }
     setPrescriptions(newPrescription);
     setHasError(false);
@@ -63,9 +79,10 @@ const Prescriptions = (props) => {
 }
 
   useEffect(() =>{
-    const setState = ()=>{
+    const getPrecriptions = async()=>{
+      let response = await api.doctor.getPatientPrescriptions(JSON.parse(localStorage.getItem('id')), props.patientId);
       let pres = [];
-      props.prescriptions.forEach(element => {
+      response.data.forEach(element => {
         if(element.doctorId === JSON.parse(localStorage.getItem('id')))
           pres.push(element);
       });
@@ -77,9 +94,10 @@ const Prescriptions = (props) => {
         p['dosage']=value[1];
       })
       setPrescriptions(pres);
+      setOldPrescriptions(pres);
     };
     if(prescriptions==='')
-      setState();
+      getPrecriptions();
   },[]);
 
   const validatePrescription = async (e) =>{
@@ -107,11 +125,7 @@ const Prescriptions = (props) => {
             delete data['strength'];
             delete data['dosage'];
             const response = await api.doctor.addPrescription(JSON.parse(localStorage.getItem('id')),props.patientId,data);
-            //props.handleChange();
-            // console.log(response);
-            
-            //props.handleChange(response.data);
-            let pres = [...response.data.prescriptions]
+            let pres = [...response.data]
             pres.map(p => {
               let keys = Object.keys(p['medicine']);
               let value = p['medicine'][keys[0]];
@@ -120,7 +134,7 @@ const Prescriptions = (props) => {
               p['dosage']=value[1];
             })
             setPrescriptions(pres)
-            props.handleChange(response.data);
+            setOldPrescriptions(pres)
             setHasSuccess(true);
             setSuccessMessage('Prescription added successfully')
             setHasError(false);
@@ -147,11 +161,7 @@ const Prescriptions = (props) => {
             delete data['strength'];
             delete data['dosage'];
             const response = await api.doctor.patchPrescription(JSON.parse(localStorage.getItem('id')),props.patientId,data,e.target.id);
-            //props.handleChange();
-            // console.log(response);
-            
-            // props.handleChange(response.data);
-            let pres = [...response.data.prescriptions]
+            let pres = [...response.data]
             pres.map(p => {
               let keys = Object.keys(p['medicine']);
               let value = p['medicine'][keys[0]];
@@ -159,8 +169,8 @@ const Prescriptions = (props) => {
               p['strength']=value[0];
               p['dosage']=value[1];
             })
-            setPrescriptions(pres)
-            props.handleChange(response.data);
+            setPrescriptions(pres);
+            setOldPrescriptions(pres);
             setHasSuccess(true);
             setSuccessMessage('Prescription updated successfully')
             setHasError(false);
@@ -173,7 +183,22 @@ const Prescriptions = (props) => {
         }
     }
 }
-
+const getDocument = (index) =>
+{
+    if(inputPrescription && index!==0)
+    {
+        if(oldPrescriptions[index-1]['prescriptionDocument'])
+            return <a download="mydoc.jpg" href={`${oldPrescriptions[index-1]['prescriptionDocument']}`}>Download Document</a>
+        else
+            return <span>No Document</span>
+    }else if(!inputPrescription)
+    {
+        if(oldPrescriptions[index]['prescriptionDocument'])
+        return <a download="mydoc.jpg" href={`${oldPrescriptions[index]['prescriptionDocument']}`}>Download Document</a>
+    else
+        return <span>No Document</span>
+    }
+}
   return (
     <div>
         <br></br>
@@ -182,7 +207,7 @@ const Prescriptions = (props) => {
         <br></br>
         {!inputPrescription && <button onClick={addPrescriptionForm}>Add prescription</button>}
         {inputPrescription && <button onClick={addPrescriptionForm}>Cancel</button>}
-        {prescriptions.length!==0 ? prescriptions.map((prescription, index)=>{
+        {prescriptions && oldPrescriptions && prescriptions.length!==0 ? prescriptions.map((prescription, index)=>{
             return <div>
                 <form onSubmit={validatePrescription} id={prescription.prescriptionId}>
                     <div>
@@ -206,8 +231,10 @@ const Prescriptions = (props) => {
                         <input placeholder="X times a day" id={prescription.prescriptionId+'-'+index+'-dosage'} value={prescriptions[index]['dosage'] } onChange={handleInputChange} type="number" className="medicine" />
                     </div>
                     <div>
+
                         <label htmlFor={prescription.prescriptionId+'-'+index+'-prescriptionDocument'}>Prescription Document</label>
-                        <input placeholder="Document.pdf" id={prescription.prescriptionId+'-'+index+'-prescriptionDocument'} value={prescriptions[index]['prescriptionDocument'] } onChange={handleInputChange} type="text" className="medicine" />
+                        {getDocument(index)}
+                        <input type="file" id={prescription.prescriptionId+'-'+index+'-prescriptionDocument'} onChange={handleInputChange} className="medicine"/>
                     </div>
                     <button type="submit" className="loginButton">Submit</button>
                 

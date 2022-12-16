@@ -1,6 +1,7 @@
 const mongoCollections = require('../config/mongoCollections');
 const patients = mongoCollections.patient;
 const doctors = mongoCollections.doctor;
+const documentCol = mongoCollections.document
 const bcryptjs = require('bcryptjs');
 const patientHelper = require('../helper/patient')
 const commonHelper = require('../helper/common')
@@ -250,6 +251,12 @@ const getTestReport = async(id) => {
 const getPatientPrescription = async(id) => {
   id = commonHelper.isValidId(id);
   const patient = await getPatientById(id);
+  documentCollection = await documentCol()
+  for(let i=0;i<patient.prescriptions.length;i++)
+  {
+    const document = await documentCollection.findOne({_id:ObjectId(patient.prescriptions[i].prescriptionDocument)});
+    patient.prescriptions[i].prescriptionDocument = document.document
+  }
   return patient.prescriptions;
 };
 

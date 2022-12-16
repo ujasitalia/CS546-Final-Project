@@ -5,9 +5,10 @@ const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 const doctorCol = mongoCollections.doctor;
 const linksCol = mongoCollections.links;
+const documentCol = mongoCollections.document
 const commonHelper = require('../helper/common')
 const {ObjectId} = require('mongodb');
-const { getPatientById } = require('./patient');
+const { getPatientById, getPatientPrescription } = require('./patient');
 const { isValidMedicine } = require('../helper/doctor');
 
 const isDoctorEmailInDb = async(email) => {
@@ -181,14 +182,16 @@ const getAllDoctor = async () => {
     const patientCollection = await patients();
     const patient = await getPatientById(patientId);
     if(!patient) throw {status: "404", error: `No patient with that ID`};
-    let newPrescription = {prescriptionId: new ObjectId(),doctorId,disease,medicine,prescriptionDocument,doctorSuggestion};
 
-    const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{prescriptions: newPrescription}});
+    const documentCollection = await documentCol();
+    const document = await documentCollection.insertOne({document:prescriptionDocument});
+    let newPrescription = {prescriptionId: new ObjectId(),doctorId,disease,medicine,prescriptionDocument:document.insertedId.toString(),doctorSuggestion};
+    const updatePatient = await patientCollection.updateMany({_id: ObjectId(patientId)},{$push:{prescriptions: newPrescription}});
 
     if (updatePatient.modifiedCount === 0) throw "Error: Could not add prescription";
 
-    const updatedPatient = await getPatientById(patientId);
-    return updatedPatient;
+    const UpdatedPrescription = await getPatientPrescription(patientId);
+    return UpdatedPrescription;
   }
 
   const updatePrescription = async (patientId,prescriptionId,disease,medicine,prescriptionDocument,doctorSuggestion) => {
@@ -207,12 +210,16 @@ const getAllDoctor = async () => {
     const patientCollection = await patients();
     let prescriptionInDb = patientInDb.prescriptions;
     //let newMedicalHistory = [];
+    const documentCollection = await documentCol();
     for(let i=0;i<prescriptionInDb.length;i++){
       if(prescriptionInDb[i].prescriptionId==prescriptionId) {
+        const document = await documentCollection.insertOne({document:prescriptionDocument});
+        const del = await documentCollection.deleteOne({_id:ObjectId(prescriptionInDb[i].prescriptionDocument)});
         prescriptionInDb[i].disease=disease;
         prescriptionInDb[i].medicine=medicine;
-        prescriptionInDb[i].prescriptionDocument=prescriptionDocument;
+        prescriptionInDb[i].prescriptionDocument=document.insertedId.toString();
         prescriptionInDb[i].doctorSuggestion=doctorSuggestion;
+        break;
       }
     
     }
@@ -223,8 +230,8 @@ const getAllDoctor = async () => {
     );
     if (updatedInfo.modifiedCount === 0) throw "No changes made to the prescription";
 
-    const updatedPatient = await getPatientById(patientId);
-    return updatedPatient;
+    const UpdatedPrescription = await getPatientPrescription(patientId);
+    return UpdatedPrescription;
   }
   
 const isDoctorsPatient = async(doctorId, patientId) =>{

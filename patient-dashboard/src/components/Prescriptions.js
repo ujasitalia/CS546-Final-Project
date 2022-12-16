@@ -1,14 +1,22 @@
 import { api } from '../api';
 import React, { useEffect, useState } from 'react';
-import {helper} from '../helper';
 import { useNavigate } from "react-router-dom";
 
-const Prescriptions = (props) => {
+const Prescriptions = () => {
   const navigate = useNavigate();
+  const [doctors, setDoctors] = useState({});
+  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState('');
+  const [prescriptions, setPrescriptions] = useState('');
     useEffect(() => {
-        if(Object.keys(doctors).length===0) getDoctors(props.patientData.prescriptions);
+        if(prescriptions==='') getPrescriptions();
     },[])
 
+    const getPrescriptions = async() =>{
+      const response = await api.patient.getPatientPrescriptions(JSON.parse(localStorage.getItem('id')));
+      setPrescriptions(response.data);
+      getDoctors(response.data);
+    }
     const getDoctors = async (prescriptions) => {
         try{
             prescriptions.forEach(async(p) => {
@@ -36,30 +44,23 @@ const Prescriptions = (props) => {
     const getMedicines = (medicine) => {
         let medicineHtml = [];
         for(let m in medicine){
-            medicineHtml.push(<li>{m} : Dosage - {medicine[m][0]}, {medicine[m][1]} times a day</li>);
+            medicineHtml.push(<span>{m} : Dosage - {medicine[m][0]}, {medicine[m][1]} times a day</span>);
         }
         return medicineHtml;
     }
 
-    const [doctors, setDoctors] = useState({});
-    const [hasError, setHasError] = useState(false);
-    const [error, setError] = useState('');
-
   return (
     <div>
       {hasError && <div className="error">{error}</div>}
-        {props.patientData.prescriptions && <p>No prescriptions</p>}
-        {props.patientData.prescriptions.map(prescription => {
+        {prescriptions.length === 0 && <p>No prescriptions</p>}
+        {prescriptions && prescriptions.map(prescription => {
            return doctors && <div>
+            <br/>
             <ul>
                     <li>Doctor - {doctors[prescription.doctorId]}</li>
                     <li>Disease - {prescription.disease}</li>
-                    <li>Medicines - 
-                        <ul>
-                        {getMedicines(prescription.medicine) }
-                        </ul>
-                    </li>
-                    <li>Documents - {prescription.documents? <a download="mydoc.jpg" href={`${prescription.documents}`}>Download Document</a>
+                    <li>Medicines - {getMedicines(prescription.medicine) }</li>
+                    <li>Documents - {prescription.prescriptionDocument? <a download="mydoc.jpg" href={`${prescription.prescriptionDocument}`}>Download Document</a>
                         :
                         <span>No Document</span>}</li>
                     <li>Suggestions - {prescription.doctorSuggestion}</li>
