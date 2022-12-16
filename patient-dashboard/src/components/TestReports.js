@@ -1,28 +1,46 @@
 import { api } from '../api';
-import React, { useEffect, useState } from 'react';
-import {helper} from '../helper';
+import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-
-import arrow from "../assets/images/arrow.svg";
 import { isValidTestReports } from '../helper/common';
 
 const TestReports = (props) => {
     const [testReports, setTestReports] = useState(props.patientData.testReports);
-    const [testReportsId,setTestReportsId] = useState('');
     const [hasError, setHasError] = useState(false);
+    const [hasSuccessMessage, setHasSuccessMessage] = useState(false);
     const [error, setError] = useState('');
     const [inputTestReport,setInputTestReport] = useState(false);
     const navigate = useNavigate();
 
+    const getBase64 = async(newTestReports, field, file) => {
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            newTestReports[field[1]]['document'] = reader.result;
+            setTestReports(newTestReports);
+        };
+    };
+
     const handleInputChange = (e) => {
+        if(hasSuccessMessage)
+            setHasSuccessMessage(false);
+        if(hasError)
+            setError(false);
         let field = e.target.id.split('-');
         let newTestReports = [...testReports]
         if(field[2] === 'testName')
             newTestReports[field[1]]['testName']=e.target.value;
         else if(field[2] === 'document')
-        newTestReports[field[1]]['document']=e.target.value;
+        {
+            if(e.target.files[0].size > 12097152){
+                alert("huge file");
+            }else
+            {
+                getBase64(newTestReports,field,e.target.files[0]);
+            }
+            return;
+        }
         else if(field[2] === 'testDate')
-        newTestReports[field[1]]['testDate']=e.target.value;
+            newTestReports[field[1]]['testDate']=e.target.value;
 
         setTestReports(newTestReports);
     }
@@ -52,6 +70,7 @@ const TestReports = (props) => {
         setInputTestReport(!inputTestReport);
         if(!inputTestReport){
             let testReportForm = {
+            "testReportId": "new",
             'testName':'',
             'document':'',
             'testDate':''
@@ -77,7 +96,7 @@ const TestReports = (props) => {
             setError(e.message);
             return;
         }
-        if(inputTestReport){
+        if(inputTestReport && e.target.id==="new"){
             try{
                 let data=newTestReports[0];
                 
@@ -89,6 +108,7 @@ const TestReports = (props) => {
                 setTestReports(response.data.testReports)
                 setInputTestReport(false);
                 setHasError(false);
+                setHasSuccessMessage(true);
             }catch(e){
               if(e.response.status===500)
                 navigate("/error");
@@ -105,15 +125,16 @@ const TestReports = (props) => {
         else
         {
             try{
-            let data={};
-            for(let m of newTestReports){
-                if(m['testReportId']==e.target.id) data = m;
-            }
-            const response = await api.profile.patchTestReports(props.patientData._id,data,e.target.id);
-            //console.log(response);
-            props.handleChange(response.data);
-            setTestReports(response.data.testReports)
+                let data={};
+                for(let m of newTestReports){
+                    if(m['testReportId']==e.target.id) data = m;
+                }
+                const response = await api.profile.patchTestReports(props.patientData._id,data,e.target.id);
+                //console.log(response);
+                props.handleChange(response.data);
+                setTestReports(response.data.testReports)
                 setHasError(false);
+                setHasSuccessMessage(true);
             }catch(e){
               if(e.response.status===500)
                 navigate("/error");
@@ -128,22 +149,41 @@ const TestReports = (props) => {
             }
         }
     }
+    const getDocument = (index) =>
+    {
+        if(inputTestReport && index!==0)
+        {
+            if(props.patientData.testReports[index-1]['document'])
+                return <a download="mydoc.jpg" href={`${props.patientData.testReports[index-1]['document']}`}>Download Document</a>
+            else
+                return <span>No Document</span>
+        }else if(!inputTestReport)
+        {
+            if(props.patientData.testReports[index]['document'])
+            return <a download="mydoc.jpg" href={`${props.patientData.testReports[index]['document']}`}>Download Document</a>
+        else
+            return <span>No Document</span>
+        }
+    }
   return (
     <div>
+        {hasSuccessMessage && <div className='successMessage'>Successfully updated/created</div>}
         {hasError && <div className="error">{error}</div>}
         {!inputTestReport && <button onClick={addTestReport}>Add Test report</button>}
         {inputTestReport && <button onClick={addTestReport}>Cancel</button>}
         {testReports && testReports.map((test,index) => {
             return testReports && 
             <form onSubmit={validateSignUp} id={test.testReportId}>
+                <br/>
                 <div>
                     <div>
                         <label htmlFor={test.testReportId+'-'+index+'-testName'}>Test Name</label>
                         <input placeholder="Test Name" id={test.testReportId+'-'+index+'-testName'} value={testReports[index]['testName']} onChange={handleInputChange} type="text" className="testName"/>
                     </div>
                     <div>
-                        <label htmlFor={test.testReportId+'-'+index+'-document'}>Document</label>
-                        <input placeholder="Document" id={test.testReportId+'-'+index+'-document'} value={(testReports[index]['document'])} onChange={handleInputChange} type="text" className="document"/>
+                        <label htmlFor={test.testReportId+'-'+index+'-document'}>Document : </label>
+                        {getDocument(index)}
+                        <input type="file" id={test.testReportId+'-'+index+'-document'} onChange={handleInputChange} className="document"/>
                     </div>
                     <div>
                         <label htmlFor={test.testReportId+'-'+index+'-testDate'}>Test Date</label>

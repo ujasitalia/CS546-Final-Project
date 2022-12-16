@@ -5,13 +5,17 @@ import { isValidMedicalHistory } from '../helper/common';
 
 const MedicalHistory = (props) => {
     const [medicalHistory, setMedicalHistory] = useState(props.patientData.medicalHistory);
-    const [medicalHistoryId,setMedicalHistoryId] = useState('');
     const [hasError, setHasError] = useState(false);
+    const [hasSuccessMessage, setHasSuccessMessage] = useState(false);
     const [error, setError] = useState('');
     const [inputMedicalHistory,setInputMedicalHistory] = useState(false);
     const navigate = useNavigate();
     
     const handleInputChange = (e) => {
+        if(hasSuccessMessage)
+            setHasSuccessMessage(false);
+        if(hasError)
+            setError(false);
         let field = e.target.id.split('-');
         let newMedicalHistory = [...medicalHistory]
         if(field[2] == 'disease')
@@ -85,6 +89,7 @@ const MedicalHistory = (props) => {
                 props.handleChange(response.data);
                 setMedicalHistory(response.data.medicalHistory)
                 setHasError(false);
+                setHasSuccessMessage(true);
                 setInputMedicalHistory(false);
             }catch(e){
               if(e.response.status===500)
@@ -112,6 +117,7 @@ const MedicalHistory = (props) => {
                 
                 // props.handleChange(response.data);
                 setHasError(false);
+                setHasSuccessMessage(true);
                 setInputMedicalHistory(false);
            }catch(e){
                 if(e.response.status===500)
@@ -130,6 +136,7 @@ const MedicalHistory = (props) => {
   return (
     <div>
         {hasError && <div className="error">{error}</div>}
+        {hasSuccessMessage && <div className='successMessage'>Successfully updated/created</div>}
         {!inputMedicalHistory && <button onClick={addMedicalHistory}>Add Medical history</button>}
         {inputMedicalHistory && <button onClick={addMedicalHistory}>Cancel</button>}
         {medicalHistory && medicalHistory.map((disease,index) => {

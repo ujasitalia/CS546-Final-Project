@@ -188,9 +188,8 @@ const updateTestReport = async (patientId,testReportId,testName, testDate, docum
     if(testReportsInDb[i].testReportId==testReportId) {
       testReportsInDb[i].testName=testName;
       testReportsInDb[i].document=document;
-      testReportsInDb[i].testDate=testDate;
+      testReportsInDb[i].testDate=testDate.toISOString().split('T')[0];
     }
-  
   }
   patientInDb.testReports=testReportsInDb;
   const updatedInfo = await patientCollection.updateOne(

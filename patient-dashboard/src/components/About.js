@@ -7,22 +7,50 @@ const About = (props) => {
     const [fullName, setName] = useState('');
     const [age, setAge] = useState('');
     const [zip, setZip] = useState('');
+    const [profilePicture, setProfilePicture] = useState('');
     const [hasError, setHasError] = useState(false);
+    const [hasSuccessMessage, setHasSuccessMessage] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
     
+    const getBase64 = async(file) => {
+
+        let baseURL = "";
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          baseURL = reader.result;
+          setProfilePicture(baseURL);
+        };
+    };
+
     const handleInputChange = (e) => {
+        if(hasSuccessMessage)
+            setHasSuccessMessage(false);
+        if(hasError)
+            setError(false);
         if(e.target.id === 'aboutAge')
             setAge(e.target.value);
         else if(e.target.id === 'aboutName')
             setName(e.target.value);
         else if(e.target.id === 'aboutZip')
             setZip(e.target.value);
+        else if(e.target.id === 'updatedProfileImage')
+        {
+            if(e.target.files[0].size > 12097152){
+                alert("huge file");
+            }else
+            {
+                getBase64(e.target.files[0]);
+            }
+        }
     }
+
     useEffect(()=> {
         if(!fullName){
             setName(props.patientData.name);
             //console.log(fullName)
+            setProfilePicture(props.patientData.profilePicture)
             setAge(props.patientData.age);
             setZip(props.patientData.zip);
         }
@@ -41,11 +69,14 @@ const About = (props) => {
         }
         
         try{
-            const data = { "age":helper.common.isValidAge(age), "name": fullName, "zip":zip,"profilePicture":"nopic"}
+            const data = { "age":helper.common.isValidAge(age), "name": helper.common.isValidName(fullName), "zip":helper.common.isValidZip(zip)}
+            if(profilePicture!='')
+                data["profilePicture"] = profilePicture
             const response = await api.profile.patch(props.patientData._id,data);
             console.log(response);
             props.handleChange(response.data);
             setHasError(false);
+            setHasSuccessMessage(true);
         }catch(e){
           if(e.response.status===500)
             navigate("/error");
@@ -61,8 +92,15 @@ const About = (props) => {
     }
   return (
     <div>
-        
+        {hasError && <div className="error">{error}</div>}
+        {hasSuccessMessage && <div className='successMessage'>Successfully updated</div>}
        <form onSubmit={validateSignUp}>
+            <label className="profileInputText" htmlFor="profileImage"> Profile Image : </label> 
+                    {props.patientData.profilePicture ? <><img style={{height: "100px"}} id="profileImage" src={`${props.patientData.profilePicture}`} alt=""/>
+                    <a download="myImage.gif" href={`${props.patientData.profilePicture}`}>Download Profile</a></>
+                    :
+                    <span>No Profile</span>}
+                <input type="file" id='updatedProfileImage' onChange={handleInputChange} />
             <div className="emailText">
                 <label for='aboutName'>Name</label>
                 <input placeholder="Patrik Hill" id="aboutName" value={fullName} onChange={handleInputChange} type="text" className="loginInput" autoFocus/>
@@ -79,7 +117,6 @@ const About = (props) => {
             </div>
             <br/>
             <button type="submit" className="loginButton">Submit</button>
-            {hasError && <div className="error">{error}</div>}
         </form>
     </div>
   )

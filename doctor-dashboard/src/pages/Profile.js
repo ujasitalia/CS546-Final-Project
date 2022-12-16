@@ -14,6 +14,7 @@ const Profile = () => {
     const [profilePicture, setProfilePicture] = useState('');
     const [hasError, setHasError] = useState(false);
     const [error, setError] = useState('');
+    const [hasSuccessMessage, setHasSuccessMessage] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -61,13 +62,17 @@ const Profile = () => {
       };
 
     const handleInputChange = async(e) => {
+        if(hasSuccessMessage)
+            setHasSuccessMessage(false);
+        if(hasError)
+            setError(false);
         if(e.target.id === 'profileName')
             setName(e.target.value);
         else if(e.target.id === 'profileZip')
             setZip(e.target.value);
         else if(e.target.id === 'profileClinicAddress')
             setClinicAddress(e.target.value)
-        else if(e.target.id = 'updatedProfileImage')
+        else if(e.target.id === 'updatedProfileImage')
         {
             if(e.target.files[0].size > 12097152){
                 alert("huge file");
@@ -93,10 +98,13 @@ const Profile = () => {
         try{
             if(profilePicture!==data.doctor.profileImage || fullName!==data.doctor.name || zip!==data.doctor.zip || clinicAddress!==data.doctor.clinicAddress)
             {
-                const doctorData = {"name":fullName, "zip":zip, clinicAddress: clinicAddress, profilePicture:profilePicture}
+                const doctorData = {"name":fullName, "zip":zip, clinicAddress: clinicAddress}
+                if(profilePicture!='')
+                    doctorData["profilePicture"] = profilePicture
                 const response = await api.doctor.updateDoctor(data.doctor._id ,doctorData);
                 setData({doctor : response.data});
                 setHasError(false);
+                setHasSuccessMessage(true);
             }
         }catch(e){
           if(e.response.status===500)
@@ -116,14 +124,17 @@ const Profile = () => {
     <div>
         
         {data && <components.Navbar doctorId={data.doctor._id}/>}
+        {hasSuccessMessage && <div className='successMessage'>Successfully updated</div>}
         {hasError && <div className="error">{error}</div>}
         {data && <div  className='container'>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet"></link>
             <form onSubmit={validateSignUp}>
                 <div className="profileInputField">
                     <label className="profileInputText" htmlFor="profileImage"> Profile Image : </label> 
-                    <img style={{height: "100px"}} id="profileImage" src={`${data.doctor.profilePicture}`} alt=""/>
-                    <a download="myImage.gif" href={`${data.doctor.profilePicture}`}>Download Profile</a>
+                    {data.doctor.profilePicture ? <><img style={{height: "100px"}} id="profileImage" src={`${data.doctor.profilePicture}`} alt=""/>
+                    <a download="myImage.gif" href={`${data.doctor.profilePicture}`}>Download Profile</a></>
+                    :
+                    <span>No Profile</span>}
                     <input type="file" id='updatedProfileImage' onChange={handleInputChange} />
                 </div>
                 <br/>

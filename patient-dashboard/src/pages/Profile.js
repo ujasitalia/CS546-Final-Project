@@ -36,38 +36,11 @@ const Profile = () => {
     const [hasError, setHasError] = useState(false);
     const [error, setError] = useState('');
     const [patientData, setPatientData] = useState('');
-    const [aboutTab, setAboutTab] = useState(true);
-    const [prescriptionsTab, setPrescriptionsTab] = useState(false);
-    const [medicalHistoryTab, setMedicalHistoryTab] = useState(false);
-    const [testReportsTab, setTestReportsTab] = useState(false);
+    const [tab, setTab] = useState('about');
     const navigate = useNavigate();
-    const aboutTabClick = async (e) =>{
-        setAboutTab(true);
-        setMedicalHistoryTab(false);
-        setPrescriptionsTab(false);
-        setTestReportsTab(false);
-        return
-    }
-    const medicalHistoryTabClick = async (e) =>{
-        setAboutTab(false);
-        setMedicalHistoryTab(true);
-        setPrescriptionsTab(false);
-        setTestReportsTab(false);
-        return
-    }
-    const prescriptionsTabClick = async (e) =>{
-        setAboutTab(false);
-        setMedicalHistoryTab(false);
-        setPrescriptionsTab(true);
-        setTestReportsTab(false);
-        return
-    }
-    const testReportsTabClick = async (e) =>{
-        setAboutTab(false);
-        setMedicalHistoryTab(false);
-        setPrescriptionsTab(false);
-        setTestReportsTab(true);
-        return
+
+    const handleTabChange = (e) => {
+      setTab(e.target.id); 
     }
 
     const handlePatientData = (aboutData) => {
@@ -78,23 +51,22 @@ const Profile = () => {
         <components.Navbar/>
         <components.SecondaryNavbar/>
         {hasError && <div className="error">{error}</div>}
-        <div className="blueContainer">
-                    <img src=".dgkjs" className="loginLogo" loading="lazy" alt="logo" />
-                    <div className="loginHeading">Patient Profile</div>
-                    <br></br>
-        </div>
-        
-        <ul>
-            <li onClick={aboutTabClick}>About</li>
-            <li onClick={prescriptionsTabClick}>Prescriptions</li>
-            <li onClick={medicalHistoryTabClick}>Medical history</li>
-            <li onClick={testReportsTabClick}>Test Reports</li>
-        </ul>
-        
-        <div> {patientData && aboutTab && <components.About patientData={patientData} handleChange={handlePatientData}/> }</div>
-        <div> {patientData && prescriptionsTab && <components.Prescriptions patientData={patientData} handleChange={handlePatientData}/> }</div>
-        <div> {patientData && medicalHistoryTab && <components.MedicalHistory patientData={patientData} handleChange={handlePatientData}/> }</div>
-        <div> {patientData && testReportsTab && <components.TestReports patientData={patientData} handleChange={handlePatientData}/> }</div>        
+        <nav>
+          <div className="nav-center">
+            <div className="links-container">
+              <ul className="links">
+                  <li id="about" onClick={handleTabChange}>About</li>
+                  <li id="prescriptions" onClick={handleTabChange}>Prescriptions</li>
+                  <li id="medicalHistory" onClick={handleTabChange}>Medical history</li>
+                  <li id="testReports" onClick={handleTabChange}>Test Reports</li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div> {patientData && tab==='about' && <components.About patientData={patientData} handleChange={handlePatientData}/> }</div>
+        <div> {patientData && tab==='prescriptions' && <components.Prescriptions patientData={patientData} handleChange={handlePatientData}/> }</div>
+        <div> {patientData && tab==="medicalHistory" && <components.MedicalHistory patientData={patientData} handleChange={handlePatientData}/> }</div>
+        <div> {patientData && tab==="testReports" && <components.TestReports patientData={patientData} handleChange={handlePatientData}/> }</div>        
     </div>
   )
 }

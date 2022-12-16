@@ -59,7 +59,9 @@ const Prescriptions = (props) => {
                         {getMedicines(prescription.medicine) }
                         </ul>
                     </li>
-                    <li>Documents - {prescription.documents}</li>
+                    <li>Documents - {prescription.documents? <a download="mydoc.jpg" href={`${prescription.documents}`}>Download Document</a>
+                        :
+                        <span>No Document</span>}</li>
                     <li>Suggestions - {prescription.doctorSuggestion}</li>
                 </ul>
             </div> 
