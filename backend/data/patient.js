@@ -185,10 +185,13 @@ const updateTestReport = async (patientId,testReportId,testName, testDate, testD
 
   let testReportsInDb = patientInDb.testReports;
   //let newMedicalHistory = [];
+  const documentCollection = await documentCol();
   for(let i=0;i<testReportsInDb.length;i++){
     if(testReportsInDb[i].testReportId==testReportId) {
+      await documentCollection.updateOne(
+        {_id:ObjectId(testReportsInDb[i].testDocument)}, 
+          {$set: {document:testDocument}});
       testReportsInDb[i].testName=testName;
-      testReportsInDb[i].testDocument=testDocument;
       testReportsInDb[i].testDate=testDate.toISOString().split('T')[0];
     }
   }
@@ -200,8 +203,8 @@ const updateTestReport = async (patientId,testReportId,testName, testDate, testD
 
   if (updatedInfo.modifiedCount === 0) throw "No changes made to the Test Report";
 
-  const updatedPatient = await getPatientById(patientId);
-  return updatedPatient;
+  const updatedTestReports = await getTestReport(patientId);
+  return updatedTestReports;
   
 };
 
@@ -231,19 +234,27 @@ const addTestReport = async (patientId, testName, testDocument, testDate) => {
   const patientCollection = await patients();
   let patientInDb = await getPatientById(patientId);
   if(!patientInDb) throw {status: "404", error: `No patient with that ID`};
-  let newTestReports = {testReportId: new ObjectId(), testName,testDocument,testDate};
 
+  const documentCollection = await documentCol();
+  const document = await documentCollection.insertOne({document:testDocument});
+  let newTestReports = {testReportId: new ObjectId(), testName,testDocument:document.insertedId.toString(),testDate};
   const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{testReports: newTestReports}});
 
   if (updatePatient.modifiedCount === 0) throw "Error: No changes made to test reports";
 
-  const updatedPatient = await getPatientById(patientId);
-  return updatedPatient;
+  const updatedTestReports = await getTestReport(patientId);
+  return updatedTestReports;
 };
 
 const getTestReport = async(id) => {
   id = commonHelper.isValidId(id);
   const patient = await getPatientById(id);
+  documentCollection = await documentCol()
+  for(let i=0;i<patient.testReports.length;i++)
+  {
+    const document = await documentCollection.findOne({_id:ObjectId(patient.testReports[i].testDocument)});
+    patient.testReports[i].testDocument = document.document
+  }
  return patient.testReports;
 };
 

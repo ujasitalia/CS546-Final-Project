@@ -2,6 +2,7 @@ import React, { useState , useEffect} from "react"
 import { api } from "../api";
 import { isValidPrescription } from "../helper/common";
 import '../assets/css/profile.css'
+import { useNavigate } from "react-router-dom";
 
 const Prescriptions = (props) => {
   const [prescriptions, setPrescriptions] = useState('');
@@ -11,6 +12,7 @@ const Prescriptions = (props) => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [inputPrescription,setInputPrescription] = useState(false);
+  const navigate = useNavigate();
 
   const addPrescriptionForm = async () => {
 
@@ -45,9 +47,13 @@ const Prescriptions = (props) => {
 };
 
   const handleInputChange = (e) => {
+    if(hasSuccess)
+      setHasSuccess(false);
+    if(hasError)
+      setError(false);
     let field = e.target.id.split('-');
     let newPrescription = [...prescriptions]
-    if(field[2] == 'disease')
+    if(field[2] === 'disease')
         newPrescription[field[1]]['disease']=e.target.value;
     else if(field[2] === 'doctorSuggestion')
         newPrescription[field[1]]['doctorSuggestion']=e.target.value;
@@ -80,21 +86,35 @@ const Prescriptions = (props) => {
 
   useEffect(() =>{
     const getPrecriptions = async()=>{
-      let response = await api.doctor.getPatientPrescriptions(JSON.parse(localStorage.getItem('id')), props.patientId);
-      let pres = [];
-      response.data.forEach(element => {
-        if(element.doctorId === JSON.parse(localStorage.getItem('id')))
-          pres.push(element);
-      });
-      pres.map(p => {
-        let keys = Object.keys(p['medicine']);
-        let value = p['medicine'][keys[0]];
-        p['medicine']=keys[0];
-        p['strength']=value[0];
-        p['dosage']=value[1];
-      })
-      setPrescriptions(pres);
-      setOldPrescriptions(pres);
+      try{
+        let response = await api.doctor.getPatientPrescriptions(JSON.parse(localStorage.getItem('id')), props.patientId);
+        let pres = [];
+        response.data.forEach(element => {
+          if(element.doctorId === JSON.parse(localStorage.getItem('id')))
+            pres.push(element);
+        });
+        pres.map(p => {
+          let keys = Object.keys(p['medicine']);
+          let value = p['medicine'][keys[0]];
+          p['medicine']=keys[0];
+          p['strength']=value[0];
+          p['dosage']=value[1];
+        })
+        setPrescriptions(pres);
+        setOldPrescriptions(pres);
+        setHasError(false);
+      }catch(e){
+        if(e.response.status===500)
+          navigate("/error");
+        else if(e.response.status===401 )
+        {
+          localStorage.clear();
+          navigate("/login");
+        }else{
+          setHasError(true);
+          setError(e.response.data);
+        }
+      }
     };
     if(prescriptions==='')
       getPrecriptions();
@@ -107,13 +127,14 @@ const Prescriptions = (props) => {
     {
       newPrescription = [...isValidPrescription(prescriptions)];
       setPrescriptions(newPrescription);
+      setError(false);
     }catch(e){
       setHasError(true);
       setError(e.message);
       setHasSuccess(false);
       return;
     }
-    if(inputPrescription && e.target.id=='temp'){
+    if(inputPrescription && e.target.id==='temp'){
         try{
             let data={...newPrescription[0]};
             //newPrescription=data;
@@ -139,19 +160,25 @@ const Prescriptions = (props) => {
             setSuccessMessage('Prescription added successfully')
             setHasError(false);
             setInputPrescription(false);
-        }catch(e){
-            setHasError(true);
-            setHasSuccess(false);
-            setError(e.response.data);
-            return;
-        }
+          }catch(e){
+            if(e.response.status===500)
+              navigate("/error");
+            else if(e.response.status===401 )
+            {
+              localStorage.clear();
+              navigate("/login");
+            }else{
+              setHasError(true);
+              setError(e.response.data);
+            }
+          }
     }
     else{
 
         try{
             let data={};
             for(let m of newPrescription){
-                if(m['prescriptionId']==e.target.id) data = {...m};
+                if(m['prescriptionId']===e.target.id) data = {...m};
             }
             let medicineObject = {};
             medicineObject[data['medicine']]=[];
@@ -175,12 +202,18 @@ const Prescriptions = (props) => {
             setSuccessMessage('Prescription updated successfully')
             setHasError(false);
             setInputPrescription(false);
-        }catch(e){
-            setHasError(true);
-            setHasSuccess(false);
-            setError(e.response.data);
-            return;
-        }
+          }catch(e){
+            if(e.response.status===500)
+              navigate("/error");
+            else if(e.response.status===401 )
+            {
+              localStorage.clear();
+              navigate("/login");
+            }else{
+              setHasError(true);
+              setError(e.response.data);
+            }
+          }
     }
 }
 const getDocument = (index) =>

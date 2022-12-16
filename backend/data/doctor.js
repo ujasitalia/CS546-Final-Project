@@ -213,15 +213,14 @@ const getAllDoctor = async () => {
     const documentCollection = await documentCol();
     for(let i=0;i<prescriptionInDb.length;i++){
       if(prescriptionInDb[i].prescriptionId==prescriptionId) {
-        const document = await documentCollection.insertOne({document:prescriptionDocument});
-        const del = await documentCollection.deleteOne({_id:ObjectId(prescriptionInDb[i].prescriptionDocument)});
+        await documentCollection.updateOne(
+          {_id:ObjectId(prescriptionInDb[i].prescriptionDocument)}, 
+            {$set: {document:prescriptionDocument}});
         prescriptionInDb[i].disease=disease;
         prescriptionInDb[i].medicine=medicine;
-        prescriptionInDb[i].prescriptionDocument=document.insertedId.toString();
         prescriptionInDb[i].doctorSuggestion=doctorSuggestion;
         break;
       }
-    
     }
     patientInDb.prescriptions=prescriptionInDb;
     const updatedInfo = await patientCollection.updateOne(

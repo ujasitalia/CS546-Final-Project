@@ -1,15 +1,27 @@
 import { api } from '../api';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { isValidTestReports } from '../helper/common';
 
-const TestReports = (props) => {
-    const [testReports, setTestReports] = useState(props.patientData.testReports);
+const TestReports = () => {
+    const [testReports, setTestReports] = useState('');
+    const [oldTestReports, setOldTestReports] = useState('');
     const [hasError, setHasError] = useState(false);
     const [hasSuccessMessage, setHasSuccessMessage] = useState(false);
     const [error, setError] = useState('');
     const [inputTestReport,setInputTestReport] = useState(false);
+    const patientId = JSON.parse(localStorage.getItem('id'));
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if(testReports==='') getTestReports();
+    },[])
+
+    const getTestReports = async() =>{
+        const response = await api.patient.getPatientTestReports(patientId);
+        setTestReports(response.data);
+        setOldTestReports(response.data);
+    }
 
     const getBase64 = async(newTestReports, field, file) => {
         let reader = new FileReader();
@@ -100,12 +112,9 @@ const TestReports = (props) => {
             try{
                 let data=newTestReports[0];
                 
-                const response = await api.profile.addTestReports(props.patientData._id,data);
-                //props.handleChange();
-                // console.log(response);
-                
-                props.handleChange(response.data);
-                setTestReports(response.data.testReports)
+                const response = await api.profile.addTestReports(patientId,data);
+                setTestReports(response.data)
+                setOldTestReports(response.data)
                 setInputTestReport(false);
                 setHasError(false);
                 setHasSuccessMessage(true);
@@ -129,10 +138,9 @@ const TestReports = (props) => {
                 for(let m of newTestReports){
                     if(m['testReportId']==e.target.id) data = m;
                 }
-                const response = await api.profile.patchTestReports(props.patientData._id,data,e.target.id);
-                //console.log(response);
-                props.handleChange(response.data);
-                setTestReports(response.data.testReports)
+                const response = await api.profile.patchTestReports(patientId,data,e.target.id)
+                setTestReports(response.data)
+                setOldTestReports(response.data)
                 setHasError(false);
                 setHasSuccessMessage(true);
             }catch(e){
@@ -153,14 +161,14 @@ const TestReports = (props) => {
     {
         if(inputTestReport && index!==0)
         {
-            if(props.patientData.testReports[index-1]['testDocument'])
-                return <a download="mydoc.jpg" href={`${props.patientData.testReports[index-1]['testDocument']}`}>Download Document</a>
+            if(oldTestReports[index-1]['testDocument'])
+                return <a download="mydoc.jpg" href={`${oldTestReports[index-1]['testDocument']}`}>Download Document</a>
             else
                 return <span>No Document</span>
         }else if(!inputTestReport)
         {
-            if(props.patientData.testReports[index]['testDocument'])
-            return <a download="mydoc.jpg" href={`${props.patientData.testReports[index]['testDocument']}`}>Download Document</a>
+            if(oldTestReports[index]['testDocument'])
+            return <a download="mydoc.jpg" href={`${oldTestReports[index]['testDocument']}`}>Download Document</a>
         else
             return <span>No Document</span>
         }
@@ -171,7 +179,7 @@ const TestReports = (props) => {
         {hasError && <div className="error">{error}</div>}
         {!inputTestReport && <button onClick={addTestReport}>Add Test report</button>}
         {inputTestReport && <button onClick={addTestReport}>Cancel</button>}
-        {testReports && testReports.map((test,index) => {
+        {testReports && oldTestReports && testReports.length!==0 ? testReports.map((test,index) => {
             return testReports && 
             <form onSubmit={validateSignUp} id={test.testReportId}>
                 <br/>
@@ -192,7 +200,8 @@ const TestReports = (props) => {
                     <button type="submit" className="loginButton">Submit</button>
                 </div>
             </form>
-       })}
+       })
+       :<span>No TestReports</span>}
     </div>
   )
 }

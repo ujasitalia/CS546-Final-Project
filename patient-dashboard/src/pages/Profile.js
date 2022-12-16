@@ -64,9 +64,9 @@ const Profile = () => {
           </div>
         </nav>
         <div> {patientData && tab==='about' && <components.About patientData={patientData} handleChange={handlePatientData}/> }</div>
-        <div> {patientData && tab==='prescriptions' && <components.Prescriptions patientData={patientData} handleChange={handlePatientData}/> }</div>
+        <div> {patientData && tab==='prescriptions' && <components.Prescriptions patientData={patientData}/> }</div>
         <div> {patientData && tab==="medicalHistory" && <components.MedicalHistory patientData={patientData} handleChange={handlePatientData}/> }</div>
-        <div> {patientData && tab==="testReports" && <components.TestReports patientData={patientData} handleChange={handlePatientData}/> }</div>        
+        <div> {patientData && tab==="testReports" && <components.TestReports patientData={patientData}/> }</div>        
     </div>
   )
 }

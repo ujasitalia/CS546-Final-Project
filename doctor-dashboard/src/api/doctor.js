@@ -1,4 +1,4 @@
-import {axiosAuth, axiosNoAuth} from './axios'
+import {axiosAuth} from './axios'
 
 export const updateDoctor = (id, data) => {
     return axiosAuth.patch(`/doctor/${id}`, data);
@@ -14,6 +14,10 @@ export const getDoctorSlot = (id, date) => {
 
 export const getPatientPrescriptions = (doctorId, patientId) =>{
     return axiosAuth.get(`/doctor/${doctorId}/patient/${patientId}/prescription`)
+}
+
+export const getPatientTestReports = (doctorId, patientId) =>{
+    return axiosAuth.get(`/doctor/${doctorId}/patient/${patientId}/testReport`)
 }
 
 export const addPrescription = (doctorId,patientId, data) => {

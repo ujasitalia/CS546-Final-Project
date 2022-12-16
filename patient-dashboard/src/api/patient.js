@@ -11,3 +11,7 @@ export const getPatient = (id) =>{
 export const getPatientPrescriptions = (patientId) =>{
     return axiosAuth.get(`/patient/${patientId}/prescription`)
 }
+
+export const getPatientTestReports = (patientId) =>{
+    return axiosAuth.get(`/patient/${patientId}/testReport`)
+}

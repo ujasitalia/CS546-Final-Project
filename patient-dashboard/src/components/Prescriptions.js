@@ -13,9 +13,23 @@ const Prescriptions = () => {
     },[])
 
     const getPrescriptions = async() =>{
-      const response = await api.patient.getPatientPrescriptions(JSON.parse(localStorage.getItem('id')));
-      setPrescriptions(response.data);
-      getDoctors(response.data);
+      try{
+        const response = await api.patient.getPatientPrescriptions(JSON.parse(localStorage.getItem('id')));
+        setPrescriptions(response.data);
+        getDoctors(response.data);
+        setHasError(false);
+      }catch(e){
+        if(e.response.status===500)
+          navigate("/error");
+        else if(e.response.status===401 )
+        {
+          localStorage.clear();
+          navigate("/login");
+        }else{
+          setHasError(true);
+          setError(e.response.data);
+        }
+      }
     }
     const getDoctors = async (prescriptions) => {
         try{
