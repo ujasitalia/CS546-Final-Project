@@ -9,7 +9,9 @@ const PatientInfo = () => {
     const [tab, setTab] = useState('detailTab');
     const [data, setData] = useState('');
     const navigate = useNavigate();
-
+    const updatePatientData = (data) => {
+      setData({patient : data})
+    }
     useEffect(() => {
       const fetchData = async()=>{
         try{
@@ -48,7 +50,7 @@ const PatientInfo = () => {
       </div>
     </nav>
         {data && tab === 'detailTab' && <components.PatientDetail doctor={data.patient}/>}
-        {data && tab === 'prescriptions' && <components.Prescriptions prescriptions={data.patient.prescriptions}/>}
+        {data && tab === 'prescriptions' && <components.Prescriptions prescriptions={data.patient.prescriptions} patientId={data.patient._id} handleChange={updatePatientData}/>}
         {data && tab === 'medicalHistory' && <components.MedicalHistory medicalHistory={data.patient.medicalHistory}/>} 
         {data && tab === 'testReports' && <components.TestReports testReports={data.patient.testReports}/>}
     </div>
