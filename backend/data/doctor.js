@@ -30,7 +30,6 @@ const isDoctorNpiInDb = async(npi) => {
 const createDoctor = async(
     npi,
     email,
-    profilePicture,
     name,
     speciality,
     clinicAddress,
@@ -42,7 +41,6 @@ const createDoctor = async(
     if(await isDoctorEmailInDb(email)) throw {status:400,error:'An account already exists with this email'};
     npi=helper.doctor.isValidNpi(npi);
     if(await isDoctorNpiInDb(npi)) throw {status:400,error:'An account already exists with this NPI'};
-    profilePicture = helper.common.isValidFilePath(profilePicture);
     name = helper.common.isValidName(name);
     speciality = helper.doctor.isValidSpeciality(speciality);
     clinicAddress = helper.doctor.isValidAddress(clinicAddress);
@@ -55,7 +53,7 @@ const createDoctor = async(
     const newDoctor = {
         npi,
         email,
-        profilePicture,
+        profilePicture: "",
         name,
         speciality,
         clinicAddress,

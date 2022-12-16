@@ -15,14 +15,13 @@ router
       const bodyData = req.body;
       bodyData.email=commonHelper.isValidEmail(bodyData.email);
       bodyData.age = patientHelper.isValidAge(bodyData.age);
-      bodyData.profilePicture=commonHelper.isValidFilePath(bodyData.profilePicture);
       bodyData.name=commonHelper.isValidName(bodyData.name);
       // bodyData.city=commonHelper.isValidCity(bodyData.city);
       // bodyData.state=commonHelper.isValidState(bodyData.state);
       bodyData.zip=commonHelper.isValidZip(bodyData.zip);
       bodyData.password=commonHelper.isValidPassword(bodyData.password);
       
-      let newPatient = await patientData.createPatient(bodyData.email,bodyData.age,bodyData.profilePicture,bodyData.name,bodyData.zip,bodyData.password);
+      let newPatient = await patientData.createPatient(bodyData.email,bodyData.age,bodyData.name,bodyData.zip,bodyData.password);
       if(newPatient){
         const token = jwt.sign(
           { role: "patient", email:newPatient.email , userId : newPatient._id},
