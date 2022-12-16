@@ -15,7 +15,7 @@ const TestReports = (props) => {
         let reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {
-            newTestReports[field[1]]['document'] = reader.result;
+            newTestReports[field[1]]['testDocument'] = reader.result;
             setTestReports(newTestReports);
         };
     };
@@ -29,7 +29,7 @@ const TestReports = (props) => {
         let newTestReports = [...testReports]
         if(field[2] === 'testName')
             newTestReports[field[1]]['testName']=e.target.value;
-        else if(field[2] === 'document')
+        else if(field[2] === 'testDocument')
         {
             if(e.target.files[0].size > 12097152){
                 alert("huge file");
@@ -72,7 +72,7 @@ const TestReports = (props) => {
             let testReportForm = {
             "testReportId": "new",
             'testName':'',
-            'document':'',
+            'testDocument':'',
             'testDate':''
             }
             let newTestReports = [testReportForm,...testReports];
@@ -153,14 +153,14 @@ const TestReports = (props) => {
     {
         if(inputTestReport && index!==0)
         {
-            if(props.patientData.testReports[index-1]['document'])
-                return <a download="mydoc.jpg" href={`${props.patientData.testReports[index-1]['document']}`}>Download Document</a>
+            if(props.patientData.testReports[index-1]['testDocument'])
+                return <a download="mydoc.jpg" href={`${props.patientData.testReports[index-1]['testDocument']}`}>Download Document</a>
             else
                 return <span>No Document</span>
         }else if(!inputTestReport)
         {
-            if(props.patientData.testReports[index]['document'])
-            return <a download="mydoc.jpg" href={`${props.patientData.testReports[index]['document']}`}>Download Document</a>
+            if(props.patientData.testReports[index]['testDocument'])
+            return <a download="mydoc.jpg" href={`${props.patientData.testReports[index]['testDocument']}`}>Download Document</a>
         else
             return <span>No Document</span>
         }
@@ -181,9 +181,9 @@ const TestReports = (props) => {
                         <input placeholder="Test Name" id={test.testReportId+'-'+index+'-testName'} value={testReports[index]['testName']} onChange={handleInputChange} type="text" className="testName"/>
                     </div>
                     <div>
-                        <label htmlFor={test.testReportId+'-'+index+'-document'}>Document : </label>
+                        <label htmlFor={test.testReportId+'-'+index+'-testDocument'}>Document : </label>
                         {getDocument(index)}
-                        <input type="file" id={test.testReportId+'-'+index+'-document'} onChange={handleInputChange} className="document"/>
+                        <input type="file" id={test.testReportId+'-'+index+'-testDocument'} onChange={handleInputChange} className="testDocument"/>
                     </div>
                     <div>
                         <label htmlFor={test.testReportId+'-'+index+'-testDate'}>Test Date</label>

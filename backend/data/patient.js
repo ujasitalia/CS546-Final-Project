@@ -169,13 +169,13 @@ const updateMedicalHistory = async (patientId,medicalHistoryId,disease, startDat
   
 };
 
-const updateTestReport = async (patientId,testReportId,testName, testDate, document) => {
+const updateTestReport = async (patientId,testReportId,testName, testDate, testDocument) => {
   
   patientId = commonHelper.isValidId(patientId);
   testReportId = commonHelper.isValidId(testReportId);
   testName = commonHelper.isValidString(testName);
   testDate = commonHelper.isValidPastDate(testDate);
-  document = commonHelper.isValidFilePath(document);
+  testDocument = commonHelper.isValidFilePath(testDocument);
   const patientCollection = await patients();
   let patientInDb = await getPatientById(patientId);
   if(!patientInDb) throw {status: "404", error: `No patient with that ID`};
@@ -187,7 +187,7 @@ const updateTestReport = async (patientId,testReportId,testName, testDate, docum
   for(let i=0;i<testReportsInDb.length;i++){
     if(testReportsInDb[i].testReportId==testReportId) {
       testReportsInDb[i].testName=testName;
-      testReportsInDb[i].document=document;
+      testReportsInDb[i].testDocument=testDocument;
       testReportsInDb[i].testDate=testDate.toISOString().split('T')[0];
     }
   }
@@ -212,11 +212,11 @@ const getMedicalHistory = async (id) => {
 
 };
 
-const addTestReport = async (patientId, testName, document, testDate) => {
+const addTestReport = async (patientId, testName, testDocument, testDate) => {
 
   patientId = commonHelper.isValidId(patientId);
   testName = commonHelper.isValidString(testName);
-  document = commonHelper.isValidFilePath(document);
+  testDocument = commonHelper.isValidFilePath(testDocument);
   testDate = commonHelper.isValidPastDate(testDate);
 
   //var today = new Date(testDate);
@@ -230,7 +230,7 @@ const addTestReport = async (patientId, testName, document, testDate) => {
   const patientCollection = await patients();
   let patientInDb = await getPatientById(patientId);
   if(!patientInDb) throw {status: "404", error: `No patient with that ID`};
-  let newTestReports = {testReportId: new ObjectId(), testName,document,testDate};
+  let newTestReports = {testReportId: new ObjectId(), testName,testDocument,testDate};
 
   const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{testReports: newTestReports}});
 

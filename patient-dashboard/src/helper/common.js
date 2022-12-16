@@ -28,7 +28,7 @@ export const isValidTestReports = (TestReport) => {
   {
     //isValidId(test.testReportId);
     TestReport[i]['testName']= isValidString(TestReport[i]['testName'],'Test Name');
-    TestReport[i]['document'] = isValidString(TestReport[i]['document'], 'Document');
+    TestReport[i]['testDocument'] = isValidString(TestReport[i]['testDocument'], 'testDocument');
   }
   return TestReport;
 }
