@@ -8,13 +8,26 @@ const Dashboard = () => {
     const [tab, setTab] = useState('appointmentTab');
     const [data, setData] = useState('');
     const navigate = useNavigate();
+    const [hasError, setHasError] = useState(false);
+    const [error, setError] = useState('');
+
     useEffect(() => {
       const fetchData = async()=>{
         try{
           const response = await api.doctor.getDoctor(JSON.parse(localStorage.getItem('id')));
           setData({doctor : response.data});
+          setHasError(false);
         }catch(e){
-          navigate("/error");
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 )
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
+            setHasError(true);
+            setError(e.response.data);
+          }
         }
       }
       if(!JSON.parse(localStorage.getItem('token_data')))
@@ -39,6 +52,7 @@ const Dashboard = () => {
       <div>
         {data && <components.Navbar/>}
         <div   className='container'>
+        {hasError && <div className="error">{error}</div>}
           <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" 
 integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" 
 crossorigin="anonymous"></link>

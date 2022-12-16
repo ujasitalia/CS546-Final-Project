@@ -8,7 +8,10 @@ const DoctorInfo = () => {
     const [tab, setTab] = useState('detailTab');
     const [data, setData] = useState('');
     const [canGiveReview, setCanGiveReview] = useState(false);
+    const [hasError, setHasError] = useState(false);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
+
     useEffect(() => {
       const fetchData = async()=>{
         try{
@@ -22,8 +25,18 @@ const DoctorInfo = () => {
               break;
             }
           };
+          setHasError(false);
         }catch(e){
-          navigate("/error");
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 )
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
+            setHasError(true);
+            setError(e.response.data);
+          }
         }
       }
       if(!JSON.parse(localStorage.getItem('token_data')))
@@ -56,6 +69,7 @@ const DoctorInfo = () => {
         </div>
       </div>
     </nav>
+    {hasError && <div className="error">{error}</div>}
         {data && tab === 'detailTab' && <components.DoctorDetail doctor={data.doctor}/>}
         {data && tab === 'doctorAvailabilityTab' && <components.DoctorAvailability doctorSchedule={data.doctor.schedule} appointmentDuration={data.doctor.appointmentDuration}/>}
         {data && tab === 'reviewTab' && <components.DoctorReviews doctorId={data.doctor._id}/>} 

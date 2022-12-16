@@ -10,19 +10,25 @@ const sendEmail = async(to, subject, html) => {
 }
 
 const sendAppointmentConfirmation = async(data) =>{
-  const html = `<h1> Appointment Confirmation </h1> <br/> <span> Time : </span> <span> ${data.appointment.startTime} </span> <br/> <span> Address : </span> <span> ${data.doctor.clinicAddress} </span>`;
-  await sendEmail(data.doctor.email, "Appointment Confirmation", html);
-  await sendEmail(data.patient.email, "Appointment Confirmation", html);
+  const html = `<h1> Appointment Confirmation </h1> <br/> <span> Time : </span> <span> ${data.startTime} </span> <br/> <span> Address : </span> <span> ${data.appointmentLocation} </span>`;
+  await sendEmail(data.doctorEmail, "Appointment Confirmation", html);
+  await sendEmail(data.patientEmail, "Appointment Confirmation", html);
 }
 
 const sendAppointmentUpdate = async(data) =>{
-  const html = `<h1> Appointment Confirmation </h1> <br/> <span> Time : </span> <span> ${data.appointment.startTime} </span> <br/> <span> Address : </span> <span> ${data.doctor.clinicAddress} </span>`;
-  await sendEmail(data.doctor.email, "Appointment Update", html);
-  await sendEmail(data.patient.email, "Appointment Update", html);
+  const html = `<h1> Appointment Update </h1> <br/> <span> Time : </span> <span> ${data.startTime} </span> <br/> <span> Address : </span> <span> ${data.appointmentLocation} </span>`;
+  await sendEmail(data.doctorEmail, "Appointment Update", html);
+  await sendEmail(data.patientEmail, "Appointment Update", html);
+}
+
+const sendAppointmentCancel = async(data) =>{
+  const html = `<h1> Appointment Cancel </h1> <br/> <span> Time : </span> <span> ${data.startTime} </span> <br/> <span> Address : </span> <span> ${data.appointmentLocation} </span>`;
+  await sendEmail(data.doctorEmail, "Appointment cancel", html);
+  await sendEmail(data.patientEmail, "Appointment cancel", html);
 }
 
 const sendAppointmentReminder = async(data) =>{
-  const html = `<h1> Appointment Confirmation </h1> <br/> <span> Time : </span> <span> ${data.startTime} </span> <br/> <span> Address : </span> <span> ${data.appointmentLocation} </span>`;
+  const html = `<h1> Appointment Reminder </h1> <br/> <span> Time : </span> <span> ${data.startTime} </span> <br/> <span> Address : </span> <span> ${data.appointmentLocation} </span>`;
   await sendEmail(data.doctorEmail, "Appointment Reminder", html);
   await sendEmail(data.patientEmail, "Appointment Reminder", html);
 }
@@ -30,5 +36,6 @@ const sendAppointmentReminder = async(data) =>{
 module.exports = {
   sendAppointmentConfirmation,
   sendAppointmentUpdate,
-  sendAppointmentReminder
+  sendAppointmentReminder,
+  sendAppointmentCancel
 }

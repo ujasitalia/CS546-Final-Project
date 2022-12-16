@@ -7,6 +7,9 @@ import { useNavigate } from "react-router-dom";
 const MyPatients = () => {
   const [data, setData] = useState('');
   const navigate = useNavigate();
+  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState('');
+
   useEffect(() => {
     const fetchData = async()=>{
       try{
@@ -17,8 +20,18 @@ const MyPatients = () => {
           data.push(res.data)
         }
         setData({patients : data});
+        setHasError(false);
       }catch(e){
-        navigate("/error");
+        if(e.response.status===500)
+          navigate("/error");
+        else if(e.response.status===401 )
+        {
+          localStorage.clear();
+          navigate("/login");
+        }else{
+          setHasError(true);
+          setError(e.response.data);
+        }
       }
     }
     if(!JSON.parse(localStorage.getItem('token_data')))
@@ -35,6 +48,7 @@ const MyPatients = () => {
     <div>
       {data && <components.Navbar/>}
       <br/>
+      {hasError && <div className="error">{error}</div>}
       <div>{data !== '' 
             ? <div className="doctorsContainer">
                           <div className='row g-4'>{data.patients.length !== 0 ? data.patients.map((element, index) =>

@@ -2,6 +2,7 @@ import React, { useState, useEffect} from 'react';
 import { api } from '../api';
 import arrow from "../assets/images/arrow.svg";
 import {helper} from '../helper';
+import { useNavigate } from "react-router-dom";
 
 const Availability = (props) => {
   const week = ["monday", "tuesday", "wednesday", "thursday", "friday"];
@@ -11,7 +12,8 @@ const Availability = (props) => {
   const [hasSuccessMessage, setHasSuccessMessage] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [error, setError] = useState('');
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
     if(slots)
     {
@@ -260,14 +262,16 @@ const Availability = (props) => {
       setAvaibility(response.data.schedule);
       props.handleAvailabilityChange(response.data);
     }catch(e){
-      setHasSuccessMessage(false);
-      setHasError(true);
-      console.log(typeof e);
-      if(!e.response)
-        setError("Error");
-      else
+      if(e.response.status===500)
+        navigate("/error");
+      else if(e.response.status===401 )
+      {
+        localStorage.clear();
+        navigate("/login");
+      }else{
+        setHasError(true);
         setError(e.response.data);
-      return;
+      }
     }
   }
 

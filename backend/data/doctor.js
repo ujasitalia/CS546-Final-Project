@@ -30,7 +30,6 @@ const isDoctorNpiInDb = async(npi) => {
 const createDoctor = async(
     npi,
     email,
-    profilePicture,
     name,
     speciality,
     clinicAddress,
@@ -42,7 +41,6 @@ const createDoctor = async(
     if(await isDoctorEmailInDb(email)) throw {status:400,error:'An account already exists with this email'};
     npi=helper.doctor.isValidNpi(npi);
     if(await isDoctorNpiInDb(npi)) throw {status:400,error:'An account already exists with this NPI'};
-    profilePicture = helper.common.isValidFilePath(profilePicture);
     name = helper.common.isValidName(name);
     speciality = helper.doctor.isValidSpeciality(speciality);
     clinicAddress = helper.doctor.isValidAddress(clinicAddress);
@@ -55,7 +53,7 @@ const createDoctor = async(
     const newDoctor = {
         npi,
         email,
-        profilePicture,
+        profilePicture: "",
         name,
         speciality,
         clinicAddress,
@@ -71,7 +69,7 @@ const createDoctor = async(
     const insertInfo = await doctorCollection.insertOne(newDoctor);
   
     if (!insertInfo.acknowledged || !insertInfo.insertedId)
-        throw {status: '500', error : 'Could not add doctor'};
+        throw {status: '400', error : 'Could not add doctor'};
   
     const newId = insertInfo.insertedId.toString();
     const doctor = await getDoctorById(newId);
@@ -99,7 +97,7 @@ const getAllDoctor = async () => {
     const doctorCollection = await doctorCol();
     const allDoctors = await doctorCollection.find({}, { projection: { hashedPassword: 0, schedule: 0 } }).toArray();
   
-    if (!allDoctors) throw {status: '500', error : 'Could not get all doctors'};
+    if (!allDoctors) throw {status: '400', error : 'Could not get all doctors'};
   
     for(let i=0;i<allDoctors.length;i++)
       allDoctors[i]._id = allDoctors[i]._id.toString();
@@ -235,6 +233,12 @@ const isDoctorsPatient = async(doctorId, patientId) =>{
   return doctorInDb;
 }
 
+const canPatientGiveReview = async(doctorId, patientId) =>{
+  const doctorCollection = await doctorCol();
+  const doctorInDb = await doctorCollection.findOne({_id:ObjectId(doctorId), myPatients: {$all:[[patientId, false]]}});
+  return doctorInDb;
+}
+
 const changeReviewStatus = async(doctorId, patientIds, flag) =>{
   const doctorCollection = await doctorCol();
   const doctorInDb = await doctorCollection.findOne({_id:ObjectId(doctorId)});
@@ -260,5 +264,6 @@ module.exports = {
     addMyPatient,
     checkDoctor,
     isDoctorsPatient,
-    changeReviewStatus
+    changeReviewStatus,
+    canPatientGiveReview
 };

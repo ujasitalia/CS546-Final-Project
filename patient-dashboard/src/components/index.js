@@ -5,6 +5,10 @@ import DoctorReviews from './DoctorReviews';
 import BookAppointment from './BookAppointment';
 import SecondaryNavbar from './SecondaryNavbar';
 import ReviewForm from './ReviewForm';
+import About  from './About';
+import Prescriptions  from './Prescriptions';
+import MedicalHistory  from './MedicalHistory';
+import TestReports  from './TestReports';
 
 const components = {
     Navbar,
@@ -13,6 +17,10 @@ const components = {
     DoctorReviews,
     BookAppointment,
     SecondaryNavbar,
-    ReviewForm
+    ReviewForm,
+    About,
+    Prescriptions,
+    MedicalHistory,
+    TestReports
 }
 export { components }

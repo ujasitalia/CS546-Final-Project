@@ -24,6 +24,7 @@ const HealthyHabits = () => {
     return(
     <div>
             <components.Navbar/>
+            <components.SecondaryNavbar/>
         {tab === 'healthyHabit' && <div>
             <div className="container">
                 <div className="row healthyContainer">

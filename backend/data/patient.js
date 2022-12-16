@@ -18,11 +18,10 @@ const isPatientEmailInDb = async(email) => {
     return true;
 }
   
-const createPatient = async (email,age,profilePicture,name,zip,password) => {
+const createPatient = async (email,age,name,zip,password) => {
     email=commonHelper.isValidEmail(email).toLowerCase();
     if(await isPatientEmailInDb(email)) throw {Status:"400",error:'An account already exists with this email'};
     age = patientHelper.isValidAge(age);
-    profilePicture=commonHelper.isValidFilePath(profilePicture);
     name=commonHelper.isValidName(name);
     // city=commonHelper.isValidCity(city);
     // state=commonHelper.isValidState(state);
@@ -31,7 +30,7 @@ const createPatient = async (email,age,profilePicture,name,zip,password) => {
     
     let hashedPassword = await bcryptjs.hash(password,saltRounds);
     
-    let newPatient = {email,age,profilePicture,name,zip,hashedPassword,medicalHistory:[],prescriptions:[],testReports:[]};
+    let newPatient = {email,age,profilePicture:"",name,zip,hashedPassword,medicalHistory:[],prescriptions:[],testReports:[],myDoctors:[]};
     const patientCollection = await patients(); 
     const insertInfo = await patientCollection.insertOne(newPatient);
     if (!insertInfo.acknowledged || !insertInfo.insertedId)
@@ -68,7 +67,7 @@ const updatePatient = async (body,id) => {
     {$set: body}
   );
   if (updatedInfo.modifiedCount === 0) {
-    throw 'could not update patient successfully';
+    throw {status:"400",error:'No changes made due to same data'};
   }
 
   return await getPatientById(id);
@@ -110,9 +109,9 @@ const addMedicalHistory = async (patientId,disease, startDate, endDate) => {
   if(endDate !== null){
     endDate = commonHelper.isValidPastDate(endDate)
     if(endDate < startDate) throw {status:'400', error:'Start date must be before the end date'}
-    endDate = endDate.toISOString().split('Z')[0];
+    endDate = endDate.toISOString().split('T')[0];
   }
-  startDate = startDate.toISOString().split('Z')[0];
+  startDate = startDate.toISOString().split('T')[0];
 
   //console.log(typeof startDate)
   const patientCollection = await patients();
@@ -139,9 +138,9 @@ const updateMedicalHistory = async (patientId,medicalHistoryId,disease, startDat
   if(endDate !== null){
     endDate = commonHelper.isValidPastDate(endDate)
     if(endDate < startDate) throw {status:'400', error:'Start date must be before the end date'}
-    endDate = endDate.toISOString().split('Z')[0];
+    endDate = endDate.toISOString().split('T')[0];
   }
-  startDate = startDate.toISOString().split('Z')[0];
+  startDate = startDate.toISOString().split('T')[0];
 
   const patientCollection = await patients();
   let patientInDb = await getPatientById(patientId);
@@ -170,13 +169,13 @@ const updateMedicalHistory = async (patientId,medicalHistoryId,disease, startDat
   
 };
 
-const updateTestReport = async (patientId,testReportId,testName, testDate, document) => {
+const updateTestReport = async (patientId,testReportId,testName, testDate, testDocument) => {
   
   patientId = commonHelper.isValidId(patientId);
   testReportId = commonHelper.isValidId(testReportId);
   testName = commonHelper.isValidString(testName);
   testDate = commonHelper.isValidPastDate(testDate);
-  
+  testDocument = commonHelper.isValidFilePath(testDocument);
   const patientCollection = await patients();
   let patientInDb = await getPatientById(patientId);
   if(!patientInDb) throw {status: "404", error: `No patient with that ID`};
@@ -188,10 +187,9 @@ const updateTestReport = async (patientId,testReportId,testName, testDate, docum
   for(let i=0;i<testReportsInDb.length;i++){
     if(testReportsInDb[i].testReportId==testReportId) {
       testReportsInDb[i].testName=testName;
-      testReportsInDb[i].document=document;
-      testReportsInDb[i].testDate=testDate;
+      testReportsInDb[i].testDocument=testDocument;
+      testReportsInDb[i].testDate=testDate.toISOString().split('T')[0];
     }
-  
   }
   patientInDb.testReports=testReportsInDb;
   const updatedInfo = await patientCollection.updateOne(
@@ -221,13 +219,13 @@ const addTestReport = async (patientId, testName, testDocument, testDate) => {
   testDocument = commonHelper.isValidFilePath(testDocument);
   testDate = commonHelper.isValidPastDate(testDate);
 
-  var today = new Date(testDate);
+  //var today = new Date(testDate);
   // var dd = String(today.getDate()).padStart(2, '0');
   // var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
   // var yyyy = today.getFullYear();
 
   // today = mm + '/' + dd + '/' + yyyy;
-  testDate = today.toISOString().split('Z')[0];
+  testDate = testDate.toISOString().split('T')[0];
 
   const patientCollection = await patients();
   let patientInDb = await getPatientById(patientId);

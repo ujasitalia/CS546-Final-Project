@@ -49,6 +49,7 @@ const SignUp = () => {
             setName(helper.common.isValidName(fullName));
             setZip(helper.common.isValidZip(zip));
             setClinicAddress(helper.common.isValidAddress(clinicAddress));
+            setHasError(false);
         }catch(e){
             setHasError(true);
             setError(e.message);
@@ -60,9 +61,10 @@ const SignUp = () => {
             const link = li.data;
             const data = {"email" : email, 'npi':npi, "password" : password, "speciality":speciality, "name":fullName, "zip":zip,"profilePicture":"nopic","clinicAddress":clinicAddress, "link": link}
             const response = await api.signup.post(data);
-            console.log(response);
             localStorage.setItem('token_data', JSON.stringify(response.data.token))
+            localStorage.setItem('id',JSON.stringify(response.data.doctorData._id));
             navigate("/dashboard", {doctor : response.data.doctorData});
+            setHasError(false);
         }catch(e){
             setHasError(true);
             if(!e.response) setError("Error");
@@ -77,6 +79,9 @@ const SignUp = () => {
         <div className="loginHeading">Doctor SignUp</div>
         <div className="loginText">Sign Up</div>
       </div>
+        <div id="login-wrap">
+            <p> <a href='http://localhost:3006/login'>Login</a> </p>
+        </div>
       <div className="loginCard">
         <form onSubmit={validateSignUp}>
             <div className="emailText">Enter Email</div>

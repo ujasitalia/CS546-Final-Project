@@ -106,7 +106,7 @@ export const isValidSchedule = (schedule) =>{
 export const isValidSpeciality = (speciality) =>{
   speciality = isValidString(speciality, "Speciality");
 
-  for(let i=0;i<speciality.length;i++)
+  for(let i=0;i<specialities.length;i++)
       if(speciality.toLowerCase() === specialities[i].toLowerCase())
           return specialities[i];
   throw new Error( "Invalid Speciality");

@@ -1,8 +1,9 @@
 const commonHelper = require('./common');
 
 const isValidAge = (age) => {
+    age=age.toString();
      if(!age.match(/^\d+$/) || !age || age<1 || age>120 || age%1) throw {status:"400", error:'Invalid age'};
-    return age;
+    return parseInt(age);
 }
 
 const isValidPatientUpdate = (body) => {

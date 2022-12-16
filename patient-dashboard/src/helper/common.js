@@ -1,6 +1,8 @@
+import { type } from "@testing-library/user-event/dist/type";
+
 export const isValidString = (string, parameter) => {
   if (!string)
-    throw new Error(`You must provide an ${parameter} to search for`);
+    throw new Error(`You must provide a ${parameter}`);
   if (typeof string !== "string")
     throw new Error(`${parameter} must be a string`);
   string = string.trim();
@@ -10,22 +12,25 @@ export const isValidString = (string, parameter) => {
 };
 
 export const isValidMedicalHistory = (medicalHistory) => {
-  for(let mh of medicalHistory){
+  for(let i=0;i<medicalHistory.length;i++){
     
-    isValidString(mh.disease,'disease');
+    medicalHistory[i]['disease']= isValidString(medicalHistory[i]['disease'],'disease');
+
     //isValidId(mh.medicalHistoryId);
     // isValidDate(mf.startDate);
     // isValidDate(mf.endDate);
   }
+  return medicalHistory;
 }
 
 export const isValidTestReports = (TestReport) => {
-  for(let test in TestReport)
+  for(let i=0;i<TestReport.length;i++)
   {
     //isValidId(test.testReportId);
-    isValidString(test.testName,'Test Name');
-    isValidString(test.document, 'Document');
+    TestReport[i]['testName']= isValidString(TestReport[i]['testName'],'Test Name');
+    TestReport[i]['testDocument'] = isValidString(TestReport[i]['testDocument'], 'testDocument');
   }
+  return TestReport;
 }
 
 export const isValidEmail = (email) => {
@@ -79,8 +84,9 @@ export const isValidName = (inputName) => {
 }
 
 export const isValidAge = (age) => {
-     if(!age.match(/^\d+$/) || !age || age<1 || age>120 || age%1) throw new Error('Invalid age');
-    return age;
+  age=age.toString();
+  if(!age.match(/^\d+$/) || !age || age<1 || age>120 || age%1) throw new Error('Invalid age');
+  return parseInt(age);
 }
 
 export const isValidRating = (rating) => {

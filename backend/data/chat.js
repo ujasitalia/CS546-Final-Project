@@ -58,13 +58,13 @@ const createChat = async (senderId, receiverId, message) => {
     const insertInfo = await chatCollection.insertOne(newMessage);
   
     if (!insertInfo.acknowledged || !insertInfo.insertedId)
-        throw {status: '500', error : 'Could not add chat'};
+        throw {status: '400', error : 'Could not add chat'};
     
     const newId = insertInfo.insertedId.toString();
     const chat = await chatCollection.findOne({_id: ObjectId(newId)});
 
     if (chat === null) 
-        throw {status: '500', error : 'Could not add chat'};
+        throw {status: '400', error : 'Could not add chat'};
   
     chat._id = chat._id.toString();
   

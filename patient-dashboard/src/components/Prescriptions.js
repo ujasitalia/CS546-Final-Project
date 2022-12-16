@@ -1,12 +1,10 @@
 import { api } from '../api';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {helper} from '../helper';
+import { useNavigate } from "react-router-dom";
 
-import arrow from "../assets/images/arrow.svg";
-
-
-export const Prescriptions = (props) => {
+const Prescriptions = (props) => {
+  const navigate = useNavigate();
     useEffect(() => {
         if(Object.keys(doctors).length===0) getDoctors(props.patientData.prescriptions);
     },[])
@@ -20,10 +18,18 @@ export const Prescriptions = (props) => {
                 x[doctor.data._id] = doctor.data.name
                 setDoctors({...doctors, ...x})
             })
+            setHasError(false);
         }catch(e){
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 )
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
             setHasError(true);
-            setError(e);
-            return;
+            setError(e.response.data);
+          }
         }
     }
    
@@ -41,6 +47,8 @@ export const Prescriptions = (props) => {
 
   return (
     <div>
+      {hasError && <div className="error">{error}</div>}
+        {props.patientData.prescriptions && <p>No prescriptions</p>}
         {props.patientData.prescriptions.map(prescription => {
            return doctors && <div>
             <ul>
@@ -51,13 +59,16 @@ export const Prescriptions = (props) => {
                         {getMedicines(prescription.medicine) }
                         </ul>
                     </li>
-                    <li>Documents - {prescription.documents}</li>
+                    <li>Documents - {prescription.documents? <a download="mydoc.jpg" href={`${prescription.documents}`}>Download Document</a>
+                        :
+                        <span>No Document</span>}</li>
                     <li>Suggestions - {prescription.doctorSuggestion}</li>
                 </ul>
             </div> 
             
         })}
-        {hasError && <div className="error">{error}</div>}
     </div>
   )
 }
+
+export default Prescriptions

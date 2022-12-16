@@ -11,26 +11,27 @@ import Row from 'react-bootstrap/Row';
 const BookAppointment = (props) => {
     const navigate = useNavigate();
     const [startDate, setStartDate] = useState(new Date());
-    const [hasError, setHasError] = useState(false);
+    const [notAvailable, setNotAvailable] = useState(false);
     const [availableSlots, setAvailableSlots] = useState('');
     const [slot, setSlot] = useState('')
-    const [notUpdated, setNotUpdated] = useState(false)
     const [onlineAppointment, setOnlineAppointment] = useState(false);
+    const [hasError, setHasError] = useState(false);
+    const [error, setError] = useState('');
     
     const checkDate = (startDate) => {  
     const currDate = new Date();  
     if(startDate.getDate() < currDate.getDate()){
-        setHasError(true)
+        setNotAvailable(true)
         return false;
     }
     const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const d = weekdays[startDate.getDay()].toLowerCase()
     if(!Object.keys(props.doctor.schedule).includes(d)){
-        setHasError(true)
+        setNotAvailable(true)
         return false;
     }
     else{
-        setHasError(false)
+        setNotAvailable(false)
         return true;
     }    
   }
@@ -39,14 +40,28 @@ const BookAppointment = (props) => {
         e.preventDefault();
         if(!checkDate(startDate))
             return;
-        const response = await api.doctor.getDoctorSlot(props.doctor._id, startDate.toLocaleDateString());
-        const slots = response.data.filter(element =>{
-            let time = element[0].split(":")
-            let curTime = new Date();
-            if((startDate.getDate() !== curTime.getDate()) || (parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes())))
-                return element;
-            })
-        setAvailableSlots(slots);
+        try{
+            const response = await api.doctor.getDoctorSlot(props.doctor._id, startDate.toLocaleDateString());
+            const slots = response.data.filter(element =>{
+                let time = element[0].split(":")
+                let curTime = new Date();
+                if((startDate.getDate() !== curTime.getDate()) || (parseInt(time[0])>curTime.getHours() || (parseInt(time[0])===curTime.getHours() && parseInt(time[1])>curTime.getMinutes())))
+                    return element;
+                })
+            setAvailableSlots(slots);
+            setHasError(false);
+        }catch(e){
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 )
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
+            setHasError(true);
+            setError(e.response.data);
+          }
+        }
     };
 
     const getTime = (slot) => {
@@ -68,14 +83,20 @@ const BookAppointment = (props) => {
         loc = props.doctor.clinicAddress
     }
     const newAppointment = {doctorId: props.doctor._id, patientId: JSON.parse(localStorage.getItem('id')),  startTime: temp, appointmentLocation: loc}
-    const udA = await api.appointment.createAppointment(newAppointment)
-    // console.log(udA.data);
-    if(udA.data === 'Could not add appointment'){
-        setNotUpdated(true);
-    }
-    else{
-        setNotUpdated(false)
+    try{
+        const udA = await api.appointment.createAppointment(newAppointment)
         navigate("/dashboard");
+    }catch(e){
+        if(e.response.status===500)
+        navigate("/error");
+        else if(e.response.status===401 )
+        {
+        localStorage.clear();
+        navigate("/login");
+        }else{
+        setHasError(true);
+        setError(e.response.data);
+        }
     }
   }
 
@@ -96,6 +117,7 @@ const BookAppointment = (props) => {
         <br/>
         <p>Appointment Duration : {props.doctor.appointmentDuration}</p>
         <br />
+        {hasError && <div className="error">{error}</div>}
         <h4>Pick a date for your appointment</h4>
         <Form onSubmit={handleForm}>
             <DatePicker selected={startDate} onChange={(date:Date) => setStartDate(date)} />
@@ -103,7 +125,7 @@ const BookAppointment = (props) => {
                 Get Slots
             </Button>
         </Form>
-           {hasError ? (
+           {notAvailable ? (
             <p>Doctor is unavailable that day</p>
              ):(
                 
@@ -148,11 +170,6 @@ const BookAppointment = (props) => {
                 )}
             </>
             )}
-        {notUpdated ? 
-            (
-                <p>Appointment could not be added. Please try again at a later stage.</p>
-            ) : ( <></> )
-        }
     </div>
   )
 }

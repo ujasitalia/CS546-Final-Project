@@ -6,6 +6,8 @@ import { api } from '../api';
 const MyAppointment = () => {
     const [data, setData] = useState('');
     const [idName, setIdName] = useState({});
+    const [hasError, setHasError] = useState(false);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -20,8 +22,18 @@ const MyAppointment = () => {
             temp[doctor._id] = doctor.name
           })
           setIdName(temp);
+          setHasError(false);
         }catch(e){
-          navigate("/error");
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 )
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
+            setHasError(true);
+            setError(e.response.data);
+          }
         }
       }
       if(!JSON.parse(localStorage.getItem('token_data')))
@@ -41,7 +53,7 @@ const MyAppointment = () => {
         <br />
         <h3>Your Appointments</h3>
         <br />
-        
+        {hasError && <div className="error">{error}</div>}
         {data ? (
           <div>
             {data.appointments.length !== 0 ?data.appointments.map(ap => {

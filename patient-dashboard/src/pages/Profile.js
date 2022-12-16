@@ -1,69 +1,46 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { api } from '../api';
-import arrow from "../assets/images/arrow.svg";
-import {helper} from '../helper';
-import { About } from '../components/About';
-import { Prescriptions } from '../components/Prescriptions';
-import { MedicalHistory } from '../components/MedicalHistory';
-import { TestReports } from '../components/TestReports';
-import { axiosAuth } from '../api/axios';
+import { components } from '../components';
 
-const Profile = ({patientId}) => {
-
-    const getData = async(patientId) => {
-        try{
-            const res = await api.profile.get(patientId);
-            console.log(res)
-            setPatientData(res.data);
-        }catch(e){
-            navigate("/error");
-        }
-    }
+const Profile = () => {
     useEffect(() => {
-        if(!JSON.parse(localStorage.getItem('token_data')))
-        {
-          navigate("/login");
-        }
-        if(patientData=='') getData(patientId);
+        const fetchData = async()=>{
+            try{
+                const response = await api.profile.get(JSON.parse(localStorage.getItem('id')));
+                setPatientData(response.data);
+                setHasError(false);
+            }catch(e){
+              if(e.response.status===500)
+                navigate("/error");
+              else if(e.response.status===401 )
+              {
+                localStorage.clear();
+                navigate("/login");
+              }else{
+                setHasError(true);
+                setError(e.response.data);
+              }
+            }
+          }
+          if(!JSON.parse(localStorage.getItem('token_data')))
+          {
+            navigate("/login");
+          }
+          if(!patientData)
+          {
+            fetchData();
+          }
     },[])
 
     const [hasError, setHasError] = useState(false);
     const [error, setError] = useState('');
     const [patientData, setPatientData] = useState('');
-    const [aboutTab, setAboutTab] = useState(true);
-    const [prescriptionsTab, setPrescriptionsTab] = useState(false);
-    const [medicalHistoryTab, setMedicalHistoryTab] = useState(false);
-    const [testReportsTab, setTestReportsTab] = useState(false);
+    const [tab, setTab] = useState('about');
     const navigate = useNavigate();
-    const aboutTabClick = async (e) =>{
-        setAboutTab(true);
-        setMedicalHistoryTab(false);
-        setPrescriptionsTab(false);
-        setTestReportsTab(false);
-        return
-    }
-    const medicalHistoryTabClick = async (e) =>{
-        setAboutTab(false);
-        setMedicalHistoryTab(true);
-        setPrescriptionsTab(false);
-        setTestReportsTab(false);
-        return
-    }
-    const prescriptionsTabClick = async (e) =>{
-        setAboutTab(false);
-        setMedicalHistoryTab(false);
-        setPrescriptionsTab(true);
-        setTestReportsTab(false);
-        return
-    }
-    const testReportsTabClick = async (e) =>{
-        setAboutTab(false);
-        setMedicalHistoryTab(false);
-        setPrescriptionsTab(false);
-        setTestReportsTab(true);
-        return
+
+    const handleTabChange = (e) => {
+      setTab(e.target.id); 
     }
 
     const handlePatientData = (aboutData) => {
@@ -71,24 +48,25 @@ const Profile = ({patientId}) => {
     }
   return (
     <div>
-        <div className="blueContainer">
-                    <img src=".dgkjs" className="loginLogo" loading="lazy" alt="logo" />
-                    <div className="loginHeading">Patient Login</div>
-                    <div className="loginText">Sign In</div>
-        </div>
-        
-        <ul>
-            <li onClick={aboutTabClick}>About</li>
-            <li onClick={prescriptionsTabClick}>Prescriptions</li>
-            <li onClick={medicalHistoryTabClick}>Medical history</li>
-            <li onClick={testReportsTabClick}>Test Reports</li>
-        </ul>
-        
-        <div> {patientData && aboutTab && <About patientData={patientData} handleChange={handlePatientData}/> }</div>
-        <div> {patientData && prescriptionsTab && <Prescriptions patientData={patientData} handleChange={handlePatientData}/> }</div>
-        <div> {patientData && medicalHistoryTab && <MedicalHistory patientData={patientData} handleChange={handlePatientData}/> }</div>
-        <div> {patientData && testReportsTab && <TestReports patientData={patientData} handleChange={handlePatientData}/> }</div>        
+        <components.Navbar/>
+        <components.SecondaryNavbar/>
         {hasError && <div className="error">{error}</div>}
+        <nav>
+          <div className="nav-center">
+            <div className="links-container">
+              <ul className="links">
+                  <li id="about" onClick={handleTabChange}>About</li>
+                  <li id="prescriptions" onClick={handleTabChange}>Prescriptions</li>
+                  <li id="medicalHistory" onClick={handleTabChange}>Medical history</li>
+                  <li id="testReports" onClick={handleTabChange}>Test Reports</li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div> {patientData && tab==='about' && <components.About patientData={patientData} handleChange={handlePatientData}/> }</div>
+        <div> {patientData && tab==='prescriptions' && <components.Prescriptions patientData={patientData} handleChange={handlePatientData}/> }</div>
+        <div> {patientData && tab==="medicalHistory" && <components.MedicalHistory patientData={patientData} handleChange={handlePatientData}/> }</div>
+        <div> {patientData && tab==="testReports" && <components.TestReports patientData={patientData} handleChange={handlePatientData}/> }</div>        
     </div>
   )
 }

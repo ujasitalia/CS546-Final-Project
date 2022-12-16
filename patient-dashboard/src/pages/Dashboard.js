@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 const Dashboard = () => {    
     const [data, setData] = useState('');
     const [filteredDoctors, setFilteredDoctors] = useState('');
+    const [hasError, setHasError] = useState(false);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -15,8 +17,18 @@ const Dashboard = () => {
           const response = await api.doctor.getAllDoctor();
           setData({doctors : response.data});
           setFilteredDoctors(response.data);
+          setHasError(false);
         }catch(e){
-          navigate("/error");
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 )
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
+            setHasError(true);
+            setError(e.response.data);
+          }
         }
       }
       if(!JSON.parse(localStorage.getItem('token_data')))
@@ -46,7 +58,7 @@ const Dashboard = () => {
         filtered = filtered.filter(element => {
           if(element.name.toLowerCase().includes(keyword.toLowerCase()))
             return element;
-          else if(element.zip.includes(keyword))
+          else if(element.zip.indexOf(keyword) === 0)
             return element;
         })
       }
@@ -54,12 +66,14 @@ const Dashboard = () => {
     }
 
     return (
-        <div><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" 
+        <div>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" 
         integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" 
         crossorigin="anonymous"></link>
           <components.Navbar handleSearch={handleSearch}/>
           <components.SecondaryNavbar/>
           <div>
+          {hasError && <div className="error">{error}</div>}
           {filteredDoctors !== '' 
             ? <div className="doctorsContainer">
                           <div className='row g-4'>{filteredDoctors.length !== 0 ? filteredDoctors.map((element, index) =>

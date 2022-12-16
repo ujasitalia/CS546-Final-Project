@@ -9,6 +9,8 @@ const PatientInfo = () => {
     const [tab, setTab] = useState('detailTab');
     const [data, setData] = useState('');
     const navigate = useNavigate();
+    const [hasError, setHasError] = useState(false);
+    const [error, setError] = useState('');
     const updatePatientData = (data) => {
       setData({patient : data})
     }
@@ -17,8 +19,18 @@ const PatientInfo = () => {
         try{
           const response = await api.patient.getPatient(id);
           setData({patient : response.data});
+          setHasError(false);
         }catch(e){
-          navigate("/error");
+          if(e.response.status===500)
+            navigate("/error");
+          else if(e.response.status===401 )
+          {
+            localStorage.clear();
+            navigate("/login");
+          }else{
+            setHasError(true);
+            setError(e.response.data);
+          }
         }
       }
       if(!JSON.parse(localStorage.getItem('token_data')))
@@ -49,6 +61,7 @@ const PatientInfo = () => {
         </div>
       </div>
     </nav>
+    {hasError && <div className="error">{error}</div>}
         {data && tab === 'detailTab' && <components.PatientDetail doctor={data.patient}/>}
         {data && tab === 'prescriptions' && <components.Prescriptions prescriptions={data.patient.prescriptions} patientId={data.patient._id} handleChange={updatePatientData}/>}
         {data && tab === 'medicalHistory' && <components.MedicalHistory medicalHistory={data.patient.medicalHistory}/>} 
