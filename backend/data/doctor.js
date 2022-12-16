@@ -71,7 +71,7 @@ const createDoctor = async(
     const insertInfo = await doctorCollection.insertOne(newDoctor);
   
     if (!insertInfo.acknowledged || !insertInfo.insertedId)
-        throw {status: '500', error : 'Could not add doctor'};
+        throw {status: '400', error : 'Could not add doctor'};
   
     const newId = insertInfo.insertedId.toString();
     const doctor = await getDoctorById(newId);
@@ -99,7 +99,7 @@ const getAllDoctor = async () => {
     const doctorCollection = await doctorCol();
     const allDoctors = await doctorCollection.find({}, { projection: { hashedPassword: 0, schedule: 0 } }).toArray();
   
-    if (!allDoctors) throw {status: '500', error : 'Could not get all doctors'};
+    if (!allDoctors) throw {status: '400', error : 'Could not get all doctors'};
   
     for(let i=0;i<allDoctors.length;i++)
       allDoctors[i]._id = allDoctors[i]._id.toString();

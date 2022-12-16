@@ -34,7 +34,7 @@ reviewText = null
     const insertInfo = await reviewCollection.insertOne(newReview);
   
     if (!insertInfo.acknowledged || !insertInfo.insertedId)
-        throw {status: '500', error : 'Could not add review'};
+        throw {status: '400', error : 'Could not add review'};
   
     const newId = insertInfo.insertedId.toString();
     const reviewsArray = await reviewCollection.find({doctorId: doctorId}).toArray();

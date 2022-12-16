@@ -155,7 +155,7 @@ const deleteAppointmentById = async (id) => {
   email.sendAppointmentCancel(appointment);
   if (deletedAppointment.deletedCount === 1)
     return `Successfully deleted ${id}`;
-  else throw { status: "500", error: "Could not delete appointment" };
+  else throw { status: "400", error: "Could not delete appointment" };
 };
 
 const updateAppointmentById = async (id, data) => {
