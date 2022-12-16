@@ -21,7 +21,7 @@ const Prescriptions = (props) => {
         'medicine':'',
         'strength':'',
         'dosage':'',
-        'documents':'',
+        'prescriptionDocument':'',
         'doctorSuggestion':''
         }
         let newPrescriptions = [prescriptionForm,...prescriptions];
@@ -53,9 +53,9 @@ const Prescriptions = (props) => {
     {
       newPrescription[field[1]]['dosage']=e.target.value;
     }
-    else if(field[2] === 'documents')
+    else if(field[2] === 'prescriptionDocument')
     {
-      newPrescription[field[1]]['documents']=e.target.value;
+      newPrescription[field[1]]['prescriptionDocument']=e.target.value;
     }
     setPrescriptions(newPrescription);
     setHasError(false);
@@ -206,8 +206,8 @@ const Prescriptions = (props) => {
                         <input placeholder="X times a day" id={prescription.prescriptionId+'-'+index+'-dosage'} value={prescriptions[index]['dosage'] } onChange={handleInputChange} type="number" className="medicine" />
                     </div>
                     <div>
-                        <label htmlFor={prescription.prescriptionId+'-'+index+'-documents'}>Documents</label>
-                        <input placeholder="Document.pdf" id={prescription.prescriptionId+'-'+index+'-documents'} value={prescriptions[index]['documents'] } onChange={handleInputChange} type="text" className="medicine" />
+                        <label htmlFor={prescription.prescriptionId+'-'+index+'-prescriptionDocument'}>Prescription Document</label>
+                        <input placeholder="Document.pdf" id={prescription.prescriptionId+'-'+index+'-prescriptionDocument'} value={prescriptions[index]['prescriptionDocument'] } onChange={handleInputChange} type="text" className="medicine" />
                     </div>
                     <button type="submit" className="loginButton">Submit</button>
                 

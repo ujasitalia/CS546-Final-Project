@@ -286,10 +286,10 @@ router
 
       prescriptionData.disease=helper.common.isValidString(prescriptionData.disease);
       prescriptionData.medicine=isValidMedicine(prescriptionData.medicine);
-      prescriptionData.documents=helper.common.isValidFilePath(prescriptionData.documents);
+      prescriptionData.prescriptionDocument=helper.common.isValidFilePath(prescriptionData.prescriptionDocument);
       prescriptionData.doctorSuggestion=helper.common.isValidString(prescriptionData.doctorSuggestion);
 
-      let newPrescription = await doctorData.addPrescription(doctorId,patientId,prescriptionData.disease,prescriptionData.medicine,prescriptionData.documents,prescriptionData.doctorSuggestion);
+      let newPrescription = await doctorData.addPrescription(doctorId,patientId,prescriptionData.disease,prescriptionData.medicine,prescriptionData.prescriptionDocument,prescriptionData.doctorSuggestion);
       res.json(newPrescription);
       }catch(e){
       if(e.status)
@@ -311,15 +311,20 @@ router
       doctorId = helper.common.isValidId(req.params.doctorId);
       let patientId = req.params.patientId;
       const prescriptionData = req.body;
+      const fields = ['disease','medicine','prescriptionDocument','doctorSuggestion','doctorId','prescriptionId'];
+      for(let field in prescriptionData)
+      {
+        if(!fields.includes(field)) throw {status:'400',error:'Invalid field'}
+      }
       patientId = helper.common.isValidId(req.params.patientId);
       if(!await patientData.getPatientById(patientId)) throw {status:'400',error:'No patient with that Id'};
       
       prescriptionData.disease=helper.common.isValidString(prescriptionData.disease);
       prescriptionData.medicine=isValidMedicine(prescriptionData.medicine);
-      prescriptionData.documents=helper.common.isValidFilePath(prescriptionData.documents);
+      prescriptionData.prescriptionDocument=helper.common.isValidFilePath(prescriptionData.prescriptionDocument);
       prescriptionData.doctorSuggestion=helper.common.isValidString(prescriptionData.doctorSuggestion);
 
-      let updatedPatient = await updatePrescription(patientId,prescriptionId,prescriptionData.disease,prescriptionData.medicine,prescriptionData.documents,prescriptionData.doctorSuggestion);
+      let updatedPatient = await updatePrescription(patientId,prescriptionId,prescriptionData.disease,prescriptionData.medicine,prescriptionData.prescriptionDocument,prescriptionData.doctorSuggestion);
       // let newMedicalHistory = await patientData.updateMedicalHistory(id,diseaseData.disease,diseaseData.startDate);
       res.json(updatedPatient);
       }catch(e){
