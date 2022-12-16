@@ -170,18 +170,18 @@ const getAllDoctor = async () => {
     return temp;
   }
   
-  const addPrescription = async(doctorId,patientId,disease,medicine,documents,doctorSuggestion) => {
+  const addPrescription = async(doctorId,patientId,disease,medicine,prescriptionDocument,doctorSuggestion) => {
     patientId = commonHelper.isValidId(patientId);
     doctorId = commonHelper.isValidId(doctorId);
     disease=commonHelper.isValidString(disease);
     medicine=isValidMedicine(medicine);
-    documents=commonHelper.isValidFilePath(documents);
+    prescriptionDocument=commonHelper.isValidFilePath(prescriptionDocument);
     doctorSuggestion=commonHelper.isValidString(doctorSuggestion);
 
     const patientCollection = await patients();
     const patient = await getPatientById(patientId);
     if(!patient) throw {status: "404", error: `No patient with that ID`};
-    let newPrescription = {prescriptionId: new ObjectId(),doctorId,disease,medicine,documents,doctorSuggestion};
+    let newPrescription = {prescriptionId: new ObjectId(),doctorId,disease,medicine,prescriptionDocument,doctorSuggestion};
 
     const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{prescriptions: newPrescription}});
 
@@ -191,14 +191,14 @@ const getAllDoctor = async () => {
     return updatedPatient;
   }
 
-  const updatePrescription = async (patientId,prescriptionId,disease,medicine,documents,doctorSuggestion) => {
+  const updatePrescription = async (patientId,prescriptionId,disease,medicine,prescriptionDocument,doctorSuggestion) => {
     
     patientId = commonHelper.isValidId(patientId);
     //doctorId = commonHelper.isValidId(doctorId);
     prescriptionId = commonHelper.isValidId(prescriptionId);
     disease=commonHelper.isValidString(disease);
     medicine=isValidMedicine(medicine);
-    documents=commonHelper.isValidFilePath(documents);
+    prescriptionDocument=commonHelper.isValidFilePath(prescriptionDocument);
     doctorSuggestion=commonHelper.isValidString(doctorSuggestion);
 
     let patientInDb = await getPatientById(patientId);
@@ -211,7 +211,7 @@ const getAllDoctor = async () => {
       if(prescriptionInDb[i].prescriptionId==prescriptionId) {
         prescriptionInDb[i].disease=disease;
         prescriptionInDb[i].medicine=medicine;
-        prescriptionInDb[i].documents=documents;
+        prescriptionInDb[i].prescriptionDocument=prescriptionDocument;
         prescriptionInDb[i].doctorSuggestion=doctorSuggestion;
       }
     

@@ -61,3 +61,12 @@ body{
 .shadow-none {
     box-shadow: none!important;
 }
+.error{
+    color: red;
+    font-weight: 900;
+}
+
+.successMessage{
+    color:green;
+    font-weight: 900;
+}

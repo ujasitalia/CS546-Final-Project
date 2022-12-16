@@ -112,13 +112,20 @@ const isValidNpi = (npi) => {
         throw {status: '400', error : 'Invalid NPI'}
     return npi;
     }
+const isValidNumber = (num,param) => {
+    num = num.toString();
+    num = common.isValidString(num);
+    
+    if(!num.match(/^\d+$/)) throw new Error(`Invalid ${param}`);
+    return parseInt(num);
+    }    
 const isValidMedicine = (medicine) => {
     let newMedicine = {}
     for(let m in medicine){
         let key=common.isValidString(m,'Medicine');
         if(!Array.isArray(medicine[m])) throw {status:'400',error:'Medicine must be an array'};
-        common.isValidString(medicine[m][0],'Dosage') 
-        if( typeof medicine[m][1] !== 'number') throw {status:'400',error:'Medicine frquency must be a number'};
+        medicine[m][0] = isValidNumber(medicine[m][0],'Strength') 
+        medicine[m][1] = isValidNumber(medicine[m][1],'Dosage') 
         newMedicine[key]=medicine[m];
     }
     return newMedicine;

@@ -11,7 +11,9 @@ const PatientInfo = () => {
     const navigate = useNavigate();
     const [hasError, setHasError] = useState(false);
     const [error, setError] = useState('');
-
+    const updatePatientData = (data) => {
+      setData({patient : data})
+    }
     useEffect(() => {
       const fetchData = async()=>{
         try{
@@ -61,7 +63,7 @@ const PatientInfo = () => {
     </nav>
     {hasError && <div className="error">{error}</div>}
         {data && tab === 'detailTab' && <components.PatientDetail doctor={data.patient}/>}
-        {data && tab === 'prescriptions' && <components.Prescriptions prescriptions={data.patient.prescriptions}/>}
+        {data && tab === 'prescriptions' && <components.Prescriptions prescriptions={data.patient.prescriptions} patientId={data.patient._id} handleChange={updatePatientData}/>}
         {data && tab === 'medicalHistory' && <components.MedicalHistory medicalHistory={data.patient.medicalHistory}/>} 
         {data && tab === 'testReports' && <components.TestReports testReports={data.patient.testReports}/>}
     </div>

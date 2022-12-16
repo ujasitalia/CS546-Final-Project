@@ -1,7 +1,7 @@
 import { specialities } from "./constants";
 
 export const isValidString = (string, parameter) =>{
-    if (!string) throw new Error(`You must provide a ${parameter} to search for`);
+    if (!string) throw new Error(`You must provide a ${parameter}`);
     if (typeof string !== 'string') throw new Error(`${parameter} must be a string`);
     string = string.trim()
     if (string.length === 0)
@@ -124,4 +124,29 @@ export const isValidNpi = (npi) => {
   if(!npi.match(/^[A-Z]{3}[0-9]{7}$/))
       throw new Error( 'Invalid NPI');
   return npi;
+}
+export const isValidNumber = (num,param) => {
+  num = num.toString();
+  num = isValidString(num);
+  
+  if(!num.match(/^\d+$/)) throw new Error(`Invalid ${param}`);
+  return parseInt(num);
+}
+export const isValidPrescription = (prescriptions) => {
+  for(let pres of prescriptions)
+  {
+
+    pres['disease']=isValidString(pres['disease'],'disease');
+    pres['doctorSuggestion']=isValidString(pres['doctorSuggestion'],'doctorSuggestion');
+    //pres['document']=isValidString(pres['document'])
+    pres['medicine']=isValidString(pres['medicine'],'medicine')
+    pres['strength']=isValidNumber(pres['strength'],'strength')
+    pres['dosage']=isValidNumber(pres['dosage'],'dosage')
+    // for(let p in pres['medicine']){
+    //   if(!Array.isArray( pres['medicine'][p])) throw new Error('medicine is not an object');
+    //   pres['medicine'][p]=isValidString(pres['medicine'][p][0]);
+    //   pres['medicine'][p]=isValidString(pres['medicine'][p][1]);
+    // }
+  }
+  return prescriptions;
 }
