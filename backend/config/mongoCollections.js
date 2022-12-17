@@ -24,6 +24,5 @@ module.exports = {
   chat : getCollectionFn('chat'),
   appointment : getCollectionFn('appointment'),
   healthyHabit : getCollectionFn('healthyHabit'),
-  links: getCollectionFn('links'),
   document: getCollectionFn('document')
 };

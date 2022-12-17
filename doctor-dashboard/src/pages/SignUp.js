@@ -14,6 +14,7 @@ const SignUp = () => {
     const [speciality, setSpeciality] = useState('');
     const [zip, setZip] = useState('');
     const [clinicAddress, setClinicAddress] = useState('');
+    const [link, setLink] = useState('');
     const [hasError, setHasError] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -35,6 +36,8 @@ const SignUp = () => {
             setZip(e.target.value);
         else if(e.target.id === 'signUpClinicAddress')
             setClinicAddress(e.target.value);
+        else if(e.target.id === 'signUpLink')
+            setLink(e.target.value);
     }
 
     const validateSignUp = async (e) =>{
@@ -49,6 +52,7 @@ const SignUp = () => {
             setName(helper.common.isValidName(fullName));
             setZip(helper.common.isValidZip(zip));
             setClinicAddress(helper.common.isValidAddress(clinicAddress));
+            setLink(helper.common.isValidLink(link))
             setHasError(false);
         }catch(e){
             setHasError(true);
@@ -57,8 +61,6 @@ const SignUp = () => {
         }
                 
         try{
-            const li = await api.signup.getLinks();
-            const link = li.data;
             const data = {"email" : email, 'npi':npi, "password" : password, "speciality":speciality, "name":fullName, "zip":zip,"profilePicture":"nopic","clinicAddress":clinicAddress, "link": link}
             const response = await api.signup.post(data);
             localStorage.setItem('token_data', JSON.stringify(response.data.token))
@@ -117,6 +119,9 @@ const SignUp = () => {
             <br/>
             <div className="emailText">Enter Clinic Address</div>
             <input placeholder="1 Castle point" id="signUpClinicAddress" value={clinicAddress} onChange={handleInputChange} type="text" className="loginInput" />
+            <br/>
+            <div className="emailText">Enter Zoom Meeting Link</div>
+            <input placeholder="https://us05web.zoom.us/j/4253986951" id="signUpLink" value={link} onChange={handleInputChange} type="text" className="loginInput" />
             <br/>
             <button type="submit" className="loginButton">
                 <div className="buttonBox">
