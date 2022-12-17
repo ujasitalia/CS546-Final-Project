@@ -6,7 +6,7 @@ const Lungs = () => {
             <div>
             <header>
         <div className="header-content">
-            <h1>Lungs</h1>
+            <h1 className="heading1">Lungs</h1>
             <div className="line"></div>
             <h2>Without our lungs, we can't get the oxygen we need. If your lungs are damaged, you can't breathe.</h2>
         </div>
@@ -15,7 +15,7 @@ const Lungs = () => {
     <div className="disease">
 
         <div className="food-choices">
-            <h1>Healthy Food Choices</h1>
+            <h1 className="heading1">Healthy Food Choices</h1>
             <ul>
                 <li>Healthy fats from nuts, eggs, avocado etc</li>
                 <li>Protein rich food</li> 
@@ -28,7 +28,7 @@ const Lungs = () => {
     
     
         <div className="exercise">
-            <h1>Exercise</h1>
+            <h1 className="heading1">Exercise</h1>
             <ul>
                 <li>Walking</li>
                 <li>Weight training</li>

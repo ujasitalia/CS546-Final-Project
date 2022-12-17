@@ -4,7 +4,6 @@ import { api } from "../api";
 import arrow from "../assets/images/arrow.svg";
 import { helper } from "../helper";
 import { specialities } from "../helper/constants";
-import "../assets/css/signup.css";
 
 const SignUp = () => {
     const [email, setEmail] = useState('');
@@ -91,20 +90,20 @@ const SignUp = () => {
         </div>
       <div className="loginCard">
         <form onSubmit={validateSignUp}>
-            <div className="emailText">Enter Email</div>
+            <label htmlFor="signUpEmail">Enter Email</label>
             <input placeholder="username@example.com" id="signUpEmail" value={email} onChange={handleInputChange} type="email" className="loginInput" autoFocus/>
             <br/>
-            <div className="emailText">Enter Password</div>
+            <label htmlFor="signUpPassword">Enter Password</label>
             <input placeholder="********" id="signUpPassword" value={password} onChange={handleInputChange} type="password" className="loginInput" />
             <br/>
-            <div className="emailText">Re-Enter Password</div>
+            <label htmlFor="signUpRepassword">Re-enter password</label>
             <input placeholder="********" id="signUpRepassword" value={repassword} onChange={handleInputChange} type="password" className="loginInput" />
             <br/>
             <br/>
-            <div className="emailText">National Provider Identifier (NPI)</div>
+            <label htmlFor="signUpNpi">National Provider Identifier (NPI)</label>
             <input placeholder="XXX1234567" id="signUpNpi" value={npi} onChange={handleInputChange} type="text" className="loginInput" />
             <br/>
-            <div className="emailText">Enter Speciality</div>
+            <label htmlFor="signUpSpeciality">Choose a Speciality</label>
             {/* <input placeholder="Cardiologist" id="signUpSpeciality" value={speciality} onChange={handleInputChange} type="text" className="loginInput" autoFocus/> */}
             <select id="signUpSpeciality" value={speciality} onChange={handleInputChange}>
                 <option value="">--Choose a Speciality--</option>
@@ -116,16 +115,16 @@ const SignUp = () => {
                 }
             </select>
             <br/>
-            <div className="emailText">Enter name</div>
+            <label htmlFor="signUpName">Enter Name</label>
             <input placeholder="Patrik Hill" id="signUpName" value={fullName} onChange={handleInputChange} type="text" className="loginInput" />
             <br/>
-            <div className="emailText">Enter zip</div>
+            <label htmlFor="signUpZip">Enter Zip</label>
             <input placeholder="07307" id="signUpZip" value={zip} onChange={handleInputChange} type="number" className="loginInput" />
             <br/>
-            <div className="emailText">Enter Clinic Address</div>
+            <label htmlFor="signUpClinicAddress">Enter Clinic Address</label>
             <input placeholder="1 Castle point" id="signUpClinicAddress" value={clinicAddress} onChange={handleInputChange} type="text" className="loginInput" />
             <br/>
-            <div className="emailText">Enter Zoom Meeting Link</div>
+            <label htmlFor="signUpLink">Enter Zoom meeting link</label>
             <input placeholder="https://us05web.zoom.us/j/4253986951" id="signUpLink" value={link} onChange={handleInputChange} type="text" className="loginInput" />
             <br/>
             <button type="submit" className="loginButton">Sign Up

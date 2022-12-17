@@ -6,7 +6,7 @@ const Kidney = () => {
         <div>
             <header>
                 <div className="header-content">
-                    <h1>Kidney</h1>
+                    <h1 className="heading1">Kidney</h1>
                     <div className="line"></div>
                     <h2>The kidney is the major player in the regulation of your blood pressure, and the make-up of the blood.</h2>
                 </div>
@@ -15,7 +15,7 @@ const Kidney = () => {
             <div className="disease">
 
                 <div className="food-choices">
-                    <h1>Healthy Food Choices</h1>
+                    <h1 className="heading1">Healthy Food Choices</h1>
                     <ul>
                         <li>Dark leafy greens</li>
                         <li>Berries</li> 
@@ -26,7 +26,7 @@ const Kidney = () => {
     
     
                 <div className="exercise">
-                    <h1>Exercise</h1>
+                    <h1 className="heading1">Exercise</h1>
                     <ul>
                         <li>Walking</li>
                         <li>Bicycling</li>

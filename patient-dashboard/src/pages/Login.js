@@ -48,7 +48,7 @@ const Login = () => {
   return (
     <div className='loginPage'>
         <div className="loginCard" id="login-form-wrap">    
-        <h2>Login</h2>
+        <h1>Login</h1>
         <form onSubmit={validateLogin} id="login-form">
             <p>
                 <input placeholder="Enter Email" name="email" value={email} onChange={handleInputChange} type="email"  className="loginInput" autoFocus/>
