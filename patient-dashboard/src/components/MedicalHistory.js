@@ -125,7 +125,7 @@ const MedicalHistory = (props) => {
         {!inputMedicalHistory && <button onClick={addMedicalHistory}>Add Medical history</button>}
         {inputMedicalHistory && <button onClick={addMedicalHistory}>Cancel</button>}
         {medicalHistory && medicalHistory.map((disease,index) => {
-            return <form onSubmit={validateSignUp} id={disease.medicalHistoryId}>
+            return <form onSubmit={validateSignUp} id={disease.medicalHistoryId} key={index}>
                 <div>
                     <div>
                         <label htmlFor={disease.medicalHistoryId+'-'+index+'-disease'}>Disease</label>

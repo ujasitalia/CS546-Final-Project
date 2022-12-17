@@ -100,17 +100,17 @@ const About = (props) => {
                     <span>No Profile</span>}
                 <input type="file" id='updatedProfileImage' onChange={handleInputChange} />
             <div className="emailText">
-                <label for='aboutName'>Name</label>
+                <label htmlFor='aboutName'>Name</label>
                 <input placeholder="Patrik Hill" id="aboutName" value={fullName} onChange={handleInputChange} type="text" className="loginInput" autoFocus/>
             </div>
             <br/>
             <div className="emailText">
-                <label for='aboutAge'>Age</label>
+                <label htmlFor='aboutAge'>Age</label>
                 <input placeholder="XX years" id="aboutAge" value={age} onChange={handleInputChange} type="number" className="loginInput" />
             </div>
             <br/>
             <div className="emailText">
-                <label for='aboutZip'>Zip</label>
+                <label htmlFor='aboutZip'>Zip</label>
                 <input placeholder="07307" id="aboutZip" value={zip} onChange={handleInputChange} type="number" className="loginInput" />
             </div>
             <br/>

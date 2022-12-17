@@ -5,16 +5,16 @@ const Bones = () => {
         <div>
             <div>
                 <header>
-        <div class="header-content">
+        <div  className="header-content">
             <h1>Bones</h1>
-            <div class="line"></div>
+            <div  className="line"></div>
             <h2>Our bones support us and allow us to move. They protect our brain, heart, and other organs from injury.</h2>
         </div>
     </header>
 
-    <div class="disease">
+    <div  className="disease">
 
-        <div class="food-choices">
+        <div  className="food-choices">
             <h1>Healthy Food Choices</h1>
             <ul>Dairy Can Be an Excellent Source of Bone-Building Calcium.</ul>
             <ul>Nuts Provide Magnesium and Phosphorus to Help Strengthen Bones.</ul> 
@@ -24,7 +24,7 @@ const Bones = () => {
         </div>
     
     
-        <div class="exercise">
+        <div  className="exercise">
             <h1>Exercise</h1>
             <ul>Running</ul>
             <ul>Tennis</ul>

@@ -58,7 +58,7 @@ const Prescriptions = () => {
     const getMedicines = (medicine) => {
         let medicineHtml = [];
         for(let m in medicine){
-            medicineHtml.push(<span>{m} : Dosage - {medicine[m][0]}, {medicine[m][1]} times a day</span>);
+            medicineHtml.push(<span key={m}>{m} : Dosage - {medicine[m][0]}, {medicine[m][1]} times a day</span>);
         }
         return medicineHtml;
     }
@@ -67,8 +67,8 @@ const Prescriptions = () => {
     <div>
       {hasError && <div className="error">{error}</div>}
         {prescriptions.length === 0 && <p>No prescriptions</p>}
-        {prescriptions && prescriptions.map(prescription => {
-           return doctors && <div>
+        {prescriptions && doctors && prescriptions.map((prescription, index) => {
+           return <div key={index}>
             <br/>
             <ul>
                     <li>Doctor - {doctors[prescription.doctorId]}</li>

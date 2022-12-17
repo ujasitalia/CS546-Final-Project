@@ -195,7 +195,7 @@ const TestReports = () => {
         {inputTestReport && <button onClick={addTestReport}>Cancel</button>}
         {testReports && oldTestReports && testReports.length!==0 ? testReports.map((test,index) => {
             return testReports && 
-            <form onSubmit={validateSignUp} id={test.testReportId}>
+            <form onSubmit={validateSignUp} id={test.testReportId} key={index}>
                 <br/>
                 <div>
                     <div>

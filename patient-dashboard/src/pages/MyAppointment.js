@@ -56,10 +56,10 @@ const MyAppointment = () => {
         {hasError && <div className="error">{error}</div>}
         {data ? (
           <div>
-            {data.appointments.length !== 0 ?data.appointments.map(ap => {
+            {data.appointments.length !== 0 ?data.appointments.map((ap, index) => {
               const name = idName[ap.doctorId]
               return (                
-                <Link to={`/myAppointment/${ap._id}`} state={{appointmentId : ap._id, name: name}} style={{color:"black"}}>
+                <Link to={`/myAppointment/${ap._id}`} state={{appointmentId : ap._id, name: name}} style={{color:"black"}} key={index}>
                   <h5>Doctor Name: </h5> {name}
                   <h5>Appointment Time: </h5> {ap.startTime.split('T')[0]} {ap.startTime.split('T')[1].slice(0,5)}
                   <h5>Location: </h5> {ap.appointmentLocation}

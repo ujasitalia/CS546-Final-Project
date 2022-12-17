@@ -63,8 +63,8 @@ const Navbar = (props) => {
             {(window.location.pathname==="/dashboard" || window.location.pathname==="/dashboard/") && <li style={{ marginLeft: '10px' }}>
                 <Form.Select aria-label="filter" id="selectSpeciality" value={specialty} onChange={handleInputChange}>
                   <option value=''>All specialities</option>
-                  {helper.constant.speciality.map((element)=>{
-                    return <option value={element}>{element}</option>
+                  {helper.constant.speciality.map((element, index)=>{
+                    return <option value={element} key={index}>{element}</option>
                   })}
                 </Form.Select>
             </li>}
