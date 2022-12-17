@@ -114,12 +114,10 @@ const addMedicalHistory = async (patientId,disease, startDate, endDate) => {
   }
   startDate = startDate.toISOString().split('T')[0];
 
-  //console.log(typeof startDate)
   const patientCollection = await patients();
   let patientInDb = await getPatientById(patientId);
   if(!patientInDb) throw {status: "404", error: `No patient with that ID`};
   let newMedicalHistory = {medicalHistoryId: new ObjectId(),disease,startDate,endDate};
-  //let newMedicalHistory = {disease,startDate};
 
   const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{medicalHistory: newMedicalHistory}});
 

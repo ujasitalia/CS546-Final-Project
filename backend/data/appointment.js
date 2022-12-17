@@ -108,7 +108,7 @@ const getPatientAppointment = async (id) => {
   const appointments = await appointmentCollection
   .find({ patientId: id, isCompleted : false})
   .toArray();  
-  // console.log(appointments);
+
   if (!appointments)
     throw { status: "404", error: "No apointments for patient with that id" };
 
@@ -133,7 +133,6 @@ const getAppointmentById = async (id) => {
      }
   );
 
-  // console.log(appointment);
   if (!appointment)
     throw { status: "404", error: "No appointment found with that id" };
   return appointment;

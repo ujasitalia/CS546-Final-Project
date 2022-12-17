@@ -5,7 +5,6 @@ const { appointment: appointmentData } = require("../data");
 
 router.route("/").post(async (req, res) => {
   const data = req.body;
-  // console.log(data);
   try {
     data.doctorId = helper.common.isValidId(data.doctorId);
     data.patientId = helper.common.isValidId(data.patientId);
@@ -15,7 +14,6 @@ router.route("/").post(async (req, res) => {
     else
       data.appointmentLocation = helper.appointment.isValidAddress(data.appointmentLocation);
   } catch (e) {
-    console.log(e);
     if (typeof e !== "object" || !("status" in e)) {
       res.status(500).json("Internal server error");
     } else res.status(parseInt(e.status)).json(e.error);
@@ -32,7 +30,6 @@ router.route("/").post(async (req, res) => {
     );
     res.json(createAppointment);
   } catch (e) {
-    console.log(e);
     if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
     else res.status(parseInt(e.status)).json(e.error);
     return;
@@ -63,12 +60,10 @@ router
   })
   .patch(async (req, res) => {
     let id = req.params.appointmentId;
-    // console.log(req.body.data);
     let data = req.body.data;
     try {
       id = helper.common.isValidId(id);
     } catch (e) {
-      console.log(e);
       if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
       else res.status(parseInt(e.status)).json(e.error);
       return;
@@ -80,7 +75,6 @@ router
       await appointmentData.getAppointmentById(id);
       // res.json(data)
     } catch (e) {
-      console.log(e);
       if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
       else res.status(parseInt(e.status)).json(e.error);
       return;
@@ -94,7 +88,6 @@ router
       );
       res.json(updatedAppointment);
     } catch (e) {
-      console.log(e);
       if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
       else res.status(parseInt(e.status)).json(e.error);
       return;
@@ -106,7 +99,6 @@ router
     try {
       id = helper.common.isValidId(id);
     } catch (e) {
-      console.log(e);
       if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
       else res.status(parseInt(e.status)).json(e.error);
       return;
@@ -116,36 +108,10 @@ router
       let deleteConfirmation = await appointmentData.deleteAppointmentById(id);
       res.json(deleteConfirmation);
     } catch (e) {
-      console.log(e);
       if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
       else res.status(parseInt(e.status)).json(e.error);
       return;
     }
   });
-
-// router.route("/slots/:doctorId&:day&:date").get(async (req, res) => {
-//   let id = req.params.doctorId;                 
-//   let day = req.params.day;
-//   let date = req.params.date;  
-//   try {
-//     id = helper.common.isValidId(id);
-//     day = helper.common.isValidString(day);
-//     date = helper.common.isValidString(date);
-//   } catch (e) {
-//     console.log(e);
-//     if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
-//     else res.status(parseInt(e.status)).json(e.error);
-//     return;
-//   }
-//   try {
-//     const a = await appointmentData.getAvailableSlots(id, day, date);
-//     res.json(a);
-//   } catch (e) {
-//     console.log(e);
-//     if (typeof e !== "object" || !("status" in e)) res.status(500).json(e);
-//     else res.status(parseInt(e.status)).json(e.error);
-//     return;
-//   }
-// });
 
 module.exports = router;

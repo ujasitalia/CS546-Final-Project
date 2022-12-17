@@ -18,9 +18,23 @@ const TestReports = () => {
     },[])
 
     const getTestReports = async() =>{
-        const response = await api.patient.getPatientTestReports(patientId);
-        setTestReports(response.data);
-        setOldTestReports(response.data);
+        try{
+            const response = await api.patient.getPatientTestReports(patientId);
+            setTestReports(response.data);
+            setOldTestReports(response.data);
+            setHasError(false);
+        }catch(e){
+            if(e.response.status===500)
+            navigate("/error");
+            else if(e.response.status===401 )
+            {
+            localStorage.clear();
+            navigate("/login");
+            }else{
+            setHasError(true);
+            setError(e.response.data);
+            }
+        }
     }
 
     const getBase64 = async(newTestReports, field, file) => {
@@ -136,7 +150,7 @@ const TestReports = () => {
             try{
                 let data={};
                 for(let m of newTestReports){
-                    if(m['testReportId']==e.target.id) data = m;
+                    if(m['testReportId']===e.target.id) data = m;
                 }
                 const response = await api.profile.patchTestReports(patientId,data,e.target.id)
                 setTestReports(response.data)

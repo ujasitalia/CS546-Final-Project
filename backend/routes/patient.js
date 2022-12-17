@@ -107,7 +107,6 @@ router
     try {
       id = helper.common.isValidId(req.params.patientId);
     } catch (e) {
-      console.log(e);
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json("Internal server error");
       else
@@ -118,7 +117,6 @@ router
     try {
       await patientData.getPatientById(id);
     } catch (e) {
-      console.log(e);
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json("Internal server error");
       else
@@ -130,7 +128,6 @@ router
       const patientAppointments = await appointmentData.getPatientAppointment(id)
       res.json(patientAppointments)
     } catch (e) {
-      console.log(e);
       if(typeof e !== 'object' || !('status' in e))
         res.status(500).json("Internal server error");
       else

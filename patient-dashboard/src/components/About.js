@@ -49,7 +49,6 @@ const About = (props) => {
     useEffect(()=> {
         if(!fullName){
             setName(props.patientData.name);
-            //console.log(fullName)
             setProfilePicture(props.patientData.profilePicture)
             setAge(props.patientData.age);
             setZip(props.patientData.zip);
@@ -70,10 +69,9 @@ const About = (props) => {
         
         try{
             const data = { "age":helper.common.isValidAge(age), "name": helper.common.isValidName(fullName), "zip":helper.common.isValidZip(zip)}
-            if(profilePicture!='')
+            if(profilePicture!=='')
                 data["profilePicture"] = profilePicture
             const response = await api.profile.patch(props.patientData._id,data);
-            console.log(response);
             props.handleChange(response.data);
             setHasError(false);
             setHasSuccessMessage(true);

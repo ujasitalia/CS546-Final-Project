@@ -59,7 +59,6 @@ const EditAppointment = () => {
   }, []);
 
   const checkDate = (startDate) => {  
-    // console.log('checkDate', startDate);  
     const currDate = new Date();
     if(startDate.getDate() < currDate.getDate()){      
       setNotAvailable(true)
@@ -115,7 +114,6 @@ const EditAppointment = () => {
     e.preventDefault();
     const time = getTime(updatedSlot);
     let temp = (new Date(startDate - (startDate.getTimezoneOffset() * 60000))).toISOString().split('T')[0]+'T'+time
-    // console.log(updatedSlot);
     const updatedAppointment = {startTime:temp}
     try{
       const udA = await api.appointment.updateAppointment(appointmentId, updatedAppointment)

@@ -1,5 +1,3 @@
-import { type } from "@testing-library/user-event/dist/type";
-
 export const isValidString = (string, parameter) => {
   if (!string)
     throw new Error(`You must provide a ${parameter}`);
@@ -11,11 +9,11 @@ export const isValidString = (string, parameter) => {
   return string;
 };
 const isValidPastDate = (time) => {
-  if (!time) throw { status: "400", error: "No date provided" };
+  if (!time) throw new Error("No date provided");
   time = new Date(time);
   let today = new Date();
   if (time === "Invalid Date" || time > today)
-    throw { status: "400", error: "Invalid date" };
+    throw new Error("Invalid date");
 };
 export const isValidMedicalHistory = (medicalHistory) => {
   for(let i=0;i<medicalHistory.length;i++){

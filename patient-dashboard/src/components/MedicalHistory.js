@@ -18,7 +18,7 @@ const MedicalHistory = (props) => {
             setError(false);
         let field = e.target.id.split('-');
         let newMedicalHistory = [...medicalHistory]
-        if(field[2] == 'disease')
+        if(field[2] === 'disease')
             newMedicalHistory[field[1]]['disease']=e.target.value;
         else if(field[2] === 'startDate')
             newMedicalHistory[field[1]]['startDate']=e.target.value;
@@ -36,18 +36,7 @@ const MedicalHistory = (props) => {
         today = yyyy + '-' + mm + '-' + dd;
         return today;
     }
-    // const processDate = (date) => {
-    //     if(date)
-    //     {
-    //     var today = new Date(date);
-    //     var dd = String(today.getDate()).padStart(2, '0');
-    //     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    //     var yyyy = today.getFullYear();
 
-    //     today = yyyy + '-' + mm + '-' + dd;
-    //     return today;
-    //     }
-    // }
     const addMedicalHistory = async () => {
 
         setInputMedicalHistory(!inputMedicalHistory);
@@ -83,8 +72,6 @@ const MedicalHistory = (props) => {
                 let data=newMedicalHistory[0];
                 
                 const response = await api.profile.addMedicalHistory(props.patientData._id,data);
-                //props.handleChange();
-                // console.log(response);
                 
                 props.handleChange(response.data);
                 setMedicalHistory(response.data.medicalHistory)
@@ -109,13 +96,11 @@ const MedicalHistory = (props) => {
             try{
                 let data={};
                 for(let m of newMedicalHistory){
-                    if(m['medicalHistoryId']==e.target.id) data = m;
+                    if(m['medicalHistoryId']===e.target.id) data = m;
                 }
                 const response = await api.profile.patchMedicalHistory(props.patientData._id,data,e.target.id);
-                //props.handleChange();
-                // console.log(response);
-                
-                // props.handleChange(response.data);
+                props.handleChange(response.data);
+                setMedicalHistory(response.data.medicalHistory)
                 setHasError(false);
                 setHasSuccessMessage(true);
                 setInputMedicalHistory(false);

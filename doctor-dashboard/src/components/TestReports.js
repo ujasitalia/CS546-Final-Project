@@ -15,7 +15,7 @@ const TestReports = (props) => {
   const getTestReports = async() =>{
     try{
       const response = await api.doctor.getPatientTestReports(JSON.parse(localStorage.getItem('id')), props.patientId);
-      console.log(response);
+
       setTestReports(response.data);
       setHasError(false);
     }catch(e){
