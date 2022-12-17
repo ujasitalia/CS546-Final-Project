@@ -2,6 +2,7 @@ import React, { useState , useEffect} from "react"
 import { api } from "../api";
 import '../assets/css/chat.css'
 import { useNavigate } from "react-router-dom";
+import userPic from "../assets/images/user.jpg";
 
 export default function Conversation({conversation,currentUser}){
   const [user, setUser] = useState(null);
@@ -36,7 +37,7 @@ export default function Conversation({conversation,currentUser}){
     {hasError && <div className="error">{error}</div>}
     <div className="people">
       <img className="personProfile"
-        src={user?.profilePicture}
+        src={user && user.profilePicture ? user.profilePicture : userPic}
         alt="N/A"
       />
       <span className="personName">{user?.name}</span>
