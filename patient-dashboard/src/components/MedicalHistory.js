@@ -133,11 +133,11 @@ const MedicalHistory = (props) => {
                     </div>
                     <div>
                         <label htmlFor={disease.medicalHistoryId+'-'+index+'-startDate'}>Start Date</label>
-                        <input placeholder="Start Date" id={disease.medicalHistoryId+'-'+index+'-startDate'} value={medicalHistory[index]['startDate'] } onChange={handleInputChange} type="date" className="startDate" max={getTodaysDate()}/>
+                        <input id={disease.medicalHistoryId+'-'+index+'-startDate'} value={medicalHistory[index]['startDate'] } onChange={handleInputChange} type="date" className="startDate" max={getTodaysDate()}/>
                     </div>
                     <div>
                         <label htmlFor={disease.medicalHistoryId+'-'+index+'-endDate'}>End Date</label>
-                        <input placeholder="End Date" id={disease.medicalHistoryId+'-'+index+'-endDate'} value={medicalHistory[index]['endDate'] } onChange={handleInputChange} type="date" className="endDate" min={medicalHistory[index]['startDate']} max={getTodaysDate()}/>
+                        <input id={disease.medicalHistoryId+'-'+index+'-endDate'} value={medicalHistory[index]['endDate'] } onChange={handleInputChange} type="date" className="endDate" min={medicalHistory[index]['startDate']} max={getTodaysDate()}/>
                     </div>
                     <button type="submit" className="loginButton">Submit</button>
                 </div>

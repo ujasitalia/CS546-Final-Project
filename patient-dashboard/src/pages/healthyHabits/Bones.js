@@ -16,21 +16,25 @@ const Bones = () => {
 
         <div  className="food-choices">
             <h1>Healthy Food Choices</h1>
-            <ul>Dairy Can Be an Excellent Source of Bone-Building Calcium.</ul>
-            <ul>Nuts Provide Magnesium and Phosphorus to Help Strengthen Bones.</ul> 
-            <ul>Seeds Have a Similar, Bone-Bolstering Nutrient Profile to Nuts.</ul>
-            <ul>Cruciferous Veggies Offer a Bevy of Nutrients That Help Fortify Bones.</ul>
-            <ul>Beans Are a Powerhouse Plant Food Loaded With Bone-Friendly Nutrients.</ul>
+            <ul>
+                <li>Dairy Can Be an Excellent Source of Bone-Building Calcium.</li>
+                <li>Nuts Provide Magnesium and Phosphorus to Help Strengthen Bones.</li> 
+                <li>Seeds Have a Similar, Bone-Bolstering Nutrient Profile to Nuts.</li>
+                <li>Cruciferous Veggies Offer a Bevy of Nutrients That Help Fortify Bones.</li>
+                <li>Beans Are a Powerhouse Plant Food Loaded With Bone-Friendly Nutrients.</li>
+            </ul>
         </div>
     
     
         <div  className="exercise">
             <h1>Exercise</h1>
-            <ul>Running</ul>
-            <ul>Tennis</ul>
-            <ul>Hopscoch</ul>
-            <ul>Basketball</ul>
-            <ul>Jumping rope</ul>
+            <ul>
+                <li>Running</li>
+                <li>Tennis</li>
+                <li>Hopscoch</li>
+                <li>Basketball</li>
+                <li>Jumping rope</li>
+            </ul>
         </div>
 
     </div>

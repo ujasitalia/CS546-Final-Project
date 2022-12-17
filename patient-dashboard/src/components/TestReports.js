@@ -209,7 +209,7 @@ const TestReports = () => {
                     </div>
                     <div>
                         <label htmlFor={test.testReportId+'-'+index+'-testDate'}>Test Date</label>
-                        <input placeholder="Test Date" id={test.testReportId+'-'+index+'-testDate'} value={testReports[index]['testDate']} onChange={handleInputChange} type="date" className="testDate" max={getTodaysDate()}/>
+                        <input id={test.testReportId+'-'+index+'-testDate'} value={testReports[index]['testDate']} onChange={handleInputChange} type="date" className="testDate" max={getTodaysDate()}/>
                     </div>
                     <button type="submit" className="loginButton">Submit</button>
                 </div>

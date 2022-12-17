@@ -65,7 +65,6 @@ const SignUp = () => {
   return (
     <div>
         <div className="blueContainer">
-                    <img src=".dgkjs" className="loginLogo" loading="lazy" alt="logo" />
                     <div className="loginHeading">Patient SignUp</div>
                     <div className="loginText">Sign Up</div>
         </div>

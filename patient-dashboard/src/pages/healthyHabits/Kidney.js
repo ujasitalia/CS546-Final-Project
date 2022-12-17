@@ -16,19 +16,23 @@ const Kidney = () => {
 
                 <div className="food-choices">
                     <h1>Healthy Food Choices</h1>
-                    <ul>Dark leafy greens</ul>
-                    <ul>Berries</ul> 
-                    <ul>Fatty fish</ul>
-                    <ul>Egg whites</ul> 
+                    <ul>
+                        <li>Dark leafy greens</li>
+                        <li>Berries</li> 
+                        <li>Fatty fish</li>
+                        <li>Egg whites</li>
+                    </ul> 
                 </div>
     
     
                 <div className="exercise">
                     <h1>Exercise</h1>
-                    <ul>Walking</ul>
-                    <ul>Bicycling</ul>
-                    <ul>Swimming</ul>
-                    <ul>Dancing</ul>
+                    <ul>
+                        <li>Walking</li>
+                        <li>Bicycling</li>
+                        <li>Swimming</li>
+                        <li>Dancing</li>
+                    </ul>
                 </div>
 
             </div>

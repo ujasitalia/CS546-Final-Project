@@ -16,22 +16,26 @@ const Liver = () => {
 
         <div className="food-choices">
             <h1>Healthy Food Choices</h1>
-            <ul>Berries</ul>
-            <ul>Grape fruit</ul> 
-            <ul>Tea and Coffee</ul>
-            <ul>Fish and Chicken</ul>
-            <ul>Nuts</ul> 
-            <ul>Leafy vegetables</ul>
+            <ul>
+                <li>Berries</li>
+                <li>Grape fruit</li> 
+                <li>Tea and Coffee</li>
+                <li>Fish and Chicken</li>
+                <li>Nuts</li> 
+                <li>Leafy vegetables</li>
+            </ul>
         </div>
     
     
         <div className="exercise">
             <h1>Exercise</h1>
-            <ul>Walking</ul>
-            <ul>Weight training</ul>
-            <ul>Swimming</ul>
-            <ul>Yoga</ul>
-            <ul>Cycling</ul>
+            <ul>
+                <li>Walking</li>
+                <li>Weight training</li>
+                <li>Swimming</li>
+                <li>Yoga</li>
+                <li>Cycling</li>
+            </ul>
         </div>
 
     </div>
