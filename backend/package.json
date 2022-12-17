@@ -5,7 +5,8 @@
     "main": "app.js",
     "scripts": {
         "start": "node app.js",
-        "dev": "nodemon app.js"
+        "dev": "nodemon app.js",
+        "seed": "node seed.js"
     },
     "author": "Chapadia Dhru - 20013370, Darji Parthkumar - 20011927, Italia Ujas - 20012646, Shah Megh - 20011908, Singh Shloka - 20015697",
     "license": "ISC",
