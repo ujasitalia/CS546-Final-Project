@@ -4,7 +4,6 @@ const patients = mongoCollections.patient;
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 const doctorCol = mongoCollections.doctor;
-const linksCol = mongoCollections.links;
 const documentCol = mongoCollections.document
 const commonHelper = require('../helper/common')
 const {ObjectId} = require('mongodb');
@@ -158,18 +157,6 @@ const getAllDoctor = async () => {
     else if(await bcrypt.compare(password,doctorInDb.hashedPassword)) return doctorInDb; 
     throw {status:400,error:'Invalid email or password'};
   };
-
-  const getLinks = async() => {
-    const linksCollection = await linksCol();
-    const links = await linksCollection.find({used: false}).toArray()
-    const temp = links[0].li
-    const data = {used: true}
-    await linksCollection.updateMany(
-      {_id: links[0]._id},
-      {$set: data}
-    );
-    return temp;
-  }
   
   const addPrescription = async(doctorId,patientId,disease,medicine,prescriptionDocument,doctorSuggestion) => {
     patientId = commonHelper.isValidId(patientId);
@@ -264,7 +251,6 @@ module.exports = {
     getAllDoctor,
     updateDoctor,
     checkDoctor,
-    getLinks,
     updatePrescription,
     addPrescription,
     addMyPatient,

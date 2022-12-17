@@ -233,21 +233,6 @@ router
   })
 
   router
-  .route('/getLinks/links')
-  .get(async (req, res) => {
-    try {
-      const links = await doctorData.getLinks()
-      res.json(links);
-    } catch (e) {
-      if(typeof e !== 'object' || !('status' in e))
-        res.status(500).json("Internal server error");
-      else
-        res.status(parseInt(e.status)).json(e.error);
-      return;
-    }
-  })
-
-  router
   .route('/:doctorId/patient/:patientId')
   .get(async (req, res) => {
     try{

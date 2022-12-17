@@ -116,7 +116,7 @@ export const isValidLink = (link) => {
   if (link.length < 1) throw new Error("No link found.")
   const url = new URL(link);
   if (!Boolean(url)) throw new Error("Not a valid url")
-  if(!url.host == 'stevens.zoom.us') throw new Error("Not the correct url")
+  if(!link.match(/https:\/\/[\w-]*\.?zoom.us\/(j|my)\/[\d\w?=-]+/g)) throw new Error("Not the correct url");
   return link;
 }
 export const isValidNpi = (npi) => {
