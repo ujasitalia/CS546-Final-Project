@@ -10,9 +10,10 @@ router.route("/").post(async (req, res) => {
     data.doctorId = helper.common.isValidId(data.doctorId);
     data.patientId = helper.common.isValidId(data.patientId);
     data.startTime = helper.appointment.isValidStartTime(data.startTime);
-    data.appointmentLocation = helper.appointment.isValidAddress(
-      data.appointmentLocation
-    );
+    if(data.isOnline)
+      data.appointmentLocation = helper.common.isValidLink(data.appointmentLocation);
+    else
+      data.appointmentLocation = helper.appointment.isValidAddress(data.appointmentLocation);
   } catch (e) {
     console.log(e);
     if (typeof e !== "object" || !("status" in e)) {
@@ -26,7 +27,8 @@ router.route("/").post(async (req, res) => {
       data.doctorId,
       data.patientId,
       data.startTime,
-      data.appointmentLocation
+      data.appointmentLocation,
+      data.isOnline
     );
     res.json(createAppointment);
   } catch (e) {

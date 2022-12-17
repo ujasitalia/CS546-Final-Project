@@ -76,13 +76,15 @@ const BookAppointment = (props) => {
     let temp = (new Date(startDate - (startDate.getTimezoneOffset() * 60000))).toISOString().split('T')[0]+'T'+time
     // console.log(slot);
     let loc;
-    if(onlineAppointment == 'true'){
-        loc = props.doctor.link
+    const newAppointment = {doctorId: props.doctor._id, patientId: JSON.parse(localStorage.getItem('id')),  startTime: temp}
+    if(onlineAppointment === "true"){
+        newAppointment["isOnline"] = true;
+        newAppointment["appointmentLocation"] = props.doctor.link
     }
     else{
-        loc = props.doctor.clinicAddress
+        newAppointment["isOnline"] = false;
+        newAppointment["appointmentLocation"] = props.doctor.clinicAddress
     }
-    const newAppointment = {doctorId: props.doctor._id, patientId: JSON.parse(localStorage.getItem('id')),  startTime: temp, appointmentLocation: loc}
     try{
         const udA = await api.appointment.createAppointment(newAppointment)
         navigate("/dashboard");
