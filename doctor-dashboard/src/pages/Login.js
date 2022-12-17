@@ -49,19 +49,17 @@ const Login = () => {
   return (
     <div className='loginPage'>
         <div className="loginCard" id="login-form-wrap">    
-        <h2>Login</h2>
+        <h1>Login</h1>
         <form onSubmit={validateLogin} id="login-form">
-            <p>
-                <input placeholder="Enter Email" name="email" value={email} onChange={handleInputChange} type="email"  className="loginInput" autoFocus/>
+            <label htmlFor='loginEmail'>Email</label>
+                <input id='loginEmail' placeholder="Enter Email" name="email" value={email} onChange={handleInputChange} type="email"  className="loginInput" autoFocus/>
                 <br/>                
-            </p>
-            <p>
-                <input placeholder="Enter Password" name="password" value={password} onChange={handleInputChange} type="password" className="loginInput" autoFocus/>
+            <label htmlFor='loginPassword'>Password</label>
+                <input id='loginPassword' placeholder="Enter Password" name="password" value={password} onChange={handleInputChange} type="password" className="loginInput" autoFocus/>
                 <br/>
-            </p>
-            <p>
+            
                 <input type="submit" id="login" value="Login" className="loginButton"/>
-            </p>
+            
         </form>
         <div id="create-account-wrap">
             <p> <a href='http://localhost:3006/signup'>Sign up</a> </p>
