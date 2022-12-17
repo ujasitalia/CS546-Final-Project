@@ -130,7 +130,7 @@ const Profile = () => {
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet"></link>
             <form onSubmit={validateSignUp}>
                 <div className="profileInputField">
-                    <label className="profileInputText" htmlFor="profileImage"> Profile Image : </label> 
+                    <label className="profileInputText" htmlFor="updatedProfileImage"> Profile Image : </label> 
                     {data.doctor.profilePicture ? <><img style={{height: "100px"}} id="profileImage" src={`${data.doctor.profilePicture}`} alt=""/>
                     <a download="myImage.gif" href={`${data.doctor.profilePicture}`}>Download Profile</a></>
                     :
@@ -138,9 +138,9 @@ const Profile = () => {
                     <input type="file" id='updatedProfileImage' onChange={handleInputChange} />
                 </div>
                 <br/>
-                <div className="profileInputField"><label className="profileInputText" htmlFor="profileEmail"> Email : </label> <span id="profileEmail">{data.doctor.email}</span> </div>
+                <div className="profileInputField"><span className="profileInputText" > Email : </span> <span id="profileEmail">{data.doctor.email}</span> </div>
                 <br/>
-                <div className="profileInputField"> <label className="profileInputText" htmlFor="profileSpeciality"> Speciality : </label> <span id="profileSpeciality">{data.doctor.speciality}</span> </div>
+                <div className="profileInputField"> <span className="profileInputText"> Speciality : </span> <span id="profileSpeciality">{data.doctor.speciality}</span> </div>
                 <br/>
                 <div className="profileInputField"> <label className="profileInputText" htmlFor="profileName"> Name : </label> <input placeholder="Patrik Hill" id="profileName" value={fullName} onChange={handleInputChange} type="text" className="profileInput" autoFocus/></div>
                 <br/>
@@ -148,10 +148,7 @@ const Profile = () => {
                 <br/>
                 <div className="profileInputField"> <label className="profileInputText" htmlFor="profileZip"> Zip : </label> <input placeholder="07307" id="profileZip" value={zip} onChange={handleInputChange} type="number" className="profileInput" autoFocus/></div>
                 <br/>
-                <button type="submit" className="updateProfileButton">
-                    <div className="buttonBox">
-                        <img src={arrow} className="arrow" loading="lazy" alt="logo" />
-                    </div>
+                <button type="submit" className="updateProfileButton">Update
                 </button>
             </form>
             </div>}
