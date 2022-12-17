@@ -275,15 +275,12 @@ const Availability = (props) => {
         </select>
         <br/>
         <br/>
-        <label htmlFor=''>
+        <span>
             Schedule : 
-        </label>
+        </span>
           {getSchedule()}
           <br/>
-            <button type="submit" className="button">
-                <div className="buttonBox">
-                    <img src={arrow} className="arrow" loading="lazy" alt="logo" />
-                </div>
+            <button type="submit" className="button">Submit
             </button>
         </form>
     </div>

@@ -4,6 +4,7 @@ import { api } from "../api";
 import arrow from "../assets/images/arrow.svg";
 import { helper } from "../helper";
 import { specialities } from "../helper/constants";
+import "../assets/css/signup.css";
 
 const SignUp = () => {
     const [email, setEmail] = useState('');
@@ -83,11 +84,8 @@ const SignUp = () => {
     }
   return (
     <div>
-      <div className="blueContainer">
-        <img src=".dgkjs" className="loginLogo" loading="lazy" alt="logo" />
+      
         <div className="loginHeading">Doctor SignUp</div>
-        <div className="loginText">Sign Up</div>
-      </div>
         <div id="login-wrap">
             <p> <a href='http://localhost:3006/login'>Login</a> </p>
         </div>
@@ -130,10 +128,8 @@ const SignUp = () => {
             <div className="emailText">Enter Zoom Meeting Link</div>
             <input placeholder="https://us05web.zoom.us/j/4253986951" id="signUpLink" value={link} onChange={handleInputChange} type="text" className="loginInput" />
             <br/>
-            <button type="submit" className="loginButton">
-                <div className="buttonBox">
-                    <img src={arrow} className="arrow" loading="lazy" alt="logo" />
-                </div>
+            <button type="submit" className="loginButton">Sign Up
+               
             </button>
         </form>
         {hasError && <div className="error">{error}</div>}
