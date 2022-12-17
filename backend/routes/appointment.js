@@ -2,9 +2,12 @@ const express = require("express");
 const router = express.Router();
 const helper = require("../helper");
 const { appointment: appointmentData } = require("../data");
+const xss = require('xss');
 
 router.route("/").post(async (req, res) => {
   const data = req.body;
+  for(let i in data)
+    data[i]=xss(data[i])
   try {
     data.doctorId = helper.common.isValidId(data.doctorId);
     data.patientId = helper.common.isValidId(data.patientId);
@@ -61,6 +64,8 @@ router
   .patch(async (req, res) => {
     let id = req.params.appointmentId;
     let data = req.body.data;
+    for(let i in data)
+      data[i]=xss(data[i])
     try {
       id = helper.common.isValidId(id);
     } catch (e) {

@@ -92,10 +92,10 @@ const isBoolean = (val) => {
 }
 
 const isValidLink = (link) => {
-  if (link.length < 1) throw new Error("No link found.")
+  if (link.length < 1) throw {status:'400',error:"No link found."}
   const url = new URL(link);
-  if (!Boolean(url)) throw new Error("Not a valid url")
-  if(!link.match(/https:\/\/[\w-]*\.?zoom.us\/(j|my)\/[\d\w?=-]+/g)) throw new Error("Not the correct url");
+  if (!Boolean(url)) throw {status:'400',error:"Not a valid url"}
+  if(!link.match(/https:\/\/[\w-]*\.?zoom.us\/(j|my)\/[\d\w?=-]+/g)) throw {status:'400',error:"Not the correct url"};
   return link;
 }
 const isValidPastDate = (time) => {

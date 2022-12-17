@@ -18,9 +18,9 @@ const isValidAddress = (address) =>{
 }
 
 const isValidAppointmentDuration = (appointmentDuration) =>{
-    if(isNaN(appointmentDuration) || typeof appointmentDuration != 'number'){
-        throw {status: '400', error : 'Not a number'}
-    }
+    appointmentDuration=appointmentDuration.toString();
+     if(!appointmentDuration.match(/^\d+$/)) throw {status:"400", error:'Invalid age'};
+     appointmentDuration = parseInt(appointmentDuration);
     if(appointmentDuration%15!=0 || appointmentDuration>90)
         throw {status: '400', error : 'Invalid Appointment Duration'}
     return appointmentDuration;
@@ -114,11 +114,10 @@ const isValidNpi = (npi) => {
     }
 const isValidNumber = (num,param) => {
     num = num.toString();
-    num = common.isValidString(num);
     
-    if(!num.match(/^\d+$/)) throw new Error(`Invalid ${param}`);
+    if(!num.match(/^\d+$/)) throw {status:'400',error:`Invalid ${param}`};
     return parseInt(num);
-    }    
+}    
 const isValidMedicine = (medicine) => {
     let newMedicine = {}
     for(let m in medicine){

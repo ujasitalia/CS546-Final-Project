@@ -1,4 +1,7 @@
 const checkRating = (rating) => {
+    rating = rating.toString();
+    if(!rating.match(/^\d+$/)) throw new Error(`Invalid ${rating}`);
+    rating=parseInt(rating);
     if(isNaN(rating) || typeof rating != 'number'){
         throw {status: '400', error : 'Not a number'}
     }

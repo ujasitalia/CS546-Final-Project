@@ -23,6 +23,5 @@ module.exports = {
   review : getCollectionFn('review'),
   chat : getCollectionFn('chat'),
   appointment : getCollectionFn('appointment'),
-  healthyHabit : getCollectionFn('healthyHabit'),
   document: getCollectionFn('document')
 };

@@ -3,10 +3,14 @@ const router = express.Router();
 const data = require("../data");
 const helper = require('../helper');
 const reviewData = data.review;
+const xss = require('xss');
+
 router
   .route('/')
   .post(async (req, res) => {
     const data = req.body;
+    for(let i in data)
+      data[i]=xss(data[i])
     try{
       data.doctorId = helper.common.isValidId(data.doctorId);
       data.patientId = helper.common.isValidId(data.patientId);

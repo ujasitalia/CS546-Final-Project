@@ -184,13 +184,15 @@ const updateTestReport = async (patientId,testReportId,testName, testDate, testD
   let testReportsInDb = patientInDb.testReports;
   //let newMedicalHistory = [];
   const documentCollection = await documentCol();
+  let doc;
   for(let i=0;i<testReportsInDb.length;i++){
     if(testReportsInDb[i].testReportId==testReportId) {
-      await documentCollection.updateOne(
+      doc = await documentCollection.updateOne(
         {_id:ObjectId(testReportsInDb[i].testDocument)}, 
           {$set: {document:testDocument}});
       testReportsInDb[i].testName=testName;
       testReportsInDb[i].testDate=testDate.toISOString().split('T')[0];
+      break;
     }
   }
   patientInDb.testReports=testReportsInDb;
@@ -199,7 +201,7 @@ const updateTestReport = async (patientId,testReportId,testName, testDate, testD
     {$set: {testReports:testReportsInDb}}
   );
 
-  if (updatedInfo.modifiedCount === 0) throw {status:'400', error:"No changes made to the Test Report"};
+  if (updatedInfo.modifiedCount === 0 && doc.modifiedCount === 0) throw {status:'400', error:"No changes made to the Test Report"};
 
   const updatedTestReports = await getTestReport(patientId);
   return updatedTestReports;

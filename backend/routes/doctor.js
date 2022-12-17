@@ -5,7 +5,7 @@ const helper = require('../helper');
 const jwt = require("jsonwebtoken");
 const { isValidMedicine } = require('../helper/doctor');
 const { updatePrescription } = require('../data/doctor');
-
+const xss = require('xss');
 
 router
   .route('/')
@@ -23,6 +23,8 @@ router
   })
   .post(async (req, res) => {
     const data = req.body;
+    for(let i in data)
+      data[i]=xss(data[i])
     try{
       data.npi = helper.doctor.isValidNpi(data.npi);
       data.email = helper.common.isValidEmail(data.email);
@@ -65,9 +67,12 @@ router
   router
   .route('/login')
   .post(async (req, res) => {
+    const data = req.body;
+    for(let i in data)
+      data[i]=xss(data[i])
     try{
-      let email = helper.common.isValidEmail(req.body.email);
-      let password = helper.common.isValidPassword(req.body.password);
+      let email = helper.common.isValidEmail(data.email);
+      let password = helper.common.isValidPassword(data.password);
       let doctorInDb = await doctorData.checkDoctor(email,password);
       if(doctorInDb){
         const token = jwt.sign(
@@ -117,6 +122,23 @@ router
   })
   .patch(async (req, res) => {
     let data = req.body;
+    for(let i in data)
+    {
+      if(typeof data[i] === "object")
+      {
+        for(let j in data[i])
+          if(Array.isArray(data[i][j]))
+            data[i][j] = data[i][j].filter(element=>{
+              return xss(element)
+            })
+          else
+            data[i][j]=xss(data[i][j])
+      }
+      else{
+        data[i]=xss(data[i])
+      }
+    }
+      
     let doctorId;
     try{
       doctorId = helper.common.isValidId(req.params.doctorId);
@@ -273,6 +295,22 @@ router
       let doctorId = req.params.doctorId;
       let patientId = req.params.patientId;
       const prescriptionData = req.body;
+      for(let i in prescriptionData)
+      {
+        if(typeof prescriptionData[i] === "object")
+        {
+          for(let j in prescriptionData[i])
+            if(Array.isArray(prescriptionData[i][j]))
+              prescriptionData[i][j] = prescriptionData[i][j].filter(element=>{
+                return xss(element)
+              })
+            else
+              prescriptionData[i][j]=xss(prescriptionData[i][j])
+        }
+        else{
+          prescriptionData[i]=xss(prescriptionData[i])
+        }
+      }
       patientId = helper.common.isValidId(req.params.patientId);
       doctorId = helper.common.isValidId(req.params.doctorId);
       await patientData.getPatientById(patientId);
@@ -304,6 +342,22 @@ router
       doctorId = helper.common.isValidId(req.params.doctorId);
       let patientId = req.params.patientId;
       const prescriptionData = req.body;
+      for(let i in prescriptionData)
+      {
+        if(typeof prescriptionData[i] === "object")
+        {
+          for(let j in prescriptionData[i])
+            if(Array.isArray(prescriptionData[i][j]))
+              prescriptionData[i][j] = prescriptionData[i][j].filter(element=>{
+                return xss(element)
+              })
+            else
+              prescriptionData[i][j]=xss(prescriptionData[i][j])
+        }
+        else{
+          prescriptionData[i]=xss(prescriptionData[i])
+        }
+      }
       const fields = ['disease','medicine','prescriptionDocument','doctorSuggestion','doctorId','prescriptionId'];
       for(let field in prescriptionData)
       {

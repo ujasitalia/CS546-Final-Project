@@ -20,7 +20,7 @@ const isValidPatientUpdate = (body) => {
             }
         }
         if(flag) continue;
-        else throw {code:"400", error:`Invalid update field for patient - ${bodyField}`};
+        else throw {status :"400", error:`Invalid update field for patient - ${bodyField}`};
     }
     
     for(let bodyField in body)

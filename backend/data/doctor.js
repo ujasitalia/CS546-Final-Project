@@ -198,9 +198,10 @@ const getAllDoctor = async () => {
     let prescriptionInDb = patientInDb.prescriptions;
     //let newMedicalHistory = [];
     const documentCollection = await documentCol();
+    let doc;
     for(let i=0;i<prescriptionInDb.length;i++){
       if(prescriptionInDb[i].prescriptionId==prescriptionId) {
-        await documentCollection.updateOne(
+        doc = await documentCollection.updateOne(
           {_id:ObjectId(prescriptionInDb[i].prescriptionDocument)}, 
             {$set: {document:prescriptionDocument}});
         prescriptionInDb[i].disease=disease;
@@ -214,7 +215,7 @@ const getAllDoctor = async () => {
       {_id: ObjectId(patientId)},
       {$set: {prescriptions:prescriptionInDb}}
     );
-    if (updatedInfo.modifiedCount === 0) throw "No changes made to the prescription";
+    if (updatedInfo.modifiedCount === 0 && doc.modifiedCount === 0) throw {status: "404", error: "No changes made to the prescription"};
 
     const UpdatedPrescription = await getPatientPrescription(patientId);
     return UpdatedPrescription;

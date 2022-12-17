@@ -7,12 +7,15 @@ const patientData = data.patient;
 const appointmentData = data.appointment;
 const commonHelper = helper.common;
 const patientHelper = helper.patient;
+const xss = require('xss');
 
 router
   .route('/')
   .post(async (req, res) => {
     try{
       const bodyData = req.body;
+      for(let i in bodyData)
+        bodyData[i]=xss(bodyData[i])
       bodyData.email=commonHelper.isValidEmail(bodyData.email);
       bodyData.age = patientHelper.isValidAge(bodyData.age);
       bodyData.name=commonHelper.isValidName(bodyData.name);
@@ -46,8 +49,11 @@ router
   .route('/login')
   .post(async (req, res) => {
     try{
-      let email = commonHelper.isValidEmail(req.body.email);
-      let password = commonHelper.isValidPassword(req.body.password);
+      const data = req.body
+      for(let i in data)
+        data[i]=xss(data[i])
+      let email = commonHelper.isValidEmail(data.email);
+      let password = commonHelper.isValidPassword(data.password);
       let userInDb = await patientData.checkUser(email,password);
       if(userInDb){
         const token = jwt.sign(
@@ -86,9 +92,11 @@ router
   })
   .patch(async (req, res) => {
     try{
-
+      const data = req.body;
+      for(let i in data)
+        data[i]=xss(data[i])
       let id = commonHelper.isValidId(req.params.patientId);
-      let body = patientHelper.isValidPatientUpdate(req.body);
+      let body = patientHelper.isValidPatientUpdate(data);
       let updatedPatient = await patientData.updatePatient(body,id);
       res.json(updatedPatient);
     }catch(e){
@@ -187,6 +195,8 @@ router
     try{
       let id = req.params.patientId;
       let diseaseData = req.body;
+      for(let i in diseaseData)
+        diseaseData[i]=xss(diseaseData[i])
       id = helper.common.isValidId(req.params.patientId); 
       //check if the patient with that id is present
       await patientData.getPatientById(id);
@@ -220,6 +230,8 @@ router
     // Only start date being considered and patient not given the access to update the medical history once entered
     try{
       const diseaseData = req.body;
+      for(let i in diseaseData)
+        diseaseData[i]=xss(diseaseData[i])
       let patientId = helper.common.isValidId(req.params.patientId);
       let medicalHistoryId = helper.common.isValidId(req.params.medicalHistoryId);
       await patientData.getPatientById(patientId);
@@ -271,6 +283,8 @@ router
     try{
       let id = req.params.patientId;
       const testData = req.body;
+      for(let i in testData)
+        testData[i]=xss(testData[i])
       id = helper.common.isValidId(req.params.patientId);
       //check if the patient with that id is present
       await patientData.getPatientById(id);
@@ -297,6 +311,8 @@ router
     //No update of test reports option given to patient 
     try{
       const testReportData = req.body;
+      for(let i in testReportData)
+        testReportData[i]=xss(testReportData[i])
       let patientId = helper.common.isValidId(req.params.patientId);
       let testReportId = helper.common.isValidId(req.params.testReportId);
       await patientData.getPatientById(patientId);

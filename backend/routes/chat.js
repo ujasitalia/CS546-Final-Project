@@ -3,10 +3,14 @@ const router = express.Router();
 const data = require("../data");
 const helper = require('../helper');
 const chatData = data.chat;
+const xss = require('xss');
+
 router
   .route('/')
   .post(async (req, res) => {
     const data = req.body;
+    for(let i in data)
+      data[i]=xss(data[i])
     try{
       data.senderId = helper.common.isValidId(data.senderId);
       data.receiverId = helper.common.isValidId(data.receiverId);
