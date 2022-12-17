@@ -89,7 +89,7 @@ const About = (props) => {
         }
     }
   return (
-    <div>
+    <div className='profilePage'>
         {hasError && <div className="error">{error}</div>}
         {hasSuccessMessage && <div className='successMessage'>Successfully updated</div>}
        <form onSubmit={validateSignUp}>

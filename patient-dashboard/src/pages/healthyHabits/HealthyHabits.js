@@ -22,14 +22,14 @@ const HealthyHabits = () => {
         setTab(e.target.id); 
     }
     return(
-    <div>
+    <div className='HealthyHabits'>
             <components.Navbar/>
             <components.SecondaryNavbar/>
         {tab === 'healthyHabit' && <div>
             <div className="container">
                 <div className="row healthyContainer">
                     <div className="col">
-                        <h1>Explore the Healthy Habits</h1>
+                        <h1 className="heading1">Explore the Healthy Habits</h1>
                         <p>When diet is wrong, medicine is of no use. When diet is correct, medicine is of no need.</p>
                     </div>
                     <div className="col healthyContainer">

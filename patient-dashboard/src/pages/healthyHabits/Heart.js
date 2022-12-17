@@ -6,7 +6,7 @@ const Heart = () => {
             <div>
             <header>
         <div className="header-content">
-            <h1>Heart</h1>
+            <h1 className="heading1">Heart</h1>
             <div className="line"></div>
             <h2>Heart health is central to overall good health. It’s responsible for pumping nutrient-rich blood throughout your body, it supplies oxygen while removing toxins and waste.</h2>
         </div>
@@ -15,7 +15,7 @@ const Heart = () => {
     <div className="disease">
 
         <div className="food-choices">
-            <h1>Healthy Food Choices</h1>
+            <h1 className="heading1">Healthy Food Choices</h1>
             <ul>
                 <li>Use a small plate or bowl to help control your portions.</li>
                 <li>Eat more low-calorie, nutrient-rich foods, such as fruits and vegetables.</li> 
@@ -29,7 +29,7 @@ const Heart = () => {
     
     
         <div className="exercise">
-            <h1>Exercise</h1>
+            <h1 className="heading1">Exercise</h1>
             <ul>
                 <li>Walking</li>
                 <li>Weight training</li>

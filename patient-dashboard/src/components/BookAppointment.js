@@ -107,7 +107,7 @@ const BookAppointment = (props) => {
         
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet"></link>
         <br />
-        <h3>Book Appointment</h3>
+        <h2>Book Appointment</h2>
         <br />
         <p>For your information. Dr. {props.doctor.name} is available on:</p>
         <ul>
@@ -119,8 +119,11 @@ const BookAppointment = (props) => {
         <p>Appointment Duration : {props.doctor.appointmentDuration}</p>
         <br />
         {hasError && <div className="error">{error}</div>}
-        <h4>Pick a date for your appointment</h4>
+        
         <Form onSubmit={handleForm}>
+            <h4><label for="my-input">
+                Pick a date for your appointment
+                </label></h4>
             <DatePicker selected={startDate} onChange={(date:Date) => setStartDate(date)} />
             <Button variant="primary" type="submit" style={{ width: "100px" }}>
                 Get Slots

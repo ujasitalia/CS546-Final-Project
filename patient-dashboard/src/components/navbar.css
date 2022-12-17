@@ -87,7 +87,7 @@ nav {
     padding: 1rem;
 }
 
-.float-left input,.float-left button{
+.float-left input,.float-left button,.float-left label{
     float:left;
  }
  .navbarInput input{

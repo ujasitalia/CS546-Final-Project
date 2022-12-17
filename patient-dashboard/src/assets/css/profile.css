@@ -66,13 +66,13 @@ textarea:focus, input:focus {
     
 }
 
-input, select, textarea{
+.profilePage input, select, textarea{
     color: #000;
     margin: 10px;
     width: 250px;
    
 }
-button,label{
+.profilePage button,.profilePage label{
     margin:10px 30px;
    
 }
