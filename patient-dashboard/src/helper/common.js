@@ -10,15 +10,22 @@ export const isValidString = (string, parameter) => {
     throw new Error(`${parameter} cannot be an empty string or just spaces`);
   return string;
 };
-
+const isValidPastDate = (time) => {
+  if (!time) throw { status: "400", error: "No date provided" };
+  time = new Date(time);
+  let today = new Date();
+  if (time === "Invalid Date" || time > today)
+    throw { status: "400", error: "Invalid date" };
+};
 export const isValidMedicalHistory = (medicalHistory) => {
   for(let i=0;i<medicalHistory.length;i++){
     
     medicalHistory[i]['disease']= isValidString(medicalHistory[i]['disease'],'disease');
 
     //isValidId(mh.medicalHistoryId);
-    // isValidDate(mf.startDate);
-    // isValidDate(mf.endDate);
+    isValidPastDate(medicalHistory[i]['startDate']);
+    if(medicalHistory[i]['endDate'])
+    isValidPastDate(medicalHistory[i]['endDate']);
   }
   return medicalHistory;
 }
