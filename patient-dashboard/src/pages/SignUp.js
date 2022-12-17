@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useNavigate } from "react-router-dom";
 import { api } from '../api';
-import arrow from "../assets/images/arrow.svg";
 import {helper} from '../helper';
 
 const SignUp = () => {
@@ -28,6 +27,12 @@ const SignUp = () => {
         else if(e.target.id === 'signUpZip')
             setZip(e.target.value);
     }
+    useEffect(() => {
+        if(JSON.parse(localStorage.getItem('token_data')))
+        {
+          navigate("/Dashboard");
+        }
+      },[]);
     const validateSignUp = async (e) =>{
         e.preventDefault();
         try

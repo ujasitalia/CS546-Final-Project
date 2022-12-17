@@ -10,13 +10,17 @@ const createAppointment = async (
   doctorId,
   patientId,
   startTime,
-  appointmentLocation
+  appointmentLocation,
+  isOnline=false
 ) => {
   //verify data using helper functions
   doctorId = helper.common.isValidId(doctorId);
   patientId = helper.common.isValidId(patientId);
   startTime = helper.appointment.isValidStartTime(startTime);
-  appointmentLocation = helper.appointment.isValidAddress(appointmentLocation);
+  if(isOnline)
+      appointmentLocation = helper.common.isValidLink(appointmentLocation);
+    else
+      appointmentLocation = helper.appointment.isValidAddress(appointmentLocation);
 
   //get doctor data to verify the time and day
   let doctor = await doctorData.getDoctorById(doctorId);

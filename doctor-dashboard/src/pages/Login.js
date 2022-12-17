@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useNavigate } from "react-router-dom";
 import { api } from '../api';
 import {helper} from '../helper';
@@ -9,6 +9,12 @@ const Login = () => {
     const [hasError, setHasError] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    useEffect(() => {
+        if(JSON.parse(localStorage.getItem('token_data')))
+        {
+          navigate("/Dashboard");
+        }
+      },[]);
     const handleInputChange = (e) => {
         if(e.target.type === 'email')
             setEmail(e.target.value); 

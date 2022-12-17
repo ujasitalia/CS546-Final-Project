@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useNavigate } from "react-router-dom";
 import { api } from '../api';
 import {helper} from '../helper';
@@ -15,6 +15,12 @@ const Login = () => {
         else
             setPassword(e.target.value);
     }
+    useEffect(() => {
+        if(JSON.parse(localStorage.getItem('token_data')))
+        {
+          navigate("/Dashboard");
+        }
+      },[]);
     const validateLogin = async (e) =>{
         e.preventDefault();
         try
