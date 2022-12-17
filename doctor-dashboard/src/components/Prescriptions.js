@@ -241,7 +241,7 @@ const getDocument = (index) =>
         {!inputPrescription && <button onClick={addPrescriptionForm}>Add prescription</button>}
         {inputPrescription && <button onClick={addPrescriptionForm}>Cancel</button>}
         {prescriptions && oldPrescriptions && prescriptions.length!==0 ? prescriptions.map((prescription, index)=>{
-            return <div>
+            return <div key={index}>
                 <form onSubmit={validatePrescription} id={prescription.prescriptionId}>
                     <div>
                         <label htmlFor={prescription.prescriptionId+'-'+index+'-disease'}>Disease</label>

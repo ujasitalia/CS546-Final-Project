@@ -55,18 +55,18 @@ const Dashboard = () => {
         {hasError && <div className="error">{error}</div>}
           <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" 
 integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" 
-crossorigin="anonymous"></link>
-          <div class="container-fluid pt-4 px-4">
-              <div class="row g-4">
-                  <div class="col-sm-12 col-xl-6">
-                      <div class="bg-light rounded h-100 p-4">
+crossOrigin="anonymous"></link>
+          <div  className="container-fluid pt-4 px-4">
+              <div  className="row g-4">
+                  <div  className="col-sm-12 col-xl-6">
+                      <div  className="bg-light rounded h-100 p-4">
                         <ul>
                             <li id="appointmentTab" onClick={handleTabChange}>Appointment</li>  
                         </ul>
                       </div>
                   </div>
-                  <div class="col-sm-12 col-xl-6">
-                      <div class="bg-light rounded h-100 p-4">
+                  <div  className="col-sm-12 col-xl-6">
+                      <div  className="bg-light rounded h-100 p-4">
                         <ul>
                             <li id="availabilityTab" onClick={handleTabChange}>Availability</li>  
                         </ul>

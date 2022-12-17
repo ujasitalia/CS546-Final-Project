@@ -38,30 +38,22 @@ const Availability = (props) => {
     return(
       <>
         Start Time:
-        <select name="hour" id={`${day}-hour-start-${index}`} onChange={handleInputChange}>
-        {prev ? getHour(prev[0], end[0]).map(option => {
-            if(start[0]===option)
-              return (<option value={option} selected> {option} </option>);
-            return (<option value={option}> {option} </option>);
+        <select name="hour" id={`${day}-hour-start-${index}`} onChange={handleInputChange} value={start[0]}>
+        {prev ? getHour(prev[0], end[0]).map((option, index) => {
+            return (<option value={option} key={index}> {option} </option>);
         })  
         :
-        getHour(8, end[0]).map(option => {
-          if(start[0]===option)
-            return (<option value={option} selected> {option} </option>);
-          return (<option value={option}> {option} </option>);
+        getHour(8, end[0]).map((option, index) => {
+          return (<option value={option} key={index}> {option} </option>);
         })}  
         </select>
-        <select name="minute" id={`${day}-minute-start-${index}`} onChange={handleInputChange}>
-        {(prev && prev[0]===start[0]) ? getMinute(prev[1]).map(option => {
-            if(start[1]===option)
-              return (<option value={option} selected> {option} </option>);
-            return (<option value={option}> {option} </option>);
+        <select name="minute" id={`${day}-minute-start-${index}`} onChange={handleInputChange} value={start[1]}>
+        {(prev && prev[0]===start[0]) ? getMinute(prev[1]).map((option, index) => {
+            return (<option value={option} key={index}> {option} </option>);
         })
         :
-        getMinute().map(option => {
-          if(start[1]===option)
-              return (<option value={option} selected> {option} </option>);
-            return (<option value={option}> {option} </option>);
+        getMinute().map((option, index) => {
+            return (<option value={option} key={index}> {option} </option>);
         })}
         </select>  
       </>
@@ -72,37 +64,27 @@ const Availability = (props) => {
     return(
       <>
         End Time:
-        <select name="hour" id={`${day}-hour-end-${index}`} onChange={handleInputChange}>
-        {(next) ? getHour(parseInt(start[0]+1),next[0]+1).map(option => {
-          if(end[0]===option)
-              return (<option value={option} selected> {option} </option>);
-          return (<option value={option}> {option} </option>);
+        <select name="hour" id={`${day}-hour-end-${index}`} onChange={handleInputChange} value={end[0]}>
+        {(next) ? getHour(parseInt(start[0]+1),next[0]+1).map((option, index) => {
+          return (<option value={option} key={index}> {option} </option>);
         })
         :
-        getHour(parseInt(start[0]+1)).map(option => {
-          if(end[0]===option)
-              return (<option value={option} selected> {option} </option>);
-          return (<option value={option}> {option} </option>);
+        getHour(parseInt(start[0]+1)).map((option, index) => {
+          return (<option value={option} key={index}> {option} </option>);
         })}
-        {next===undefined && (end[0]===20 ? <option value="20" selected> 20 </option> : <option value="20"> 20 </option>)}  
+        {next===undefined && <option value="20"> 20 </option>}  
         </select>
-        <select name="minute" id={`${day}-minute-end-${index}`} onChange={handleInputChange}>
-        {end[0] === 20 ? <option value="0" selected> 0 </option> : start[0]===end[0] ? getMinute(parseInt(start[1])).map(option => {
-          if(end[1]===option)
-            return (<option value={option} selected> {option} </option>);
-          return (<option value={option}> {option} </option>);
+        <select name="minute" id={`${day}-minute-end-${index}`} onChange={handleInputChange} value={end[0] === 20 ? 0 : end[1]}>
+        {end[0] === 20 ? <option value="0"> 0 </option> : start[0]===end[0] ? getMinute(parseInt(start[1])).map((option, index) => {
+          return (<option value={option} key={index}> {option} </option>);
         })
         :
-        (next) && (next[0] === end[0]) ? getMinute(0,next[1]+15).map(option => {
-          if(end[1]===option)
-              return (<option value={option} selected> {option} </option>);
-          return (<option value={option}> {option} </option>);
+        (next) && (next[0] === end[0]) ? getMinute(0,next[1]+15).map((option, index) => {
+          return (<option value={option} key={index}> {option} </option>);
         })
         :
-        getMinute().map(option => {
-          if(end[1]===option)
-              return (<option value={option} selected> {option} </option>);
-          return (<option value={option}> {option} </option>);
+        getMinute().map((option, index) => {
+          return (<option value={option} key={index}> {option} </option>);
         })}
         </select>  
       </>
@@ -131,28 +113,28 @@ const Availability = (props) => {
 
   const getSchedule = () =>{
     let daysCards = [];
-    week.forEach( day => {
+    week.map( (day, index) => {
       if(slots[day])
       {
         let child = slots[day].map( (slot, index) => {
           const start = slot[0];
           const end = slot[1];
           return (
-            <div id={`${day}-availability-${index}`}>
+            <div id={`${day}-availability-${index}`}  key={index}>
               {slots[day][index-1] ? getStartTime(day, index, start, end, slots[day][index-1][1]) : getStartTime(day, index, start, end)}
               {slots[day][index+1] ? getEndTime(day, index, start, end, slots[day][index+1][0]) : getEndTime(day, index, start, end)}
               <button type="button" id={`${day}-deleteAvailability-${index}`} onClick={deletAvailability}>Delete Availability</button>
             </div>
           )
         })
-        daysCards.push(<div className={day}>
+        daysCards.push(<div className={day} key={index}>
           {day + " : "}
           {child}
           {!(slots[day][slots[day].length-1][0][0]===slots[day][slots[day].length-1][1][0] && slots[day][slots[day].length-1][0][1]===slots[day][slots[day].length-1][1][1])&& slots[day][slots[day].length-1][1][0]!==20 && <button type="button" id={`addSlot-${day}`} onClick={addAvailability}>Add Availability</button>}
         </div>)
       }else{
         daysCards.push(
-          <div className={day}>
+          <div className={day} key={index}>
             {day + " : "}
             <div>No Availability</div>
             <button type="button" id={`addSlot-${day}`} onClick={addAvailability}>Add Availability</button>
@@ -212,6 +194,8 @@ const Availability = (props) => {
         slot[change[0]][change[3]][1][0] = parseInt(e.target.value);
         if(slot[change[0]][parseInt(change[3])+1] && slot[change[0]][parseInt(change[3])+1][0][0]===slot[change[0]][parseInt(change[3])][1][0] && slot[change[0]][parseInt(change[3])+1][0][1]<slot[change[0]][parseInt(change[3])][1][1])
           slot[change[0]][change[3]][1][1] = slot[change[0]][parseInt(change[3])+1][0][1];
+        if(slot[change[0]][change[3]][1][0]===20)
+          slot[change[0]][change[3]][1][1] = 0;
       }
       else
         slot[change[0]][change[3]][1][1] = parseInt(e.target.value);
@@ -223,15 +207,18 @@ const Availability = (props) => {
     let newSchedule = {};
     for(let day in slots){
       let allAvailability = [];
-      for(let index=0;index<slots[day].length;index++)
+      for(let i=0;i<slots[day].length;i++)
       {
-        if(slots[day][index+1] && slots[day][index][1][0]===slots[day][index+1][0][0] && slots[day][index][1][1]===slots[day][index+1][0][1])
+        let index=i;
+        while(slots[day][index+1] && slots[day][index][1][0]===slots[day][index+1][0][0] && slots[day][index][1][1]===slots[day][index+1][0][1])
         {
-          allAvailability.push([slots[day][index][0][0].toString().padStart(2, '0') + ':' + slots[day][index][0][1].toString().padStart(2, '0'), slots[day][index+1][1][0].toString().padStart(2, '0') + ':' + slots[day][index+1][1][1].toString().padStart(2, '0')]);
           index++;
         }
-        else
+        if(index===i)
           allAvailability.push([slots[day][index][0][0].toString().padStart(2, '0') + ':' + slots[day][index][0][1].toString().padStart(2, '0'), slots[day][index][1][0].toString().padStart(2, '0') + ':' + slots[day][index][1][1].toString().padStart(2, '0')]);
+        else
+          allAvailability.push([slots[day][i][0][0].toString().padStart(2, '0') + ':' + slots[day][i][0][1].toString().padStart(2, '0'), slots[day][index][1][0].toString().padStart(2, '0') + ':' + slots[day][index][1][1].toString().padStart(2, '0')]);
+        i=index;
       }
       newSchedule[day] = allAvailability;
     }

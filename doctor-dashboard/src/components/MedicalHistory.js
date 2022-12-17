@@ -4,7 +4,7 @@ const MedicalHistory = (props) => {
   return (
     <div>
         {props.medicalHistory.length !== 0 ? props.medicalHistory.map((medical, index)=>{
-            return <div>
+            return <div key={index}>
                 <br/>
                 <div><span>Disease : </span> <span>{medical.disease}</span></div>
                 <div><span>Start Date : </span> <span>{medical.startDate}</span></div>

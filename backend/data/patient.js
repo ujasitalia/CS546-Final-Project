@@ -121,7 +121,7 @@ const addMedicalHistory = async (patientId,disease, startDate, endDate) => {
 
   const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{medicalHistory: newMedicalHistory}});
 
-  if (updatePatient.modifiedCount === 0) throw "No changes made to the Medical History";
+  if (updatePatient.modifiedCount === 0) throw {status:'400', error:"No changes made to the Medical History"};
 
   const updatedPatient = await getPatientById(patientId);
   return updatedPatient;
@@ -161,7 +161,7 @@ const updateMedicalHistory = async (patientId,medicalHistoryId,disease, startDat
     {_id: ObjectId(patientId)},
     {$set: {medicalHistory:medicalHistoryInDb}}
   );
-  if (updatedInfo.modifiedCount === 0) throw "No changes made to the Medical History";
+  if (updatedInfo.modifiedCount === 0) throw {status:'400', error:"No changes made to the Medical History"};
 
   const updatedPatient = await getPatientById(patientId);
   return updatedPatient;
@@ -199,7 +199,7 @@ const updateTestReport = async (patientId,testReportId,testName, testDate, testD
     {$set: {testReports:testReportsInDb}}
   );
 
-  if (updatedInfo.modifiedCount === 0) throw "No changes made to the Test Report";
+  if (updatedInfo.modifiedCount === 0) throw {status:'400', error:"No changes made to the Test Report"};
 
   const updatedTestReports = await getTestReport(patientId);
   return updatedTestReports;
@@ -238,7 +238,7 @@ const addTestReport = async (patientId, testName, testDocument, testDate) => {
   let newTestReports = {testReportId: new ObjectId(), testName,testDocument:document.insertedId.toString(),testDate};
   const updatePatient = await patientCollection.updateOne({_id: ObjectId(patientId)},{$push:{testReports: newTestReports}});
 
-  if (updatePatient.modifiedCount === 0) throw "Error: No changes made to test reports";
+  if (updatePatient.modifiedCount === 0) throw {status:'400', error:"Error: No changes made to test reports"};
 
   const updatedTestReports = await getTestReport(patientId);
   return updatedTestReports;

@@ -133,8 +133,8 @@ const ChatWindow = () => {
         <div className="messenger">
             <div className="chatMenu">
             <div className="chatMenuWrapper">
-                {conversations.length !== 0 ? conversations.map((c) => (
-                <div ref={scrollRef}>
+                {conversations.length !== 0 ? conversations.map((c, index) => (
+                <div ref={scrollRef} key={index}>
                     <div onClick={() => setCurrentChat(c[0])}>
                     <Conversation 
                         conversation={c[0]}
@@ -151,11 +151,11 @@ const ChatWindow = () => {
                     {currentChat ? (<>
                     <div className="chatBoxTop">
                         {messages && messages.map((m, index) => ( 
-                        messages.length-1 === index ? <div ref={bottomRef}>
+                        messages.length-1 === index ? <div ref={bottomRef} key={index}>
                         <Message message={m} own={m.senderId === userId} />
                         </div>
                         :
-                        <div>
+                        <div key={index}>
                         <Message message={m} own={m.senderId === userId} />
                         </div>
                         ))}

@@ -35,7 +35,7 @@ const TestReports = (props) => {
     <div>
         {hasError && <div className="error">{error}</div>}
         {testReports && testReports.length !== 0 ?testReports.map((testReport, index)=>{
-            return <div>
+            return <div key={index}>
               <br/>
                 <div><span>Test Name : </span> <span>{testReport.testName}</span></div>
                 <div><span>Test Date : </span> <span>{testReport.testDate}</span></div>

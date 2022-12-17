@@ -35,7 +35,7 @@ const DoctorAppointment = (props) => {
       {appointments !== '' 
       ? <div className="appointmentContainer">
           <div>{appointments.length !== 0 ? appointments.map((element, index) =>
-            <Link to={`/dashboard/appointment/${element._id}`} state={{appointmentId :      element._id}}>
+            <Link to={`/dashboard/appointment/${element._id}`} state={{appointmentId :element._id}} key={index}>
                 <div className="card" key={element._id}>
                     <div className="cardHeading">Appointment - {index+1}</div>
                     <div className="cardText">Date : {element.startTime.slice(0, 10)}</div>

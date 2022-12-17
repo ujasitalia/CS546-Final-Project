@@ -52,7 +52,7 @@ const MyPatients = () => {
       <div>{data !== '' 
             ? <div className="doctorsContainer">
                           <div className='row g-4'>{data.patients.length !== 0 ? data.patients.map((element, index) =>
-                            <div class="col-sm-4 col-xm-6 card">
+                            <div  className="col-sm-4 col-xm-6 card" key={index}>
                           <Link to={{ pathname : `/patient/${element._id}`}}>
                               <div key={element._id}>
                                   <div className="cardHeading">Patient - {index+1}</div>
