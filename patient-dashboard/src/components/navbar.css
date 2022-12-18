@@ -87,6 +87,15 @@ nav {
     padding: 1rem;
 }
 
+a:hover{
+    text-decoration: none  !important; 
+}
+a{
+    color: #0072ee !important;
+  }
+  .btn-primary{
+    background-color: #0072ee !important;
+  }
 .float-left input,.float-left button,.float-left label{
     float:left;
  }
