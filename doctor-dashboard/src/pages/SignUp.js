@@ -108,8 +108,8 @@ const SignUp = () => {
             <select id="signUpSpeciality" value={speciality} onChange={handleInputChange}>
                 <option value="">--Choose a Speciality--</option>
                 {
-                    specialities.map(spec => {
-                        return <option value={spec}>{spec}</option>;
+                    specialities.map((spec, index) => {
+                        return <option value={spec} key={index}>{spec}</option>;
                     //   return spec===speciality ? <option value={spec} selected>{spec}</option> : <option value={spec}>{spec}</option>
                     })
                 }

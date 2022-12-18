@@ -25,7 +25,7 @@ const Chat = () => {
   return (
     <div ref={wrapperRef}>
             {visible && <ChatWindow/>}
-            <div onClick={() => setVisible(true)}
+            <div onClick={() => setVisible(!visible)}
                 style={{position: 'fixed',
                         bottom: '24px',
                         right: '24px'}}>

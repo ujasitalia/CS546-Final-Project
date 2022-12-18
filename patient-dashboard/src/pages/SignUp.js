@@ -66,7 +66,9 @@ const SignUp = () => {
     <div>
         <div className="blueContainer">
                     <div className="loginHeading">Patient SignUp</div>
-                    <div className="loginText">Sign Up</div>
+        </div>
+        <div id="login-account-wrap">
+            <p> <a href='http://localhost:3003/login'>Login</a> </p>
         </div>
         <div className="loginCard">
         <form onSubmit={validateSignUp}>
@@ -90,9 +92,6 @@ const SignUp = () => {
             <br/>
             <button type="submit" className="loginButton">Sign Up</button>
         </form>
-        <div id="login-account-wrap">
-            <p> <a href='http://localhost:3003/login'>Login</a> </p>
-        </div>
         {hasError && <div className="error">{error}</div>}
         </div>
     </div>

@@ -21,7 +21,7 @@ const isPatientEmailInDb = async(email) => {
   
 const createPatient = async (email,age,name,zip,password) => {
     email=commonHelper.isValidEmail(email).toLowerCase();
-    if(await isPatientEmailInDb(email)) throw {Status:"400",error:'An account already exists with this email'};
+    if(await isPatientEmailInDb(email)) throw {status:"400",error:'An account already exists with this email'};
     age = patientHelper.isValidAge(age);
     name=commonHelper.isValidName(name);
     // city=commonHelper.isValidCity(city);

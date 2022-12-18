@@ -1,7 +1,7 @@
 const checkRating = (rating) => {
     rating = rating.toString();
-    if(!rating.match(/^\d+$/)) throw new Error(`Invalid ${rating}`);
-    rating=parseInt(rating);
+    if(!rating.match(/^[\d.]+$/)) throw {status: '400', error : `Invalid ${rating}`};
+    rating=parseFloat(rating);
     if(isNaN(rating) || typeof rating != 'number'){
         throw {status: '400', error : 'Not a number'}
     }
@@ -14,15 +14,13 @@ const checkRating = (rating) => {
     return rating;
   };
   const checkReviewText = (reviewText) => {
-    if(!reviewText || reviewText == null){
-        return null;
-    }
-    if(typeof reviewText != 'string'){
+
+    if(!reviewText || typeof reviewText != 'string'){
         throw {status: '400', error : 'Not a string'};
     }
     reviewText = reviewText.trim();
-    if(reviewText.length > 500){
-        throw {status: '400', error : 'Review over character limit'};
+    if(reviewText.length <4 || reviewText.length > 500){
+        throw {status: '400', error : 'Review over/under character limit'};
     }
     return reviewText;
   };

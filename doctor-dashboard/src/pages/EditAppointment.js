@@ -55,7 +55,7 @@ const EditAppointment = () => {
 
   const checkDate = (startDate) => {    
     const currDate = new Date();
-    if(startDate.getDate() < currDate.getDate()){
+    if(startDate.getDate() < currDate.getDate() && startDate.getMonth()<= currDate.getMonth() && startDate.getFullYear()<= currDate.getFullYear()){
         setNotAvailable(true)
         return false
     }
@@ -103,6 +103,25 @@ const EditAppointment = () => {
     slot = slot.split(':')
     slot = slot[0]+':'+slot[1]+':00.000'
     return slot
+  }
+
+  const handleCancel = async (e) => {
+    e.preventDefault()
+    try{
+      await api.appointment.deleteAppointment(appointmentId)
+      navigate("/myAppointments");
+    }catch(e){
+      if(e.response.status===500)
+        navigate("/error");
+      else if(e.response.status===401 )
+      {
+        localStorage.clear();
+        navigate("/login");
+      }else{
+        setHasError(true);
+        setError(e.response.data);
+      }
+    }
   }
 
   const updateAppointment = async (e) => {
@@ -153,6 +172,11 @@ const EditAppointment = () => {
             </div>
           </div>
           <br />
+          <h4>Would you like to cancel the appointment?</h4>
+          <Button variant="danger" type="button" onClick={handleCancel} style={{ width: "70px" }}>
+              Cancel
+          </Button>
+          <br/>
           <h4>Update to:</h4>
           <Form onSubmit={handleForm}>
             <Form.Label style={{ marginRight: "10px" }}>Date</Form.Label>            

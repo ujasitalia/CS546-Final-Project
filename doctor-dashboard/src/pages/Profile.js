@@ -131,7 +131,7 @@ const Profile = () => {
             <form onSubmit={validateSignUp}>
                 <div className="profileInputField">
                     <label className="profileInputText" htmlFor="updatedProfileImage"> Profile Image : </label> 
-                    {data.doctor.profilePicture ? <><img style={{height: "100px"}} id="profileImage" src={`${data.doctor.profilePicture}`} alt=""/>
+                    {data.doctor.profilePicture ? <><img style={{height: "100px"}} id="profileImage" src={`${data.doctor.profilePicture}`} alt="Profile"/>
                     <a download="myImage.gif" href={`${data.doctor.profilePicture}`}>Download Profile</a></>
                     :
                     <span>No Profile</span>}

@@ -37,7 +37,7 @@ export default function Conversation({conversation,currentUser}){
     <div className="people">
       <img className="personProfile"
         src={user && user.profilePicture ? user.profilePicture : userPic}
-        alt="N/A"
+        alt="Doctor Profile"
       />
       <span className="personName">{user?.name}</span>
     </div>

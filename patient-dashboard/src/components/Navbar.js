@@ -46,7 +46,7 @@ const Navbar = (props) => {
 
           {(window.location.pathname==="/dashboard" || window.location.pathname==="/dashboard/") && <li className="float-left navbarInput">
               <Form onSubmit={handleInputChange}>
-              <label for="searchBar">
+              <label htmlFor="searchBar">
                 Search Doctor:
               </label>
                 <Form.Control

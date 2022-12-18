@@ -60,7 +60,7 @@ const EditAppointment = () => {
 
   const checkDate = (startDate) => {  
     const currDate = new Date();
-    if(startDate.getDate() < currDate.getDate()){      
+    if(startDate.getDate() < currDate.getDate() && startDate.getMonth()<= currDate.getMonth() && startDate.getFullYear()<= currDate.getFullYear()){      
       setNotAvailable(true)
         return false
     }

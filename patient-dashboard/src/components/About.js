@@ -94,7 +94,7 @@ const About = (props) => {
         {hasSuccessMessage && <div className='successMessage'>Successfully updated</div>}
        <form onSubmit={validateSignUp}>
             <label className="profileInputText" htmlFor="updatedProfileImage"> Profile Image : </label> 
-                    {props.patientData.profilePicture ? <><img style={{height: "100px"}} id="profileImage" src={`${props.patientData.profilePicture}`} alt=""/>
+                    {props.patientData.profilePicture ? <><img style={{height: "100px"}} id="profileImage" src={`${props.patientData.profilePicture}`} alt="Profile"/>
                     <a download="myImage.gif" href={`${props.patientData.profilePicture}`}>Download Profile</a></>
                     :
                     <span>No Profile</span>}

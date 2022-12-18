@@ -267,7 +267,7 @@ const getDocument = (index) =>
 
                         <label htmlFor={prescription.prescriptionId+'-'+index+'-prescriptionDocument'}>Prescription Document</label>
                         {getDocument(index)}
-                        <input type="file" id={prescription.prescriptionId+'-'+index+'-prescriptionDocument'} onChange={handleInputChange} className="medicine"/>
+                        <input type="file" id={prescription.prescriptionId+'-'+index+'-prescriptionDocument'} onChange={handleInputChange} className="medicine" key={Math.floor(Math.random()*100 + 300)}/>
                     </div>
                     <button type="submit" className="loginButton">Submit</button>
                 
