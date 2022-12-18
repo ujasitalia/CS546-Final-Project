@@ -21,7 +21,7 @@ const isValidAppointmentDuration = (appointmentDuration) =>{
     appointmentDuration=appointmentDuration.toString();
      if(!appointmentDuration.match(/^\d+$/)) throw {status:"400", error:'Invalid age'};
      appointmentDuration = parseInt(appointmentDuration);
-    if(appointmentDuration%15!=0 || appointmentDuration>90)
+    if(appointmentDuration%15!=0 || appointmentDuration>90 || appointmentDuration===0)
         throw {status: '400', error : 'Invalid Appointment Duration'}
     return appointmentDuration;
 }
