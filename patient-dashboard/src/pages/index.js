@@ -7,6 +7,7 @@ import Profile from './Profile';
 import HealthyHabits from './healthyHabits/HealthyHabits'
 import SignUp from "./SignUp";
 import Error from "./Error";
+import MyDoctors from "./MyDoctors";
 
 const pages = {
     Login,
@@ -17,6 +18,7 @@ const pages = {
     Profile,
     HealthyHabits,
     SignUp,
-    Error
+    Error,
+    MyDoctors
 }
 export { pages }

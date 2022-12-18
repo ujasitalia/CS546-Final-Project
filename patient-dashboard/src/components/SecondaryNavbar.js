@@ -12,6 +12,9 @@ const SecondaryNavbar = () => {
                             <a href="/myAppointments">my appointments</a>
                         </li>
                         <li>
+                            <a href="/myDoctors">My Doctors</a>
+                        </li>
+                        <li>
                             <a href="/healthyHabits">healthy habits</a>
                         </li>
                     </ul>

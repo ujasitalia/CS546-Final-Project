@@ -13,6 +13,7 @@ function App() {
           <Route path="/myAppointment/:appointmentId" element={<pages.EditAppointment/>}/>
           <Route path="/profile" element={<pages.Profile/>}/>
           <Route path="/healthyHabits" element={<pages.HealthyHabits/>}/>
+          <Route path="/myDoctors" element={<pages.MyDoctors/>}/>
           <Route path="/signup" element={<pages.SignUp/>} />
           <Route path="/error" element={<pages.Error/>} />
           <Route path="*" element={<Navigate  to="/dashboard"/>}/>
