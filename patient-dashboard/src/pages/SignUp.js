@@ -72,22 +72,22 @@ const SignUp = () => {
         </div>
         <div className="loginCard">
         <form onSubmit={validateSignUp}>
-            <div className="emailText">Enter Email</div>
+            <label htmlFor='signUpEmail'>Enter Email</label>
             <input placeholder="username@example.com" id="signUpEmail" value={email} onChange={handleInputChange} type="email" className="loginInput" autoFocus/>
             <br/>
-            <div className="emailText">Enter Password</div>
+            <label htmlFor='signUpPassword'>Enter Password</label>
             <input placeholder="********" id="signUpPassword" value={password} onChange={handleInputChange} type="password" className="loginInput" autoFocus/>
             <br/>
-            <div className="emailText">Re-Enter Password</div>
+            <label htmlFor='signUpRepassword'>Re-Enter Password</label>
             <input placeholder="********" id="signUpRepassword" value={repassword} onChange={handleInputChange} type="password" className="loginInput" autoFocus/>
             <br/>
-            <div className="emailText">Enter Age</div>
+            <label htmlFor='signUpAge'>Enter Age</label>
             <input placeholder="XX years" id="signUpAge" value={age} onChange={handleInputChange} type="number" className="loginInput" autoFocus/>
             <br/>
-            <div className="emailText">Enter name</div>
+            <label htmlFor='signUpName'>Enter name</label>
             <input placeholder="Patrik Hill" id="signUpName" value={fullName} onChange={handleInputChange} type="text" className="loginInput" autoFocus/>
             <br/>
-            <div className="emailText">Enter zip</div>
+            <label htmlFor='signUpZip'>Enter zip</label>
             <input placeholder="07307" id="signUpZip" value={zip} onChange={handleInputChange} type="number" className="loginInput" autoFocus/>
             <br/>
             <button type="submit" className="loginButton">Sign Up</button>

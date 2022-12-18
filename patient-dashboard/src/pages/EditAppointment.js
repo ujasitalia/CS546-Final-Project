@@ -165,9 +165,9 @@ const EditAppointment = () => {
         {hasError && <div className="error">{error}</div>}
         {appointment ? (
         <div style={{marginLeft: "5px"}}>
-            <h2 style={{position:"center"}}>Edit/Cancel Appointment</h2>
+            <h1 style={{position:"center"}}>Edit/Cancel Appointment</h1>
             <br />
-            <h4>Original Appointment</h4>
+            <h2>Original Appointment</h2>
           <div className="card">
             <div className="cardText">
               Date : {appointment.startTime.slice(0, 10)}
@@ -180,20 +180,20 @@ const EditAppointment = () => {
             </div>
           </div>
           <br />
-          <h4>Would you like to cancel the appointment?</h4>
+          <h2>Would you like to cancel the appointment?</h2>
           <Button variant="danger" type="button" onClick={handleCancel} style={{ width: "70px" }}>
               Cancel
           </Button>
           <br />
           <br />
-          <h4>Dr. {doctor.name} is available on:</h4>
+          <h2>Dr. {doctor.name} is available on:</h2>
           <ul>
             {days.map(d => {
               return <li key={d}>{d}</li>
             })}
           </ul>
           <br />
-          <h4>Update to:</h4>
+          <h2>Update to:</h2>
           <Form onSubmit={handleForm}>
             <Form.Label style={{ marginRight: "10px" }}>Date</Form.Label>            
             <DatePicker selected={startDate} onChange={(date:Date) => setStartDate(date)} />

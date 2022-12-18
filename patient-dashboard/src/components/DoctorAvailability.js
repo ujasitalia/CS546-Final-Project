@@ -8,7 +8,7 @@ export const DoctorAvailability = (props) => {
       daycard.push(
         <div  className="col-sm-4" key={day}>
         <br/>
-          <h6>{day} :</h6> {props.doctorSchedule[day].map((element, index)=>{
+          <h3>{day} :</h3> {props.doctorSchedule[day].map((element, index)=>{
             return (<div key={index}>{element[0]} - {element[1]}</div>)
           })}
         </div>
@@ -27,9 +27,8 @@ export const DoctorAvailability = (props) => {
                   <div  className="col-sm-12 col-xl-12">
                       <div  className="bg-light rounded h-100 p-4">
                         <div>
-                          <h4>Appointment Duration : {props.appointmentDuration}
-                          <br/>
-                          Schedule</h4>
+                          <h1>Appointment Duration : {props.appointmentDuration}</h1>
+                          <h2>Schedule</h2>
                         </div>
                         <div className='row w-100 '>
                           {getAvailability()}

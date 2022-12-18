@@ -161,11 +161,13 @@ const ChatWindow = () => {
                         ))}
                     </div>
                     <div className="chatBoxBottom">
+                    <label htmlFor="msg" hidden></label>
                         <textarea
                             className="chatMessageInput textarea"
                             placeholder="write something..."
                             onChange={ (e) => setNewMessage(e.target.value)}
                             value={newMessage}
+                            id="msg"
                         ></textarea>
                         <button className="chatSubmitButton" onClick={handleSubmit}>
                             Send

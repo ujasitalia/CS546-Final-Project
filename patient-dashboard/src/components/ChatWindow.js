@@ -161,7 +161,9 @@ const ChatWindow = () => {
                         ))}
                     </div>
                     <div className="chatBoxBottom">
+                      <label htmlFor="msg" hidden></label>
                         <textarea
+                            id="msg"
                             className="chatMessageInput textarea"
                             placeholder="write something..."
                             onChange={ (e) => setNewMessage(e.target.value)}
