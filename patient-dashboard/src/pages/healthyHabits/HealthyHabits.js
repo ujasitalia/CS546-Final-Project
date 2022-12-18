@@ -34,22 +34,22 @@ const HealthyHabits = () => {
                     </div>
                     <div className="col healthyContainer">
                         <div className="card card1" id="heart" onClick={handleTabChange}>
-                            <h5>Heart</h5>
+                            <h2>Heart</h2>
                         </div>
                         <div className="card card2" id="kidney" onClick={handleTabChange}>
-                            <h5>Kidney</h5>
+                            <h2>Kidney</h2>
                         </div>
                         <div className="card card3" id="bones" onClick={handleTabChange}>
-                            <h5>Bones</h5>
+                            <h2>Bones</h2>
                         </div>
                         <div className="card card4" id="lungs" onClick={handleTabChange}>
-                            <h5>Lungs</h5>
+                            <h2>Lungs</h2>
                         </div>
                         <div className="card card5" id="teeth" onClick={handleTabChange}>
-                            <h5>Teeth</h5>
+                            <h2>Teeth</h2>
                         </div>
                         <div className="card card6" id="liver" onClick={handleTabChange}>
-                            <h5>Liver</h5>
+                            <h2>Liver</h2>
                         </div>
                     </div>
                 </div> 
