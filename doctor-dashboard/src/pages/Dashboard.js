@@ -51,27 +51,23 @@ const Dashboard = () => {
     return (
       <div>
         {data && <components.Navbar/>}
-        <div   className='container'>
+        <nav style={{paddingTop: "10px", marginBottom: "10px", paddingBottom: "8px"}}>
+            <div className="nav-center">
+                <div className="links-container">
+                    <ul className="links">
+                      <li id="appointmentTab" className='linkLi' onClick={handleTabChange}>Appointment</li>  
+                      <li id="availabilityTab" className='linkLi' onClick={handleTabChange}>Availability</li>  
+                    </ul>
+                </div>
+            </div>
+          </nav>
+        <div className='container'>
         {hasError && <div className="error">{error}</div>}
           <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" 
 integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" 
 crossOrigin="anonymous"></link>
           <div  className="container-fluid pt-4 px-4">
               <div  className="row g-4">
-                  <div  className="col-sm-12 col-xl-6">
-                      <div  className="bg-light rounded h-100 p-4">
-                        <ul>
-                            <li id="appointmentTab" onClick={handleTabChange}>Appointment</li>  
-                        </ul>
-                      </div>
-                  </div>
-                  <div  className="col-sm-12 col-xl-6">
-                      <div  className="bg-light rounded h-100 p-4">
-                        <ul>
-                            <li id="availabilityTab" onClick={handleTabChange}>Availability</li>  
-                        </ul>
-                      </div>
-                  </div>
                   <div >
                       <div>
                         {data && tab === 'appointmentTab' && <components.DoctorAppointment doctorId={data.doctor._id} />}

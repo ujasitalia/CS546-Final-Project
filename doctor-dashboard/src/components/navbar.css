@@ -65,10 +65,23 @@ body {
 ul {
     list-style-type: none;
 }
-
+.linkLi:hover{
+    text-decoration: none  !important; 
+}
+.linkLi{
+    text-decoration: none;
+    color: #0072ee !important;
+  }
+a:hover{
+    text-decoration: none  !important; 
+}
 a {
     text-decoration: none;
-}
+    color: #0064d3 !important;
+  }
+  .btn-primary{
+    background-color: #0072ee !important;
+  }
 
 /*
 =============== 
