@@ -205,7 +205,7 @@ const TestReports = () => {
                     <div>
                         <label htmlFor={test.testReportId+'-'+index+'-testDocument'}>Document : </label>
                         {getDocument(index)}
-                        <input type="file" id={test.testReportId+'-'+index+'-testDocument'} onChange={handleInputChange} className="testDocument"/>
+                        <input type="file" id={test.testReportId+'-'+index+'-testDocument'} onChange={handleInputChange} className="testDocument" key={Math.floor(Math.random()*100 + 300)}/>
                     </div>
                     <div>
                         <label htmlFor={test.testReportId+'-'+index+'-testDate'}>Test Date</label>

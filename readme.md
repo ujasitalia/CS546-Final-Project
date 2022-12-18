@@ -1,3 +1,7 @@
+# GitHub repo
+
+- https://github.com/ujasitalia/CS546-Final-Project
+
 # Doctolib-Backend
 ## Features
 
@@ -35,6 +39,7 @@ npm start
 - Review and rate doctor after every appointment
 - Upload medical histories and test reports
 - Download doctor's prescriptions
+- Chat with doctor with whom patient booked at least one appointment
 
 ## Tech
 
@@ -61,6 +66,7 @@ npm start
 - Update or delete appointments
 - Doctor can give prescription to patiant
 - View patient's profile, medical histories and test reports
+- Chat with patient who booked at least one appointment
 
 ## Tech
 
@@ -78,3 +84,15 @@ git checkout master
 npm install
 npm start
 ```
+
+## Credentials to access and view data in application
+
+Doctolib-Doctor-Frontend Credentials
+
+pdarji@stevens.edu
+Parth@123
+
+Doctolib-Patient-Frontend Credentials
+
+mshah9@stevens.edu
+Megh@123
